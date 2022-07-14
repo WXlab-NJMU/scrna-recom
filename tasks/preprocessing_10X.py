@@ -1,8 +1,10 @@
+import os
 import subprocess
 import pandas as pd
-from dotenv import load_dotenv
-class DataAnalysis10X(indir, outdir, index):
+from dotenv import dotenv_values
+from typing import List
 
+class DataAnalysis10X:
     """Data Analysis for 10X Genomics: BCL to count
 
     Attributes:
@@ -12,62 +14,53 @@ class DataAnalysis10X(indir, outdir, index):
     Todo:
         * a1
         * a2
-
     """
 
-    def __init__(self, indir, outdir):
+    def __init__(self, indir: str, outdir: str, index: str):
         """TODO: to be defined. """
         self.indir = indir
-        self.outdir = outdir
         self.index = index
+        self.outdir = outdir
+        os.makedirs(outdir, exist_ok=True)
+        config = dotenv_values()
+        self.cell_ranger = config["CellRanger"]
+        self.genome = config["CellRangerGenome"]
 
     @property
-    def samples(self):
+    def samples(self) -> List[str]:
         samples = pd.read_csv(self.index)["Sample"].to_list()
         return samples
     @property
-    def config(self):
-        config = dotenv_values("../.env")
-        return config
-    @property
-    def cell_ranger(self):
-        return config["CellRanger"]
-    @property
-    def cell_ranger(self):
-        return config["CellRangerGenome"]
-    @property
-    def agg_csv(self):
+    def agg_csv(self) -> str:
         outdir = self.outdir
         return f"{outdir}/celranger_agg.csv"
 
-    def bcl2fq(self):
+    def bcl2fq(self) -> None:
         """CellRanger Convert BCL to Fastq Files
         :returns: fastq files
         """
-        indir = self.indir
-        index = self.index
-        genome = self.genome
-        cell_ranger = self.cell_ranger
-        cmd = f"{cell_ranger} mkfastq --csv={index} \
-            --run={indir} --output-dir={outdir}"
+        cmd = f"{self.cell_ranger} mkfastq --csv={self.index} \
+            --run={self.indir} --output-dir={self.outdir}"
         print(cmd)
 
-    def fq2count(self):
-        genome = self.genome
-        cell_ranger = self.cell_ranger
+    def fq2count(self) -> None:
         header = "sample_id,molecule_h5"
         for sample in self.samples:
-            cmd = f"{cell_ranger} --transcriptome={genome} \
-                --id={sample}_count --fastqs={outdir} --sample={sample}"
+            cmd = f"{self.cell_ranger} --transcriptome={self.genome} \
+                --id={sample}_count --fastqs={self.outdir} --sample={sample}"
             print(cmd)
-            text = f"{sample},{outdir}/{sample}_count/{sample}_molecule_info.h5"
+            text = f"{sample},{self.outdir}/{sample}_count/{sample}_molecule_info.h5"
             print(text)
 
-
-    def count2agg(self):
-        csv = self.agg_csv
-        cmd = f"cellranger aggr --id=out_aggr --csv={csv}"
+    def count2agg(self) -> None:
+        cmd = f"{self.cell_ranger} aggr --id=out_aggr --csv={self.agg_csv}"
         print(cmd)
 
+    def run(self) -> None:
+        self.bcl2fq()
+        self.fq2count()
+        self.count2agg()
 
-
+csv = "/home/minsu/Pipelines/scrna/tests/cellranger-tiny-bcl-simple-1.2.0.csv"
+bcl = "/home/minsu/Pipelines/scrna/tests/cellranger-tiny-bcl-1.2.0"
+DataAnalysis10X(indir=bcl, outdir="test-results", index=csv).run()
