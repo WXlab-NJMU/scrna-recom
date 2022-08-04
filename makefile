@@ -3,8 +3,7 @@ OS = $(shell lsb_release -i | cut -d: -f2)
 PLATFORM = $(shell uname -s)
 RVERSION = $(shell R --version | head -1 | awk '{print $$3}')
 # local R library path
-RLIB = $(HOME)/Pipelines/scrna/R-Library/
-
+RLIB = $(HOME)/miniconda/envs/scrna/lib/R/library/
 all: install test
 .PHONY : install clean test
 
@@ -33,9 +32,18 @@ ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
 	$(error "Please update the R version, and it must be greater than 4!")
 endif
 
+conda-R:
+ifeq (,$(shell which Rt))
+	$(info Installing R)
+	conda install -c r r-base=4.2.1 r-essentials r-docopt
+endif
+
 Seurat: R
+	sudo apt-get install libblas-dev liblapack-dev libgeos-dev libcurl4-openssl-dev
 	$(info Install Seurat to $(RLIB))
-	R --vanilla -e 'install.packages("Seurat", repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
+	R --vanilla -e 'install.packages(c("httr", "ploty", "RcppEigen", "Seurat", "remotes"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
+	R --vanilla -e 'remotes::install_github("chris-mcginnis-ucsf/DoubletFinder")'
+
 
 Python:
 ifeq (, $(shell conda))
