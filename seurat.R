@@ -13,6 +13,8 @@ Usage:
 
   seurat.R reduct <input> <outdir>
 
+  seurat.R dedoubl <input> <outdir>
+
   seurat.R diff <input> <outdir>
 
   seurat.R type <input> <outdir>
@@ -42,6 +44,7 @@ print(arguments)
 
 library(Seurat)
 library(dplyr)
+library(DoubletFinder)
 
 QualityControl <- function (indir, outdir) {
   pbmc.data <- Read10X(data.dir = indir)
@@ -170,10 +173,32 @@ CellType <- function (input, outdir) {
   return(outrds)
 }
 
+RemoveDoublet <- function (input, outdir) {
+  # input seurat object after NormalizeData, FindVariableGenes, ScaleData, RunPCA, and RunTSNE
+  pbmc <- readRDS(normalizePath(input))
+  # pk
+  sweep.res <- paramSweep_v3(pbmc, PCs = 1:20, sct = FALSE)
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE)
+  bcmvn <- find.pK(sweep.stats)
+  mpK<-as.numeric(as.vector(bcmvn$pK[which.max(bcmvn$BCmetric)]))
+  # nExp
+  annotations <- pbmc@meta.data$seurat_clusters
+  homotypic.prop <- modelHomotypic(annotations)      ## ex: annotations <- seu_kidney@meta.data$ClusteringResults
+  nExp_poi <- round(0.075*nrow(pbmc@meta.data))   ## Assuming 7.5% doublet formation rate - tailor for your dataset
+  nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
+  # final
+  pbmc <- doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = 0.09, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
+  pbmc <- doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = 0.09, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.09_913", sct = FALSE)
+  outrds = file.path(outdir, "remove_doublet.rds")
+  saveRDS(pbmc, outrds)
+  return(outrds)
+
+}
+
 steps = list()
 if (arguments$workflow) {
   if (arguments$steps == "all"){
-    steps = c("qc", "norm", "feat", "scale", "reduct", "diff", "type")
+    steps = c("qc", "norm", "feat", "scale", "reduct", "dedoubl", "diff", "type")
   } else {
     steps = unlist(strsplit(arguments$steps, split=','))
   }
@@ -195,6 +220,9 @@ if (arguments$scale | 'scale' %in% steps) {
 }
 if (arguments$reduct | 'reduct' %in% steps) {
   rds <- rds %>% DimensionReduction(arguments$outdir)
+}
+if (arguments$dedoubl | 'dedoubl' %in% steps) {
+  rds <- rds %>% RemoveDoublet(arguments$outdir)
 }
 if (arguments$diff | 'diff' %in% steps) {
   rds <- rds %>% DifferentExpression(arguments$outdir)
