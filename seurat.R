@@ -187,8 +187,8 @@ RemoveDoublet <- function (input, outdir) {
   nExp_poi <- round(0.075*nrow(pbmc@meta.data))   ## Assuming 7.5% doublet formation rate - tailor for your dataset
   nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
   # final
-  pbmc <- doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = 0.09, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
-  pbmc <- doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = 0.09, nExp = nExp_poi.adj, reuse.pANN = "pANN_0.25_0.09_913", sct = FALSE)
+  pbmc <- doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = mpK, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
+  pbmc <- doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = mpK, nExp = nExp_poi.adj, reuse.pANN = paste("pANN", 0.25, mpK, nExp_poi, sep="_"), sct = FALSE)
   outrds = file.path(outdir, "remove_doublet.rds")
   saveRDS(pbmc, outrds)
   return(outrds)
