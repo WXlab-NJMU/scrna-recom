@@ -32,7 +32,7 @@ $(info Checking R version...)
 conda-R:
 ifeq (,$(shell which Rt))
 	$(info Installing R)
-	conda install -c r r-base=4.2.1 r-essentials r-docopt scvelo cellphonedb
+	conda install -c r r-base=4.2.1 r-essentials r-docopt r-ragg scvelo cellphonedb
 endif
 ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
 	$(error "Please update the R version, and it must be greater than 4!")
@@ -43,7 +43,7 @@ Seurat: R
 	$(info Install Seurat to $(RLIB))
 	R --vanilla -e 'install.packages(c("remotes", "BiocManager", "httr", "ploty", "RcppEigen", "Seurat", "rliger", "harmony", "scCATCH"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
 	R --vanilla -e 'BiocManager::install(c("ComplexHeatmap","SingleR","clusterProfiler","monocle"))'
-	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder","sqjin/CellChat","YosefLab/VISION"))'
+	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder","sqjin/CellChat","YosefLab/VISION", "satijalab/seurat-data"))'
 
 
 Python:
