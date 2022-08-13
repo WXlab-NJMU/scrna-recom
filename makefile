@@ -32,7 +32,7 @@ $(info Checking R version...)
 conda-R:
 ifeq (,$(shell which Rt))
 	$(info Installing R)
-	conda install -c r r-base=4.2.1 r-essentials r-docopt r-ragg scvelo cellphonedb
+	conda install -c conda-forge r-base=4.2.1 r-essentials r-docopt r-ragg scvelo cellphonedb
 endif
 ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
 	$(error "Please update the R version, and it must be greater than 4!")

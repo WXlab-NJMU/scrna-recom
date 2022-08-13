@@ -13,6 +13,7 @@ NULL
 #' @return Returns a processed seurat object rds
 #'
 #' @import Seurat
+#' @import dplyr
 #' @export
 #' @rdname preprocess
 #' @order 1
@@ -20,15 +21,15 @@ NULL
 #'
 SeuratPreprocess <- function(indir, outdir) {
   rds <- indir %>%
-    QualityControl(outdir) %>%
-    Normalization(outdir) %>%
-    FeatureSelection(outdir) %>%
-    Scale(outdir)
+    Seurat::QualityControl(outdir) %>%
+    Seurat::Normalization(outdir) %>%
+    Seurat::FeatureSelection(outdir) %>%
+    Seurat::Scale(outdir)
 }
 
 QualityControl <- function (project, indir, outdir) {
-  pbmc.data <- Read10X(data.dir = indir)
-  pbmc <- CreateObject(counts = pbmc.data,
+  pbmc.data <- Seurat::Read10X(data.dir = indir)
+  pbmc <- Seurat::CreateSeuratObject(counts = pbmc.data,
                              project = project,
                              min.cells = as.numeric(arguments$minCell),
                              min.features = as.numeric(arguments$minRNA))
@@ -81,7 +82,7 @@ Scale <- function(input, outdir) {
   pbmc <- readRDS(normalizePath(input))
   all.genes <- rownames(pbmc)
   #pbmc <- ScaleData(pbmc, features = all.genes)
-  pbmc <- ScaleData(pbmc) # faster! use 2000 instead of all genes
+  pbmc <- Seurat::ScaleData(pbmc) # faster! use 2000 instead of all genes
   outrds = file.path(outdir, "04_scale.rds")
   saveRDS(pbmc, outrds)
   return(outrds)
@@ -92,7 +93,9 @@ Scale <- function(input, outdir) {
 #' @description
 #' SCTransform replaces NormalizeData(), ScaleData(), and FindVariableFeatures()
 #' and removes confounding sources of variation, such as mitochondrial percentage
-#'
+#' SCTransform is an improved method for the normalization based on 
+#' regularized negative binomial regression in 2019
+#' 
 #' @references
 #' https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1
 #'
@@ -107,11 +110,11 @@ Scale <- function(input, outdir) {
 #' @concept preprocess
 #'
 SeuratSCTransform <- function(indir, outdir) {
-  pbmc_data <- Read10X(data.dir = indir)
-  pbmc <- CreateSeuratObject(counts = pbmc_data)
-  pbmc <- PercentageFeatureSet(pbmc, pattern = "^MT-", col.name = "percent.mt")
+  pbmc_data <- Seurat::Read10X(data.dir = indir)
+  pbmc <- Seurat::CreateSeuratObject(counts = pbmc_data)
+  pbmc <- Seurat::PercentageFeatureSet(pbmc, pattern = "^MT-", col.name = "percent.mt")
   # option of method = "glmGamPoi" could improve the speed
-  pbmc <- SCTransform(pbmc, vars.to.regress = "percent.mt", verbose = FALSE)
+  pbmc <- Seurat::SCTransform(pbmc, vars.to.regress = "percent.mt", verbose = FALSE)
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
   }
@@ -119,3 +122,4 @@ SeuratSCTransform <- function(indir, outdir) {
   saveRDS(pbmc, outrds)
   return(outrds)
 }
+

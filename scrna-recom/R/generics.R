@@ -12,17 +12,11 @@
 #'
 #' @rdname SeuratIntegration
 #' @concept integration
-#' @export SeuratIntegration
+#' @import Seurat
+#' @export
 #'
-#' @examples
-#' add_numbers(1, 2) ## returns 3
 #'
-#' ## don't run this in calls to 'example(add_numbers)'
-#' \dontrun{
-#'    SeuratIntegration(2, 3)
-#' }
-#'
-SeuratIntegration <- function(x, ...) {
+MergeFilepathData <- function(csv) {
   UseMethod(generic = 'SeuratIntegration', object = x)
 }
 
