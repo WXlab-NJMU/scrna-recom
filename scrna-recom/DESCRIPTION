@@ -1,7 +1,7 @@
-Package: scrnaRecom
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
+Package: screcom
+Title: scRNA Recommend Practice
+Version: 0.0.0.8000
+Authors@R:
     person("Min", "Su", , "sumin2012@163.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3933-6604"))
 Description: What the package does (one paragraph).
@@ -9,3 +9,13 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
+Collate:
+    'utils.R'
+    'generics.R'
+    'integration.R'
+Imports: 
+    dplyr,
+    Seurat,
+    SeuratWrappers,
+    harmony,
+    rliger

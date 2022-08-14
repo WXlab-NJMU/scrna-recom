@@ -7,7 +7,7 @@
 #' @return Returns List consisted of multiple Seurat objects
 #'
 #' @concept utility
-#' @import Seurat
+#' @importFrom Seurat Read10X CreateSeuratObject
 #' @export
 #'
 MergeFileData <- function(csv) {
@@ -16,6 +16,7 @@ MergeFileData <- function(csv) {
     data <- Seurat::Read10X(data.dir = item[["path"]]) %>%
       Seurat::CreateSeuratObject(project = item[["project"]], min.cells = 3, min.features = 200)
     data[["dataset"]] <- item[["project"]]
+    return(data)
     })
   return(data.list)
 }

@@ -1,22 +1,23 @@
-#' 36L: This is the title.
+#' @include utils.R
+NULL
+
+#' Project Data Integration
 #'
-#' @description
-#' This is the description.
-#'
-#' @details
-#' These are further details.
-#'
-#' @param x desc
-#' @param y desc
-#' @return Returns ddf
-#'
-#' @rdname SeuratIntegration
+#' @param csv The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv
+#' @param outdir The ouput directory for rds and plot
+#' @param used Methods for integration: SeuratCCA, SCTransform, Harmony, Liger, default is SeuratCCA
+#' @return Return a combined object
+#' 
 #' @concept integration
-#' @import Seurat
-#' @export
+#' @export Integration
 #'
-#'
-MergeFilepathData <- function(csv) {
-  UseMethod(generic = 'SeuratIntegration', object = x)
+Integration <- function(csv, outdir, used = "SeuratCCA") {
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE) 
+  }
+  obj <- 1
+  class(obj) <- used
+  print(used)
+  UseMethod(generic = 'Integration', object = obj)
 }
 
