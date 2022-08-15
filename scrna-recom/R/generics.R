@@ -10,14 +10,34 @@ NULL
 #' 
 #' @concept integration
 #' @export Integration
+#' 
 #'
 Integration <- function(csv, outdir, used = "SeuratCCA") {
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE) 
   }
-  obj <- 1
-  class(obj) <- used
-  print(used)
-  UseMethod(generic = 'Integration', object = obj)
+  UseMethod(generic = 'Integration', 
+            object = structure(1, class = used))
 }
+
+
+#' Project Data Integration
+#'
+#' @param object The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv
+#' @param outdir The ouput directory for rds and plot
+#' @param used Methods for cell type annotation: scCATCH, singleR
+#' @return Return a combined object
+#' 
+#' @concept cell type annotation
+#' @export AnnotateCellType
+#'
+AnnotateCellType <- function(csv, outdir, used = "scCATCH") {
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE) 
+  }
+  UseMethod(generic = 'AnnotateCellType', 
+            object = structure(1, class = used))
+}
+
+
 

@@ -32,6 +32,7 @@ $(info Checking R version...)
 conda-R:
 ifeq (,$(shell which Rt))
 	$(info Installing R)
+  conda install h5py
 	conda install -c conda-forge r-base=4.2.1 r-essentials r-docopt r-ragg scvelo cellphonedb
 endif
 ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
@@ -42,8 +43,8 @@ Seurat: R
 	sudo apt-get install libblas-dev liblapack-dev libgeos-dev libcurl4-openssl-dev libhdf5-dev libfontconfig1-dev
 	$(info Install Seurat to $(RLIB))
 	R --vanilla -e 'install.packages(c("remotes", "BiocManager", "httr", "ploty", "RcppEigen", "Seurat", "rliger", "harmony", "scCATCH"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'BiocManager::install(c("ComplexHeatmap","SingleR","clusterProfiler","monocle"))'
-	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder","sqjin/CellChat","YosefLab/VISION", "satijalab/seurat-data"))'
+	R --vanilla -e 'BiocManager::install(c("ComplexHeatmap","SingleR","clusterProfiler","monocle", "GSVA"))'
+	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder","sqjin/CellChat","YosefLab/VISION", "aertslab/SCENIC", "wu-yc/scMetabolism", "satijalab/seurat-data"))'
 
 
 Python:

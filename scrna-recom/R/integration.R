@@ -1,6 +1,6 @@
 #' @include utils.R
 #' @import dplyr Seurat SeuratWrappers
-#' @importFrom grDevices dev.off
+#' @importFrom grDevices dev.off pdf
 #' @importFrom utils read.csv tail
 NULL
 
@@ -36,6 +36,53 @@ Integration.SeuratCCA <- function(csv, outdir, used){
   print(p2)
   dev.off()
   return(combined.data)
+}
+
+#' @section Seurat Large Data:
+#' For very large datasets, Seruat provide two options that can improve efficiency and runtimes:
+#' * Reciprocal PCA (RPCA): faster and more conservative 
+#' * Reference-based integration
+#' 
+#' > quick start: <https://satijalab.org/seurat/articles/integration_large_datasets.html>
+#' > RPCA: <https://satijalab.org/seurat/articles/integration_rpca.html>
+#' 
+#' @md
+#' @param reference Sample IDs to used as integration 
+#' @import Seurat
+#' @export
+#' @rdname Integration
+#' @method Integration SeuratLargeData
+#' @concept integration
+#' 
+Integration.SeuratLargeData <- function(csv, outdir, used, 
+                                        reference = c(1,2)
+                                        ){
+  projects <- MergeFileData(csv) 
+  projects <- lapply(projects, FUN = function(x) {
+    Seurat::NormalizeData(x) %>% 
+      Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
+  })
+  features <- Seurat::SelectIntegrationFeatures(object.list = projects)
+  # difference with SeruatCCA, run PCA first then 
+  projects <- lapply(projects, FUN = function(x) {
+    x <- ScaleData(x, features = features, verbose = FALSE)
+    x <- RunPCA(x, features = features, verbose = FALSE)
+  })
+  anchors <- FindIntegrationAnchors(projects, dims = 1:50,
+                                    reference = reference, reduction = "rpca")
+  combined.data <- IntegrateData(anchorset = anchors, dims = 1:50) %>%
+    ScaleData(verbose = FALSE) %>%
+    RunPCA(verbose = FALSE) %>%
+    RunUMAP(dims = 1:50)
+  DefaultAssay(combined.data) <- "integrated"
+  saveRDS(combined.data, file.path(outdir, "integration.seurat-largedata.rds"))
+  pdf(file.path(outdir, "integration.seurat-largedata.pdf"))
+  p1 <- Seurat::DimPlot(combined.data, reduction = "pca", group.by = "dataset")
+  print(p1)
+  p2 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = "dataset") 
+  print(p2)
+  dev.off()
+  return(combined.data) 
 }
 
 

@@ -1,4 +1,4 @@
-Package: screcom
+Package: scRecom
 Title: scRNA Recommend Practice
 Version: 0.0.0.8000
 Authors@R:
@@ -10,6 +10,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Collate:
+    'celltype.R'
     'utils.R'
     'generics.R'
     'integration.R'
@@ -18,4 +19,10 @@ Imports:
     Seurat,
     SeuratWrappers,
     harmony,
-    rliger
+    rliger,
+    SingleR,
+    scCATCH,
+    celldex,
+    scater,
+    GSVA,
+    scMetabolism
