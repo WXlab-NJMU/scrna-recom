@@ -69,9 +69,9 @@ AnnotateCellType.scCATCH <- function(input, outdir,
 #' * input: 
 #' @md
 #' 
-#' @import SingleR SingleR plotScoreHeatmap plotDeltaDistribution
-#' @import scater plotHeatmap
-#' @import celldex HumanPrimaryCellAtlasData
+#' @importFrom  SingleR SingleR plotScoreHeatmap plotDeltaDistribution
+#' @importFrom  scater plotHeatmap
+#' @importFrom  celldex HumanPrimaryCellAtlasData
 #' @export
 #' @rdname AnnotateCellType
 #' @method AnnotateCellType SingleR

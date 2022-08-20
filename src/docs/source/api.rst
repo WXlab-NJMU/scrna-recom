@@ -8,6 +8,7 @@ Submodules
 
 preprocess
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. currentmodule:: scrna.preprocess
 .. autosummary::
    :toctree: api
@@ -15,6 +16,15 @@ preprocess
 
    DataAnalysis10X
 
+trajectory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: scrna.trajectory
+.. autosummary::
+   :toctree: api
+   :nosignatures:
+
+   run_scvelo
 
 Index
 -----------------------------------

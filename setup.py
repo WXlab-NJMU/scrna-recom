@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 setup(
-    name="myapp",
+    name="scrna",
     version="1.0",
     author="SuMin",
     author_email="sumin2012@163.com",
@@ -9,11 +9,6 @@ setup(
     python_requires=">=3.10",
     license = "MIT",
 
-    packages=find_packages(
-        where = ".",
-        include = ["*"],
-        exclude = [],
-    ),
     # package data specified in MANIFEST.in
     include_package_data=True,
     exclude_package_data={'':['.gitignore']},
@@ -26,6 +21,7 @@ setup(
     #   'cli-name = mypkg.mymodule:some_func',
     entry_points={
         'console_scripts': [
+            'run-scvelo=scrna.trajectory:run_scvelo',
         ]
     },
 
@@ -34,6 +30,10 @@ setup(
     ##   "pywin32 >= 1.0;platform_system=='Windows'"
     install_requires=[
         "docutils",
+        "sphinx",
+        "sphinx-book-theme",
+        "scvelo",
+        "velocyto",
     ],
     # extra requirements: identifier: [required_packages]
     extras_require={

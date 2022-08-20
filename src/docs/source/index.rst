@@ -15,11 +15,6 @@ scRNA User Guide
    preprocess
    downstream
    faq
-   api
+   api/
    citation
 
-API Reference
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* :ref:`genindex`
-* :ref:`modindex`

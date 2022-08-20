@@ -56,49 +56,7 @@ class DataAnalysis10X:
         self.fq2count()
         self.count2agg()
 
-def hello_world():
-    """Example function with types documented in the docstring.
-
-    function description
-
-    Args:
-            param1 (int): The first parameter.
-            param2 (str): The second parameter.
-
-    Returns:
-            bool: The return value. True for success, False otherwise.
-
-    Yields:
-            int: The next number in the range of 0 to  - 1
-            works for generator
-
-    Raises:
-        AttributeError: The Raises section is a list of all exceptions
-        ValueError: If  is equal to .
-
-    Examples:
-            >>> print([i for i in example_generator(4)])
-            [0,1,2,3]
-
-    """
-    def print():
-        print("hi")
-
-class MyClass(object):
-    """Summary line for a class
-
-    class description
-
-    Attributes:
-        attr1 (str): Description
-        attr2 (int, optional): Description
-
-    """
-    attr1 = 1
-    attr2 = 2
-
-
-
-csv = "/home/minsu/Pipelines/scrna/tests/cellranger-tiny-bcl-simple-1.2.0.csv"
-bcl = "/home/minsu/Pipelines/scrna/tests/cellranger-tiny-bcl-1.2.0"
-#DataAnalysis10X(indir=bcl, outdir="test-results", index=csv).run()
+if __name__ == '__main__':
+    csv = "/home/minsu/Pipelines/scrna/tests/cellranger-tiny-bcl-simple-1.2.0.csv"
+    bcl = "/home/minsu/Pipelines/scrna/tests/cellranger-tiny-bcl-1.2.0"
+    #DataAnalysis10X(indir=bcl, outdir="test-results", index=csv).run()

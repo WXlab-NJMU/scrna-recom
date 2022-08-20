@@ -1,7 +1,7 @@
-scrna
-=====
+source
+======
 
 .. toctree::
    :maxdepth: 4
 
-   scrna
+   conf
