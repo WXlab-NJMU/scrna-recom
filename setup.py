@@ -22,8 +22,9 @@ setup(
     entry_points={
         'console_scripts': [
             'run-scvelo=scrna.trajectory:run_scvelo',
-            'run-scanpy=scrna.scanpy:run_scanpy_cli',
-            'plot-scanpy-focus=scrna.scanpy:plot_genes_cli',
+            'run-scanpy=scrna.processing:run_scanpy_cli',
+            'plot-scanpy-focus=scrna.processing:plot_genes_cli',
+            'run-pysenic=scrna.network:run_pyscenic_cli',
         ]
     },
 
@@ -41,6 +42,7 @@ setup(
         "numpy",
         "loompy",
         "matplotlib",
+        "seaborn",
     ],
     # extra requirements: identifier: [required_packages]
     extras_require={

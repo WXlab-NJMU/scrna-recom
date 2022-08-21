@@ -14,6 +14,8 @@ def scanpy_default_settings():
 class ProcessingUsingScanpy(object):
     """Standard Processing using Scanpy.
 
+    Online Tutorial: https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html
+
     Attributes:
         indir (str): cellranger filtered_feature_bc_matrix directory
         outdir (str): output directory
@@ -60,7 +62,7 @@ class ProcessingUsingScanpy(object):
         sc.pl.violin(adata, save = ".qc_after.pdf", show=False,
                      keys = ['n_genes_by_counts', 'total_counts', 'pct_counts_mt'],
                      jitter=0.4, multi_panel=True)
-        adata.write(f"{self.outdir}.qc_done.h5ad", compression='gzip')
+        adata.write(f"{self.outdir}/scanpy.qc_done.h5ad", compression='gzip')
         return adata
 
     def processing_ended_in_pca(self):
@@ -79,6 +81,8 @@ class ProcessingUsingScanpy(object):
         adata = adata[:, adata.var.highly_variable]
         # scale
         sc.pp.scale(adata, max_value=10)
+        # save size
+        sc.pp.regress_out(adata, ['total_counts', 'pct_counts_mt'])
         # pca and get PCs for louvain and tsne
         sc.tl.pca(adata, svd_solver='arpack')
         sc.pl.pca(adata, save=".pca.pdf")
