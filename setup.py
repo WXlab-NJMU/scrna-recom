@@ -22,6 +22,8 @@ setup(
     entry_points={
         'console_scripts': [
             'run-scvelo=scrna.trajectory:run_scvelo',
+            'run-scanpy=scrna.scanpy:run_scanpy_cli',
+            'plot-scanpy-focus=scrna.scanpy:plot_genes_cli',
         ]
     },
 
@@ -34,6 +36,11 @@ setup(
         "sphinx-book-theme",
         "scvelo",
         "velocyto",
+        "pyscenic",
+        "scanpy",
+        "numpy",
+        "loompy",
+        "matplotlib",
     ],
     # extra requirements: identifier: [required_packages]
     extras_require={
