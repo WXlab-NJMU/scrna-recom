@@ -40,7 +40,7 @@ AnnotateCellType <- function(input, outdir, used = "scCATCH") {
 }
 
 
-#' Trajectories
+#' Trajectory Analysis
 #'
 #' @param object The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv
 #' @param outdir The ouput directory for rds and plot
@@ -48,14 +48,31 @@ AnnotateCellType <- function(input, outdir, used = "scCATCH") {
 #' @return Return a combined object
 #' 
 #' @concept trajectory
-#' @export Trajectories
+#' @export Trajectory
 #'
-Trajectories <- function(csv, outdir, used = "Monocole3") {
+Trajectory <- function(csv, outdir, used = "Monocole3") {
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE) 
   }
-  UseMethod(generic = 'AnnotateCellType', 
+  UseMethod(generic = 'Trajectory', 
             object = structure(1, class = used))
 }
 
+#' Metabolic Analysis
+#'
+#' @param object The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv
+#' @param outdir The ouput directory for rds and plot
+#' @param used Methods for anlysis: scMetabolism, scFEA
+#' @return Return a combined object
+#' 
+#' @concept Metabolic Analysis
+#' @export MetabolicAnalysis
+#'
+MetabolicAnalysis <- function(csv, outdir, used = "scMetabolism") {
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE) 
+  }
+  UseMethod(generic = 'MetabolicAnalysis', 
+            object = structure(1, class = used))
+}
 

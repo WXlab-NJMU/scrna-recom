@@ -42,11 +42,10 @@ Integration.SeuratCCA <- function(csv, outdir, used){
 #' For very large datasets, Seruat provide two options that can improve efficiency and runtimes:
 #' * Reciprocal PCA (RPCA): faster and more conservative 
 #' * Reference-based integration
-#' 
-#' > quick start: <https://satijalab.org/seurat/articles/integration_large_datasets.html>
-#' > RPCA: <https://satijalab.org/seurat/articles/integration_rpca.html>
-#' 
+#' - quick start: <https://satijalab.org/seurat/articles/integration_large_datasets.html>
+#' - RPCA: <https://satijalab.org/seurat/articles/integration_rpca.html>
 #' @md
+#' 
 #' @param reference Sample IDs to used as integration 
 #' @import Seurat
 #' @export
