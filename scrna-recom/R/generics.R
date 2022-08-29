@@ -76,3 +76,39 @@ MetabolicAnalysis <- function(csv, outdir, used = "scMetabolism") {
             object = structure(1, class = used))
 }
 
+
+#' Cell Communication
+#'
+#' @param infile Input file path
+#' @param outdir The ouput directory for rds and plot
+#' @param used Methods for anlysis: CellChat
+#' @return Return a combined object
+#' 
+#' @concept Cell Communication
+#' @export CellCommunication
+#'
+CellCommunication <- function(infile, outdir, used = "CellChat") {
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE) 
+  }
+  UseMethod(generic = 'CellCommunication', 
+            object = structure(1, class = used))
+}
+
+#' Dimensional Reduction 
+#'
+#' @param infile Input file path
+#' @param outdir The ouput directory for rds and plot
+#' @param used Methods for anlysis: Seurat
+#' @return Return a combined object
+#' 
+#' @concept Reduction
+#' @export Dimensional Reduction
+#'
+CellCommunication <- function(infile, outdir, used = "Seurat") {
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE) 
+  }
+  UseMethod(generic = 'Reduction', 
+            object = structure(1, class = used))
+}

@@ -1,5 +1,4 @@
 #' @include utils.R
-#' @importFrom monocle3 colData
 NULL
 
 #' @section Monocole3:
@@ -12,10 +11,11 @@ NULL
 #' @param root.key Key used to find root
 #' @param root.value Value of root key
 #' 
+#' @importFrom SummarizedExperiment colData
 #' @importFrom monocle3 cluster_cells plot_cells learn_graph principal_graph order_cells
 #' @importFrom SeuratWrappers as.cell_data_set
 #' @importFrom Seurat as.Seurat
-#' @importFrom patchwork::wrap_plots
+#' @importFrom patchwork wrap_plots
 #' @export
 #' @rdname Trajectory
 #' @method Trajectory Monocole3
@@ -27,6 +27,8 @@ Trajectory.Monocole3 <- function(input, outdir, used,
   #obj.seurat <- pbmc
   cds <- SeuratWrappers::as.cell_data_set(obj.seurat)
   cds <- monocle3::cluster_cells(cds, reduction_method = reduction)
+  outpdf <- file.path(outdir, "trajectory.monocle3_output.pdf")
+  pdf(outpdf)
   p1 <- monocle3::plot_cells(cds, show_trajectory_graph = FALSE)
   p2 <- monocle3::plot_cells(cds, color_cells_by = "partition", show_trajectory_graph = FALSE)
   p3 <- monocle3::plot_cells(cds, color_cells_by = "cluster", label_groups_by_cluster = TRUE)
@@ -40,7 +42,7 @@ Trajectory.Monocole3 <- function(input, outdir, used,
   monocle3::plot_cells(cds, label_groups_by_cluster = FALSE, label_leaves = FALSE, label_branch_points = FALSE)
   # get root
   get_root_node <- function(cds, key, value){
-    cell_ids <- which(colData(cds)[, key] == value)
+    cell_ids <- which(SummarizedExperiment::colData(cds)[, key] == value)
     closest_vertex <- cds@principal_graph_aux[["UMAP"]]$pr_graph_cell_proj_closest_vertex
     closest_vertex <- as.matrix(closest_vertex[colnames(cds), ])
     root_pr_nodes <-igraph::V(monocle3::principal_graph(cds)[["UMAP"]])$name[
@@ -59,8 +61,9 @@ Trajectory.Monocole3 <- function(input, outdir, used,
     #cds <- monocle3::reduce_dimension(cds, reduction_method = reduction)
     integrated.sub <- Seurat::as.Seurat(cds, assay = NULL)
     Seurat::FeaturePlot(integrated.sub, "monocle3_pseudotime")
-    
   }
+  dev.off()
+  saveRDS(cds, file = file.path(outdir, "trajectory.monocle3_final.rds"))
 }
 
 #' @section scVelo:
