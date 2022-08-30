@@ -15,7 +15,7 @@ researchers to conduct the data analysis locally.
 
 ## Workflow
 
-![workflow](https://github.com/Sue9104/scrna/blob/master/img/workflow.png)
+![workflow](https://github.com/Sue9104/scrna/blob/master/img/workflow.png?raw=true)
 
 Current wrapped tools:
 <table>
