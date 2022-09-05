@@ -21,10 +21,11 @@ setup(
     #   'cli-name = mypkg.mymodule:some_func',
     entry_points={
         'console_scripts': [
-            'run-scvelo=scrna.trajectory:run_scvelo',
-            'run-scanpy=scrna.processing:run_scanpy_cli',
-            'plot-scanpy-focus=scrna.processing:plot_genes_cli',
+            'trajectory-scvelo=scrna.trajectory:run_scvelo',
+            'process-scanpy=scrna.processing:run_scanpy_cli',
+            'process-plot-focus=scrna.processing:plot_genes_cli',
             'run-pysenic=scrna.network:run_pyscenic_cli',
+            'raw-data-process=scrna.rawdata:run_cellranger_cli',
         ]
     },
 
@@ -43,6 +44,8 @@ setup(
         "loompy",
         "matplotlib",
         "seaborn",
+        "MulticoreTSNE",
+        "umap-learn",
     ],
     # extra requirements: identifier: [required_packages]
     extras_require={
