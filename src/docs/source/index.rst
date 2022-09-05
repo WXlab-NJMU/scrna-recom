@@ -12,8 +12,9 @@ scRNA User Guide
    intro
    install
    quick_start
-   preprocess
-   downstream
+   processing
+   basic_data_analysis
+   high_level_analysis
    faq
    api/
    citation

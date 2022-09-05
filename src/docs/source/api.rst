@@ -1,20 +1,18 @@
 API
 ========================================
 
-
-
 Submodules
 -----------------------------------
 
-preprocess
+raw data processing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. currentmodule:: scrna.preprocess
+.. currentmodule:: scrna.rawdata
 .. autosummary::
    :toctree: api
    :nosignatures:
 
-   DataAnalysis10X
+   RawDataProcessing
 
 trajectory
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -25,6 +23,18 @@ trajectory
    :nosignatures:
 
    run_scvelo
+   run_velocyto
+
+regulon
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: scrna.network
+.. autosummary::
+   :toctree: api
+   :nosignatures:
+
+   run_pyscenic_cli
+
 
 Index
 -----------------------------------

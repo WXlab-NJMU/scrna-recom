@@ -8,8 +8,8 @@ class RawDataProcessing:
 
     Online Manual: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger
     Requirements:
-        - bcl2fastq: https://support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html
-        - cellranger: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/installation
+    - bcl2fastq: https://support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html
+    - cellranger: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/installation
 
     Attributes:
         indir (str): Input directory
@@ -40,14 +40,13 @@ class RawDataProcessing:
         self.aggr = aggr
         self.aggr_csv = aggr_csv
 
-    def check_requires(self):
+    def run(self):
+        """Run CellRanger Analysis"""
+        # check whether cmd exists
         requires = ['bcl2fastq', 'cellranger']
         for cmd in requires:
             if which(cmd) is None:
                 raise ModuleNotFoundError(f'{cmd} NOT FOUND, Please install first!!!')
-
-    def run(self):
-        self.check_requires()
         # BCL to Fastq
         if self.type == "BCL":
             if not self.index:
@@ -93,13 +92,11 @@ class RawDataProcessing:
             subprocess.run(cmd, shell=True)
             ## outputs: aggr/outs/count/filtered_feature_bc_matrix
             ## outputs: aggr/outs/count/analysis
+
             ## outputs: aggr/outs/count/analysis/ clustering,pca,tsne,umap,diffexp
 
-
 def run_cellranger_cli():
-    """24l: Example function with types documented in the docstring.
-
-    function description
+    """Running CellRanger Workflow in one command
 
     Args:
         indir (str): Input directory
@@ -110,6 +107,7 @@ def run_cellranger_cli():
         fq_path (str): Need fastq path csv, header is Sample,FastqDir
         multi (bool): execute multi instead of count for cell multiplex barcode, default is False
         aggr (bool): Perform normalize, dimensional reduction and clustering for Loupe Viewer
+        aggr_csv (str): Need aggr csv, header is sample_id,molecule_h5
 
     Raises:
         ModuleNotFoundError Need install bcl2fastq and cellranger first!!!
@@ -133,6 +131,7 @@ def run_cellranger_cli():
                         help="whether to run multi, please set True if using cell multiplex")
     parser.add_argument('--aggr', type=bool, default = False,
                         help="whether to run aggr(normalize,reduction,cluster), please set True if using Loupe Viewer")
+    parser.add_argument('--aggr_csv', type=str, help="aggr csv, header is sample_id,molecule_h5")
     args = parser.parse_args()
     args = vars(args)
     print(args)
