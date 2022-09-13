@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 import matplotlib.pyplot as plt
 import scanpy as sc
 
@@ -87,7 +88,7 @@ class ProcessingUsingScanpy(object):
         sc.pp.regress_out(adata, ['total_counts', 'pct_counts_mt'])
         # pca and get PCs for louvain and tsne
         sc.tl.pca(adata, svd_solver='arpack')
-        sc.pl.pca(adata, save=".pca.pdf")
+        sc.pl.pca(adata, save=".raw.pdf")
         sc.pl.pca_variance_ratio(adata, log=True, save=".PCs.pdf")
         adata.write(f"{self.outdir}/scanpy.pca_done.h5ad", compression='gzip')
 
@@ -108,10 +109,11 @@ class ProcessingUsingScanpy(object):
         sc.settings.figdir = self.outdir
         # read
         adata = sc.read(h5ad)
+        adata.uns['log1p']["base"] = None
         sc.pp.neighbors(adata, n_neighbors=self.neighbors, n_pcs=self.pcNums)
         # umap
         sc.tl.umap(adata)
-        sc.pl.umap(adata, save=".umap.pdf")
+        sc.pl.umap(adata, save=f".pc={self.pcNums}.pdf")
         sc.tl.leiden(adata)
         # find marker genes
         ## method: t-test, wilcoxon, logreg
