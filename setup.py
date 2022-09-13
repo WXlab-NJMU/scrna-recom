@@ -20,11 +20,12 @@ setup(
     #   'cli-name = mypkg.mymodule:some_func',
     entry_points={
         'console_scripts': [
-            'trajectory-scvelo=pyscrna.trajectory:run_scvelo',
             'basic-scanpy=pyscrna.processing:run_scanpy_cli',
             'basic-plot-focus=pyscrna.processing:plot_genes_cli',
-            'network-pysenic=pyscrna.network:run_pyscenic_cli',
             'basic-rawdata=pyscrna.rawdata:run_cellranger_cli',
+            'trajectory-scvelo=pyscrna.trajectory:run_scvelo',
+            'network-pysenic=pyscrna.network:run_pyscenic_cli',
+            'metabolism-scfea=pyscrna.metabolism:run_scfea_cli'
         ]
     },
 

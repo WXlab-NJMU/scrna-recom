@@ -25,7 +25,6 @@ class ProcessingUsingScanpy(object):
         minCells (int): min cell counts for one gene, default is 3
         maxMT (int): max percentage of mitochondrial, default is 5
         markerTesting(str): method to find markers, wilcoxon|t-test|logreg
-        fixedPC (bool): rerun the pipline with specified pcs, default is False
         pcNums (int): the fixed pc numbers
     """
 
@@ -66,6 +65,9 @@ class ProcessingUsingScanpy(object):
                      keys = ['n_genes_by_counts', 'total_counts', 'pct_counts_mt'],
                      jitter=0.4, multi_panel=True)
         adata.write(f"{self.outdir}/scanpy.qc_done.h5ad", compression='gzip')
+        pd.DataFrame(
+            ann.X.toarray(),index=ann.obs.index, columns=ann.var.index
+        ).to_csv(f"{self.outdir}/scanpy_count_matrix.qc_done.csv")
         return adata
 
     def processing_ended_in_pca(self):

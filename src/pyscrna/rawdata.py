@@ -1,6 +1,7 @@
 import pandas as pd
 import subprocess
 from shutil import which
+import logging
 
 class RawDataProcessing:
 
