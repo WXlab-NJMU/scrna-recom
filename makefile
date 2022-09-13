@@ -3,7 +3,7 @@ OS = $(shell lsb_release -i | cut -d: -f2)
 PLATFORM = $(shell uname -s)
 RVERSION = $(shell R --version | head -1 | awk '{print $$3}')
 # local R library path
-RLIB = $(HOME)/miniconda/envs/scrna/lib/R/library/
+RLIB = $(HOME)/anaconda3/envs/scrna/lib/R/library/
 all: install test
 .PHONY : install clean test
 
@@ -14,48 +14,34 @@ test:
 		echo "testing..." ;\
   fi;
 
-R:
-# Install R on different OS
-	@if [[ "$(shell which R)" == "" ]]; then \
-		if [[ "$(strip $(OS))" == "Ubuntu" ]]; then \
-			sudo apt update -y; \
-			sudo apt install -y --no-install-recommends software-properties-common dirmngr; \
-			wget -qo- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && rm marutter_pubkey.asc; \
-			sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(shell lsb_release -cs)-cran40/"; \
-			sudo apt install -y --no-install-recommends r-base; \
-		elif [[ $(PLATFORM) == "Darwin" ]]; then \
-			brew install R; \
-		fi; \
-	fi;
-$(info Checking R version...)
-
-conda-R:
-ifeq (,$(shell which Rt))
+conda-r:
+$(info "Current R version: $(RVERSION)")
+ifeq (,$(shell which R))
 	$(info Installing R)
-  conda install h5py
-	conda install -c conda-forge r-base=4.2.1 r-essentials r-docopt r-ragg scvelo cellphonedb
-	# install scvelo
-	pip install python-igraph louvain pybind11 hnswlib scvelo
+	conda activate scrna && conda install h5py && conda install -c conda-forge r-base=4.2.1 r-essentials r-docopt r-ragg && pip install python-igraph louvain pybind11 hnswlib pyscenic scvelo cellphonedb
 endif
 ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
 	$(error "Please update the R version, and it must be greater than 4!")
 endif
 
-Seurat: R
-	sudo apt-get install libblas-dev liblapack-dev libgeos-dev libcurl4-openssl-dev libhdf5-dev libfontconfig1-dev
+seurat: conda-r
+	#sudo apt-get install libblas-dev liblapack-dev libgeos-dev libcurl4-openssl-dev libhdf5-dev libfontconfig1-dev
+	#sudo yum install blas-devel lapack-devel geos-devel libcurl-devel hdf5-devel fontconfig-devel
 	$(info Install Seurat to $(RLIB))
 	R --vanilla -e 'install.packages(c("remotes", "BiocManager", "httr", "ploty", "RcppEigen", "Seurat", "rliger", "harmony", "scCATCH"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'BiocManager::install(c("ComplexHeatmap","SingleR","clusterProfiler","monocle", "GSVA"))'
-	R --vanilla -e 'remotes::install_github(c("mojaveazure/seurat-disk","chris-mcginnis-ucsf/DoubletFinder","sqjin/CellChat","YosefLab/VISION", "aertslab/SCENIC", "wu-yc/scMetabolism", "satijalab/seurat-data","cole-trapnell-lab/monocle3"))'
+	R --vanilla -e 'install.packages(c("HDF5Array", "lme4", "reshape2", "spdep", "stringr", "terra"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
+	R --vanilla -e 'BiocManager::install(c("Rhdf5lib","ComplexHeatmap","SingleR","clusterProfiler","GSVA"), lib="$(RLIB)")'
+	R --vanilla -e 'remotes::install_github(c("rspatial/terra","mojaveazure/seurat-disk","chris-mcginnis-ucsf/DoubletFinder","sqjin/CellChat","YosefLab/VISION", "aertslab/SCENIC", "wu-yc/scMetabolism", "satijalab/seurat-data","cole-trapnell-lab/monocle3"), lib="$(RLIB)")'
 
 
-Python:
+python:
 ifeq (, $(shell conda))
 	$(error Please install conda first!!!)
 	exit
 endif
 ifeq (, $(shell conda env list | grep scrna))
 	$(info Conda environment is creating...)
+	# conda create -n scrna python=3.10 && pip install Cython sphinx-book-theme
 	conda env create -f scrna_environment.yaml
 endif
 

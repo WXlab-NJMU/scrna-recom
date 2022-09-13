@@ -25,7 +25,7 @@ class ProcessingUsingScanpy(object):
         maxMT (int): max percentage of mitochondrial, default is 5
         markerTesting(str): method to find markers, wilcoxon|t-test|logreg
         fixedPC (bool): rerun the pipline with specified pcs, default is False
-        pcNum (int): the fixed pc numbers
+        pcNums (int): the fixed pc numbers
     """
 
     def __init__(self, indir = None, outdir = None,
@@ -41,6 +41,8 @@ class ProcessingUsingScanpy(object):
         self.maxMT = maxMT
         self.markerTesting = markerTesting
         self.focusedGenes = focusedGenes
+        self.pcNums = pcNums
+        self.neighbors = neighbors
 
     def quality_control(self):
         """quality control"""

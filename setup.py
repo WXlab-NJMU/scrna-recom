@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 setup(
-    name="scrna",
+    name="pyscrna-recom",
     version="1.0",
     author="SuMin",
     author_email="sumin2012@163.com",
@@ -12,20 +12,19 @@ setup(
     # package data specified in MANIFEST.in
     include_package_data=True,
     exclude_package_data={'':['.gitignore']},
+    packages=['pyscrna'],
     # package structure: source path, target path
-    package_dir = {
-        ".": "src"
-    },
+    package_dir = {"pyscrna": "src/pyscrna"},
 
     # package will executable commands
     #   'cli-name = mypkg.mymodule:some_func',
     entry_points={
         'console_scripts': [
-            'trajectory-scvelo=scrna.trajectory:run_scvelo',
-            'process-scanpy=scrna.processing:run_scanpy_cli',
-            'process-plot-focus=scrna.processing:plot_genes_cli',
-            'run-pysenic=scrna.network:run_pyscenic_cli',
-            'raw-data-process=scrna.rawdata:run_cellranger_cli',
+            'trajectory-scvelo=pyscrna.trajectory:run_scvelo',
+            'basic-scanpy=pyscrna.processing:run_scanpy_cli',
+            'basic-plot-focus=pyscrna.processing:plot_genes_cli',
+            'network-pysenic=pyscrna.network:run_pyscenic_cli',
+            'basic-rawdata=pyscrna.rawdata:run_cellranger_cli',
         ]
     },
 

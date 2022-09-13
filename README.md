@@ -1,4 +1,4 @@
-# scrna
+# scrna-recom
 
 > A collected resource for scRNA-seq data analysis with biomedical applications 
 
