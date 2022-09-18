@@ -18,7 +18,7 @@ conda-r:
 $(info "Current R version: $(RVERSION)")
 ifeq (,$(shell which R))
 	$(info Installing R)
-	conda activate scrna && conda install h5py && conda install -c conda-forge r-base=4.2.1 r-essentials r-docopt r-ragg && pip install python-igraph louvain pybind11 hnswlib pyscenic scvelo cellphonedb
+	conda activate scrna  && conda install -c conda-forge r-base=4.2.1 r-essentials r-biocmanager r-remotes r-rcppeigen r-httr r-docopt r-ragg && conda install -c bioconda bioconductor-rhdf5lib
 endif
 ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
 	$(error "Please update the R version, and it must be greater than 4!")
@@ -28,10 +28,11 @@ seurat: conda-r
 	#sudo apt-get install libblas-dev liblapack-dev libgeos-dev libcurl4-openssl-dev libhdf5-dev libfontconfig1-dev
 	#sudo yum install blas-devel lapack-devel geos-devel libcurl-devel hdf5-devel fontconfig-devel
 	$(info Install Seurat to $(RLIB))
-	R --vanilla -e 'install.packages(c("remotes", "BiocManager", "httr", "ploty", "RcppEigen", "Seurat", "rliger", "harmony", "scCATCH"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'install.packages(c("HDF5Array", "lme4", "reshape2", "spdep", "stringr", "terra"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'BiocManager::install(c("Rhdf5lib","ComplexHeatmap","SingleR","clusterProfiler","GSVA"), lib="$(RLIB)")'
-	R --vanilla -e 'remotes::install_github(c("rspatial/terra","mojaveazure/seurat-disk","chris-mcginnis-ucsf/DoubletFinder","sqjin/CellChat","YosefLab/VISION", "aertslab/SCENIC", "wu-yc/scMetabolism", "satijalab/seurat-data","cole-trapnell-lab/monocle3"), lib="$(RLIB)")'
+	conda activate scrna  && conda install -c conda-forge r-seurat r-seuratdisk r-terra r-stringi r-reshape2
+	#conda install -c bioconda bioconductor-clusterprofiler bioconductor-complexheatmap bioconductor-gsva bioconductor-singler r-monocle3 scvelo r-harmony && conda install -c bioturing r-rliger r-seuratdata && conda install -c paul.martin-2 r-doubletfinder && pip install torch pyscenic cellphonedb
+	R --vanilla -e 'install.packages(c("Seurat", "rliger", "harmony", "scCATCH"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
+	R --vanilla -e 'BiocManager::install(c("ComplexHeatmap","SingleR","clusterProfiler","GSVA"), lib="$(RLIB)")'
+	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder", "sqjin/CellChat","YosefLab/VISION", "aertslab/SCENIC", "wu-yc/scMetabolism", "satijalab/seurat-data"), lib="$(RLIB)")'
 
 
 python:
@@ -46,9 +47,3 @@ ifeq (, $(shell conda env list | grep scrna))
 endif
 
 
-clean :
-	sudo apt remove r-*
-	sudo apt autoremove
-
-rr :
-	sudo apt update -y
