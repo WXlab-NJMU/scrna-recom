@@ -72,7 +72,9 @@ def run_scfea_cli():
 
     Online Manual:
     - https://github.com/changwn/scFEA/blob/master/scFEA_tutorial1.ipynb
+
     - https://github.com/changwn/scFEA/blob/master/scFEA_tutorial2.ipynb
+
 
     Requirements:
     - scFEA.py: add to PATH, https://github.com/changwn/scFEA

@@ -7,17 +7,27 @@ Submodules
 raw data processing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. currentmodule:: scrna.rawdata
+.. currentmodule:: pyscrnarecom.rawdata
 .. autosummary::
    :toctree: api
    :nosignatures:
 
    RawDataProcessing
 
+basic analysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: pyscrnarecom.processing
+.. autosummary::
+   :toctree: api
+   :nosignatures:
+
+   run_scanpy_cli
+
 trajectory
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. currentmodule:: scrna.trajectory
+.. currentmodule:: pyscrnarecom.trajectory
 .. autosummary::
    :toctree: api
    :nosignatures:
@@ -28,13 +38,22 @@ trajectory
 regulon
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. currentmodule:: scrna.network
+.. currentmodule:: pyscrnarecom.network
 .. autosummary::
    :toctree: api
    :nosignatures:
 
    run_pyscenic_cli
 
+metabolism
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: pyscrnarecom.metabolism
+.. autosummary::
+   :toctree: api
+   :nosignatures:
+
+   run_scfea_cli
 
 Index
 -----------------------------------

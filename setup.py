@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 setup(
-    name="pyscrna-recom",
+    name="pyscrnarecom",
     version="1.0",
     author="SuMin",
     author_email="sumin2012@163.com",
@@ -12,20 +12,20 @@ setup(
     # package data specified in MANIFEST.in
     include_package_data=True,
     exclude_package_data={'':['.gitignore']},
-    packages=['pyscrna'],
+    packages=['pyscrnarecom'],
     # package structure: source path, target path
-    package_dir = {"pyscrna": "src/pyscrna"},
+    package_dir = {"pyscrnarecom": "src/pyscrnarecom"},
 
     # package will executable commands
     #   'cli-name = mypkg.mymodule:some_func',
     entry_points={
         'console_scripts': [
-            'basic-scanpy=pyscrna.processing:run_scanpy_cli',
-            'basic-plot-focus=pyscrna.processing:plot_genes_cli',
-            'basic-rawdata=pyscrna.rawdata:run_cellranger_cli',
-            'trajectory-scvelo=pyscrna.trajectory:run_scvelo',
-            'network-pysenic=pyscrna.network:run_pyscenic_cli',
-            'metabolism-scfea=pyscrna.metabolism:run_scfea_cli'
+            'basic-scanpy=pyscrnarecom.processing:run_scanpy_cli',
+            'basic-plot-focus=pyscrnarecom.processing:plot_genes_cli',
+            'basic-rawdata=pyscrnarecom.rawdata:run_cellranger_cli',
+            'trajectory-scvelo=pyscrnarecom.trajectory:run_scvelo',
+            'network-pysenic=pyscrnarecom.network:run_pyscenic_cli',
+            'metabolism-scfea=pyscrnarecom.metabolism:run_scfea_cli'
         ]
     },
 

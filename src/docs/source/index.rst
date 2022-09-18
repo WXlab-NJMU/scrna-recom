@@ -12,7 +12,7 @@ scRNA User Guide
    intro
    install
    quick_start
-   processing
+   preprocess
    basic_data_analysis
    high_level_analysis
    faq

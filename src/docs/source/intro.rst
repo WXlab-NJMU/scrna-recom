@@ -1,6 +1,6 @@
-##################################################
 What's scRNA?
-##################################################
+-----------------------------------
+
 
    A collected resource for scRNA-seq data analysis with biomedical applications
 
@@ -15,13 +15,34 @@ scripts together with the software environment setting, which may facilitate
 researchers to conduct the data analysis locally.
 
 
-**************************************************
 Workflow
-**************************************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: https://github.com/Sue9104/scrna/blob/main/img/workflow.png?raw=true
    :align: center
    :alt: scRNA recommned workflow
+
+Framework
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Tools are integrated in two packages acoording to the program language.
+
+.. list-table:: Framework
+   :widths: 5 10 30
+   :align: left
+   :header-rows: 1
+   :stub-columns: 0
+
+   * - Language
+     - PackageName
+     - WrappedTools
+   * - R
+     - scrnaRecom
+     - Seurat、DoubletFinder、Liger、Harmony、scCATCH、singleR、Monocle3、CellChat、scMetabolism
+   * - Python
+     - pyscrnarecom
+     - cellranger、scanpy、pySCENIC、scVelo、scFEA
+
 
 Current wrapped tools
 '''''''''''''''''''''''''
@@ -86,3 +107,4 @@ Current wrapped tools
    * -
      - scFEA
      - https://github.com/changwn/scFEA
+

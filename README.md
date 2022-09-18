@@ -109,12 +109,31 @@ Current wrapped tools:
     </tbody>
 </table>
 
-## Install from source
+## Framework
 
-```R
-setwd("src-recom")
-install()
-#install_github("")
+- R packages are wrapped in **scrnaRecom**:
+  - qc: DoubletFinder, Seurat
+  - integration: liger and harmony
+  - normalization, reduction and cluster: Seurat
+  - cell annotation: singR and scCATCH
+  - trajectory prediction: Monocle3
+  - cell communication: CellChat
+  - metabolic flux: scMetabolism
+
+- Python packages and executations are wrapped in **pyscrnarecom**:
+ - rawdata: cellranger
+ - qc, normalization, reduction and cluster: scanpy
+ - regulon analysis: pySCENIC
+ - trajectory prediction: scVelo
+ - metabolic flux: scFEA
+
+## Installation
+
+```shell
+# scrnaRecom
+devtools:install_github("Sue9104/scrna", subdir="scrna-recom")
+# pyscrnarecom
+python setup.py install
 ```
 
 ## Online Manual

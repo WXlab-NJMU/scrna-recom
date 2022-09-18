@@ -24,7 +24,7 @@ ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
 	$(error "Please update the R version, and it must be greater than 4!")
 endif
 
-seurat: conda-r
+r-pkgs: conda-r
 	#sudo apt-get install libblas-dev liblapack-dev libgeos-dev libcurl4-openssl-dev libhdf5-dev libfontconfig1-dev
 	#sudo yum install blas-devel lapack-devel geos-devel libcurl-devel hdf5-devel fontconfig-devel
 	$(info Install Seurat to $(RLIB))
@@ -35,7 +35,7 @@ seurat: conda-r
 	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder", "sqjin/CellChat","YosefLab/VISION", "aertslab/SCENIC", "wu-yc/scMetabolism", "satijalab/seurat-data"), lib="$(RLIB)")'
 
 
-python:
+python-pkgs:
 ifeq (, $(shell conda))
 	$(error Please install conda first!!!)
 	exit
