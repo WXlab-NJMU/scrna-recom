@@ -17,7 +17,25 @@ researchers to conduct the data analysis locally.
 
 <img src="https://github.com/Sue9104/scrna/blob/main/img/workflow.png" width="50%" height="80%">
 
-Current wrapped tools:
+## Framework
+
+- R packages are wrapped in **scrnaRecom**:
+  - qc: DoubletFinder, Seurat
+  - integration: liger and harmony
+  - normalization, reduction and cluster: Seurat
+  - cell annotation: singR and scCATCH
+  - trajectory prediction: Monocle3
+  - cell communication: CellChat
+  - metabolic flux: scMetabolism
+
+- Python packages and executations are wrapped in **pyscrnarecom**:
+ - rawdata: cellranger
+ - qc, normalization, reduction and cluster: scanpy
+ - regulon analysis: pySCENIC
+ - trajectory prediction: scVelo
+ - metabolic flux: scFEA
+
+### Current wrapped tools
 <table>
     <thead>
         <tr>
@@ -109,23 +127,6 @@ Current wrapped tools:
     </tbody>
 </table>
 
-## Framework
-
-- R packages are wrapped in **scrnaRecom**:
-  - qc: DoubletFinder, Seurat
-  - integration: liger and harmony
-  - normalization, reduction and cluster: Seurat
-  - cell annotation: singR and scCATCH
-  - trajectory prediction: Monocle3
-  - cell communication: CellChat
-  - metabolic flux: scMetabolism
-
-- Python packages and executations are wrapped in **pyscrnarecom**:
- - rawdata: cellranger
- - qc, normalization, reduction and cluster: scanpy
- - regulon analysis: pySCENIC
- - trajectory prediction: scVelo
- - metabolic flux: scFEA
 
 ## Installation
 
@@ -136,7 +137,7 @@ devtools:install_github("Sue9104/scrna", subdir="scrna-recom")
 python setup.py install
 ```
 
-## Online Manual
+## Manual
 
 ```
 cd scr/doc
