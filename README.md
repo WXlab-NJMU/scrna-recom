@@ -13,29 +13,46 @@ Along with the recommended workflow, we also provide example computational
 scripts together with the software environment setting, which may facilitate 
 researchers to conduct the data analysis locally. 
 
+
 ## Workflow
 
 <img src="https://github.com/Sue9104/scrna/blob/main/img/workflow.png" width="50%" height="80%">
 
 ## Framework
 
-- R packages are wrapped in **scrnaRecom**:
-  - qc: DoubletFinder, Seurat
-  - integration: liger and harmony
-  - normalization, reduction and cluster: Seurat
-  - cell annotation: singR and scCATCH
-  - trajectory prediction: Monocle3
-  - cell communication: CellChat
-  - metabolic flux: scMetabolism
+- R packages are wrapped in ***scrnaRecom***:
+  - *qc*: DoubletFinder, Seurat
+  - *integration*: liger and harmony
+  - *normalization, reduction and cluster*: Seurat
+  - *cell annotation*: singR and scCATCH
+  - *trajectory prediction*: Monocle3
+  - *cell communication*: CellChat
+  - *metabolic flux*: scMetabolism
 
-- Python packages and executations are wrapped in **pyscrnarecom**:
- - rawdata: cellranger
- - qc, normalization, reduction and cluster: scanpy
- - regulon analysis: pySCENIC
- - trajectory prediction: scVelo
- - metabolic flux: scFEA
+- Python packages and executations are wrapped in ***pyscrnarecom***:
+  - *rawdata*: cellranger
+  - *qc, normalization, reduction and cluster*: scanpy
+  - *regulon analysis*: pySCENIC
+  - *trajectory prediction*: scVelo
+  - *metabolic flux*: scFEA
 
-### Current wrapped tools
+## Installation
+
+```shell
+# scrnaRecom
+devtools:install_github("Sue9104/scrna", subdir="scrna-recom")
+# pyscrnarecom
+python setup.py install
+```
+
+## Manual
+
+```
+cd scr/doc
+make html
+```
+
+## Current wrapped tools
 <table>
     <thead>
         <tr>
@@ -128,18 +145,4 @@ researchers to conduct the data analysis locally.
 </table>
 
 
-## Installation
 
-```shell
-# scrnaRecom
-devtools:install_github("Sue9104/scrna", subdir="scrna-recom")
-# pyscrnarecom
-python setup.py install
-```
-
-## Manual
-
-```
-cd scr/doc
-make html
-```
