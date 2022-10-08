@@ -33,6 +33,9 @@ setup(
     ## platfrom specific dependencies:
     ##   "pywin32 >= 1.0;platform_system=='Windows'"
     install_requires=[
+        "Cython",
+        "pytz",
+        "numpy",
         "docutils",
         "sphinx",
         "sphinx-book-theme",
@@ -40,7 +43,6 @@ setup(
         "velocyto",
         "pyscenic",
         "scanpy",
-        "numpy",
         "loompy",
         "matplotlib",
         "seaborn",
