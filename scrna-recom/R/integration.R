@@ -15,8 +15,9 @@ NULL
 #' @method Integration SeuratCCA
 #' @concept integration
 #' 
-Integration.SeuratCCA <- function(csv, outdir, used){
-  projects <- MergeFileData(csv) 
+Integration.SeuratCCA <- function(csv, outdir, used, 
+                                  mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+  projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt) 
   projects <- lapply(projects, FUN = function(x) {
       Seurat::NormalizeData(x) %>% 
         Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
@@ -53,10 +54,11 @@ Integration.SeuratCCA <- function(csv, outdir, used){
 #' @method Integration SeuratLargeData
 #' @concept integration
 #' 
-Integration.SeuratLargeData <- function(csv, outdir, used, 
+Integration.SeuratLargeData <- function(csv, outdir, used,
+                                        mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5,
                                         reference = c(1,2)
                                         ){
-  projects <- MergeFileData(csv) 
+  projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt) 
   projects <- lapply(projects, FUN = function(x) {
     Seurat::NormalizeData(x) %>% 
       Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
@@ -70,9 +72,9 @@ Integration.SeuratLargeData <- function(csv, outdir, used,
   anchors <- FindIntegrationAnchors(projects, dims = 1:50,
                                     reference = reference, reduction = "rpca")
   combined.data <- IntegrateData(anchorset = anchors, dims = 1:50) %>%
-    ScaleData(verbose = FALSE) %>%
-    RunPCA(verbose = FALSE) %>%
-    RunUMAP(dims = 1:50)
+    Seurat::ScaleData(verbose = FALSE) %>%
+    Seurat::RunPCA(verbose = FALSE) %>%
+    Seurat::RunUMAP(dims = 1:50)
   DefaultAssay(combined.data) <- "integrated"
   saveRDS(combined.data, file.path(outdir, "integration.seurat-largedata.rds"))
   pdf(file.path(outdir, "integration.seurat-largedata.pdf"))
@@ -94,8 +96,9 @@ Integration.SeuratLargeData <- function(csv, outdir, used,
 #' @method Integration SCTransform 
 #' @rdname Integration
 #' 
-Integration.SCTransform <- function(csv, outdir, used){
-  projects <- MergeFileData(csv) %>% lapply(SCTransform)
+Integration.SCTransform <- function(csv, outdir, used,
+                                    mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+  projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt) %>% lapply(SCTransform)
   features <- Seurat::SelectIntegrationFeatures(object.list = projects, nfeatures = 5000)
   pojects <- Seurat::PrepSCTIntegration(object.list = projects, anchor.features = features)
   anchors <- Seurat::FindIntegrationAnchors(object.list = pojects, normalization.method = "SCT", anchor.features = features)
@@ -123,8 +126,8 @@ Integration.SCTransform <- function(csv, outdir, used){
 #' @export
 #' @rdname Integration
 #' 
-Integration.Harmony <- function(csv, outdir,used){
-  projects <- MergeFileData(csv)
+Integration.Harmony <- function(csv, outdir,used, mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+  projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   combined.data <- merge(projects[[1]], tail(projects, length(projects)-1)) %>%
     Seurat::NormalizeData()  %>% 
     Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>% 
@@ -150,15 +153,15 @@ Integration.Harmony <- function(csv, outdir,used){
 #' * source code: <https://github.com/welch-lab/liger>
 #' * quick start: <https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/liger.html>
 #' 
-#' @import rliger
 #' @import Seurat
-#' @import SeuratWrappers
+#' @importFrom SeuratWrappers RunOptimizeALS RunQuantileNorm
 #' @export
 #' @method Integration Liger
 #' @rdname Integration
 #' 
-Integration.Liger <- function(csv, outdir, used){
-  projects <- MergeFileData(csv)
+Integration.Liger <- function(csv, outdir, used,
+                              mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+  projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   combined.data <- merge(projects[[1]], tail(projects, length(projects)-1)) %>%
     Seurat::NormalizeData()  %>% 
     Seurat::FindVariableFeatures() %>% 

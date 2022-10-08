@@ -1,6 +1,6 @@
-Package: scRecom
+Package: scrnaRecom
 Title: scRNA Recommend Practice
-Version: 0.0.0.8000
+Version: 0.1.0
 Authors@R:
     person("Min", "Su", , "sumin2012@163.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3933-6604"))
@@ -10,10 +10,15 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Collate:
-    'celltype.R'
     'utils.R'
     'generics.R'
+    'objects.R'
+    'basic.R'
+    'celltype.R'
+    'communication.R'
     'integration.R'
+    'metabolism.R'
+    'trajectory.R'
 Imports: 
     dplyr,
     Seurat,
@@ -25,4 +30,8 @@ Imports:
     celldex,
     scater,
     GSVA,
-    scMetabolism
+    scMetabolism,
+    argparser
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

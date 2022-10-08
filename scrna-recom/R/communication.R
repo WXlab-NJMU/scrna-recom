@@ -14,10 +14,10 @@ NULL
 #' @import NMF ggalluvial CellChat
 #' @importFrom Seurat GetAssayData Idents
 #' @export
-#' @rdname Communication
 #' @concept Cell to Cell Communication
+#' @rdname CellCommunication
 #' 
-Communication.CellChat <- function(infile, outdir, species = NULL){
+CellCommunication.CellChat <- function(infile, outdir, species = NULL){
   outpdf <- file.path(outdir, "communication.cellchat_output.pdf")
   pdf(outpdf)
   data.input <- Seurat::GetAssayData(obj.seurat, assay = "RNA", slot = "data")

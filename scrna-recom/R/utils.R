@@ -13,6 +13,42 @@ TryCatchWithCallingHandlers <- function(expression){
     finally = { message("...") })
 }
 
+qc <- function (indir, project, outdir, mincell, minrna, maxrna, maxmt) {
+  outdir <- file.path(outdir, 'qc')
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE)
+  }
+  pbmc.data <- Seurat::Read10X(data.dir = indir)
+  pbmc <- Seurat::CreateSeuratObject(counts = pbmc.data,
+                                     project = project,
+                                     min.cells = mincell,
+                                     min.features = minrna)
+  pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^MT-")
+  #plot
+  pdf(file.path(outdir,"01_qc_before.pdf"))
+  plot1 <- Seurat::VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+  print(plot1)
+  plot2 <- Seurat::FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
+  plot3 <- Seurat::FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+  print(plot2 + plot3)
+  dev.off()
+  pbmc <- subset(pbmc,
+                 subset = nFeature_RNA > minrna
+                 & nFeature_RNA < maxrna
+                 & percent.mt < maxmt)
+  #plot
+  pdf(file.path(outdir,"01_qc_after.pdf"))
+  plot1 <- Seurat::VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+  print(plot1)
+  plot2 <- Seurat::FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
+  plot3 <- Seurat::FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+  print(plot2 + plot3)
+  dev.off()
+  
+  pbmc[["dataset"]] <- project
+  return(pbmc)
+}
+
 #' Merge Data to List of Seurat Object
 #'
 #' @description
@@ -25,13 +61,10 @@ TryCatchWithCallingHandlers <- function(expression){
 #' @importFrom Seurat Read10X CreateSeuratObject
 #' @export
 #'
-MergeFileData <- function(csv) {
+MergeFileData <- function(csv, outdir, mincell, minrna, maxrna, maxmt) {
   inputs <- read.csv(csv)
   data.list <- apply(inputs, 1, FUN = function(item) {
-    data <- Seurat::Read10X(data.dir = item[["path"]]) %>%
-      Seurat::CreateSeuratObject(project = item[["project"]], min.cells = 3, min.features = 200)
-    data[["dataset"]] <- item[["project"]]
-    return(data)
+    qc(item[["path"]], item[["project"]], outdir, mincell, minrna, maxrna, maxmt)
     })
   return(data.list)
 }

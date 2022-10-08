@@ -1,22 +1,29 @@
 #' @include utils.R
 NULL
 
+
+#' @export
+setGeneric("basic_analysis", function(object) {
+  standardGeneric("basic_analysis")
+})
+
 #' Project Data Integration
 #'
 #' @param csv The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv
 #' @param outdir The ouput directory for rds and plot
 #' @param used Methods for integration: SeuratCCA, SCTransform, Harmony, Liger, default is SeuratCCA
 #' @return Return a combined object
-#' 
+#'
 #' @concept integration
 #' @export Integration
-#' 
 #'
-Integration <- function(csv, outdir, used = "SeuratCCA") {
+#'
+Integration <- function(csv, outdir, used = "SeuratCCA", 
+                        mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5) {
   if (!dir.exists(outdir)) {
-    dir.create(outdir, recursive = TRUE) 
+    dir.create(outdir, recursive = TRUE)
   }
-  UseMethod(generic = 'Integration', 
+  UseMethod(generic = 'Integration',
             object = structure(1, class = used))
 }
 
@@ -27,15 +34,15 @@ Integration <- function(csv, outdir, used = "SeuratCCA") {
 #' @param outdir The ouput directory for rds and plot
 #' @param used Methods for cell type annotation: scCATCH, singleR
 #' @return Return a combined object
-#' 
+#'
 #' @concept cell type annotation
 #' @export AnnotateCellType
 #'
 AnnotateCellType <- function(input, outdir, used = "scCATCH") {
   if (!dir.exists(outdir)) {
-    dir.create(outdir, recursive = TRUE) 
+    dir.create(outdir, recursive = TRUE)
   }
-  UseMethod(generic = 'AnnotateCellType', 
+  UseMethod(generic = 'AnnotateCellType',
             object = structure(1, class = used))
 }
 
@@ -46,15 +53,15 @@ AnnotateCellType <- function(input, outdir, used = "scCATCH") {
 #' @param outdir The ouput directory for rds and plot
 #' @param used Methods for  trajectories: Monocole3, scVelo
 #' @return Return a combined object
-#' 
+#'
 #' @concept trajectory
 #' @export Trajectory
 #'
 Trajectory <- function(csv, outdir, used = "Monocole3") {
   if (!dir.exists(outdir)) {
-    dir.create(outdir, recursive = TRUE) 
+    dir.create(outdir, recursive = TRUE)
   }
-  UseMethod(generic = 'Trajectory', 
+  UseMethod(generic = 'Trajectory',
             object = structure(1, class = used))
 }
 
@@ -64,15 +71,15 @@ Trajectory <- function(csv, outdir, used = "Monocole3") {
 #' @param outdir The ouput directory for rds and plot
 #' @param used Methods for anlysis: scMetabolism, scFEA
 #' @return Return a combined object
-#' 
+#'
 #' @concept Metabolic Analysis
 #' @export MetabolicAnalysis
 #'
 MetabolicAnalysis <- function(csv, outdir, used = "scMetabolism") {
   if (!dir.exists(outdir)) {
-    dir.create(outdir, recursive = TRUE) 
+    dir.create(outdir, recursive = TRUE)
   }
-  UseMethod(generic = 'MetabolicAnalysis', 
+  UseMethod(generic = 'MetabolicAnalysis',
             object = structure(1, class = used))
 }
 
@@ -83,32 +90,14 @@ MetabolicAnalysis <- function(csv, outdir, used = "scMetabolism") {
 #' @param outdir The ouput directory for rds and plot
 #' @param used Methods for anlysis: CellChat
 #' @return Return a combined object
-#' 
+#'
 #' @concept Cell Communication
 #' @export CellCommunication
 #'
 CellCommunication <- function(infile, outdir, used = "CellChat") {
   if (!dir.exists(outdir)) {
-    dir.create(outdir, recursive = TRUE) 
+    dir.create(outdir, recursive = TRUE)
   }
-  UseMethod(generic = 'CellCommunication', 
-            object = structure(1, class = used))
-}
-
-#' Dimensional Reduction 
-#'
-#' @param infile Input file path
-#' @param outdir The ouput directory for rds and plot
-#' @param used Methods for anlysis: Seurat
-#' @return Return a combined object
-#' 
-#' @concept Reduction
-#' @export Dimensional Reduction
-#'
-CellCommunication <- function(infile, outdir, used = "Seurat") {
-  if (!dir.exists(outdir)) {
-    dir.create(outdir, recursive = TRUE) 
-  }
-  UseMethod(generic = 'Reduction', 
+  UseMethod(generic = 'CellCommunication',
             object = structure(1, class = used))
 }
