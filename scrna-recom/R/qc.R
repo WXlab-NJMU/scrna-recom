@@ -65,7 +65,8 @@ qc <- function (indir, outdir, project,
              ncol(pbmc), nrow(pbmc))
   )
   #detail <- t(detail)
-  write.csv(detail, file.path(indir, paste0(project,".qc_detail.csv")), row.names = FALSE)
+  write.csv(detail, file.path(outdir, paste0(project,".qc.stat.csv")), 
+            row.names = FALSE, col.names = FALSE, quote = FALSE )
   return(pbmc) 
 }
 
@@ -80,12 +81,12 @@ group_qc <- function (csv, outdir, project,
                       max.counts, min.counts, max.genes, min.genes,
                       min.cells, max.mt, max.hb) {
   # create outdir
-  outdir <- file.path(outdir, 'qc')
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
   }
   # read raw data
   inputs <- read.csv(csv)
+  samples <- inputs[["sample"]]
   sample.data <- apply(inputs, 1, FUN = function(item) {
     indir  <- item[["path"]]
     sample  <- item[["sample"]]
@@ -95,7 +96,7 @@ group_qc <- function (csv, outdir, project,
     data
   })
   raw.data <- merge(sample.data[[1]], tail(sample.data, length(sample.data)-1), 
-                    add.cell.ids = inputs[["sample"]], project = project)
+                    add.cell.ids = samples, project = project)
   
   # plot before qc
   pdf(file.path(outdir,"01_qc_before.pdf"))
@@ -136,7 +137,7 @@ group_qc <- function (csv, outdir, project,
        as.numeric(min.cells), as.numeric(max.mt), as.numeric(max.hb))
   })
   qc.data <- merge(sample.qcdata[[1]], tail(sample.qcdata, length(sample.qcdata)-1), 
-                    add.cell.ids = inputs[["sample"]], project = project)
+                    add.cell.ids = samples, project = project)
   # plot after qc
   pdf(file.path(outdir,"01_qc_after.pdf"))
   plot1 <- Seurat::VlnPlot(qc.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 4)
@@ -146,6 +147,11 @@ group_qc <- function (csv, outdir, project,
   plot4 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
   print(plot2 + plot3 + plot4)
   dev.off()
+  # merge stat
+  stat <- do.call(cbind, lapply(samples, function(x) read.csv(file.path(outdir, paste0(x,".qc.stat.csv")))))
+  cols <- append(1, range(1, length(inputs[["sample"]]))*2 )
+  write.csv(stat[cols], file.path(outdir, paste0(project,".qc.stat.csv")), 
+            row.names = FALSE, quote = FALSE )
 }
 
 
