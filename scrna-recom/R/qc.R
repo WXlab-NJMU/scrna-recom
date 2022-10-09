@@ -61,7 +61,7 @@ qc <- function (indir, outdir, project,
              count.range, count.filt, 
              gene.range, gene.filt, 
              max.mt, mt.filt, 
-             max.hb, mt.filt,
+             max.hb, hb.filt,
              ncol(pbmc), nrow(pbmc))
   )
   #detail <- t(detail)
