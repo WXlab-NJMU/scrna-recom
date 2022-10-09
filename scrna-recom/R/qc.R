@@ -99,7 +99,7 @@ group_qc <- function (csv, outdir, project,
                     add.cell.ids = samples, project = project)
   
   # plot before qc
-  pdf(file.path(outdir,"01_qc_before.pdf"))
+  pdf(file.path(outdir, paste0(project,".qc_before.pdf")))
   plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 4)
   #plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
   print(plot1)
@@ -139,7 +139,7 @@ group_qc <- function (csv, outdir, project,
   qc.data <- merge(sample.qcdata[[1]], tail(sample.qcdata, length(sample.qcdata)-1), 
                     add.cell.ids = samples, project = project)
   # plot after qc
-  pdf(file.path(outdir,"01_qc_after.pdf"))
+  pdf(file.path(outdir, paste0(project,".qc_after.pdf")))
   plot1 <- Seurat::VlnPlot(qc.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 4)
   print(plot1)
   plot2 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "percent.mt")
@@ -152,6 +152,9 @@ group_qc <- function (csv, outdir, project,
   cols <- append(1, range(1, length(inputs[["sample"]]))*2 )
   write.csv(stat[cols], file.path(outdir, paste0(project,".qc.stat.csv")), 
             row.names = FALSE, quote = FALSE )
+  for (sample in samples){ 
+    file.remove(file.path(outdir, paste0(sample,".qc.stat.csv")))
+  }
 }
 
 
