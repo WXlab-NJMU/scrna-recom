@@ -99,19 +99,20 @@ group_qc <- function (csv, outdir, project,
   
   # plot before qc
   pdf(file.path(outdir,"01_qc_before.pdf"))
-  #plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 4)
-  plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+  plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 4)
+  #plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
   print(plot1)
   plot2 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
   plot3 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "percent.mt")
-  #plot4 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "percent.hb")
-  print(plot2 + plot3)
+  plot4 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "percent.hb")
+  print(plot2 + plot3 + plot4)
   dev.off()
   # qc 
   sample.qcdata <- apply(inputs, 1, FUN = function(item) {
     indir  <- item[["path"]]
     sample  <- item[["sample"]]
-    if (item[["qc"]] != "") {
+    print(item[["qc"]])
+    if (is.na(item[["qc"]])) {
       text <- unlist(strsplit(item[["qc"]], split = '&'))
       thresolds <- setNames(
         lapply(text, function(x) unlist(strsplit(x, '='))[2]),
