@@ -115,7 +115,7 @@ group_qc <- function (csv, outdir, project,
     indir  <- item[["path"]]
     sample  <- item[["sample"]]
     #print(item[["qc"]])
-    if (is.na(item[["qc"]])) {
+    if (! is.na(item[["qc"]])) {
       text <- unlist(strsplit(item[["qc"]], split = '&'))
       thresolds <- setNames(
         lapply(text, function(x) unlist(strsplit(x, '='))[2]),
