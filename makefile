@@ -3,7 +3,8 @@ OS = $(shell lsb_release -i | cut -d: -f2)
 PLATFORM = $(shell uname -s)
 RVERSION = $(shell R --version | head -1 | awk '{print $$3}')
 # local R library path
-RLIB = $(HOME)/miniconda3/envs/scrna/lib/R/library/
+RLIB = $(HOME)/miniconda3/envs/scrna-recom/lib/R/library
+CRAN = https://mirrors.ustc.edu.cn/CRAN/
 all: install test
 .PHONY : install clean test
 
@@ -16,12 +17,9 @@ test:
 
 conda-r:
 $(info "Current R version: $(RVERSION)")
-ifeq (,$(shell which R))
+ifneq (ok, $(shell [[ '$(RVERSION)' == '4.1.3' ]]  && echo ok ))
 	$(info Installing R)
-	mamba activate scrna  && mamba install -c conda-forge r-base==4.2 r-essentials r-rcppeigen r-httr pkg-config && conda install -c bioconda bioconductor-rhdf5lib
-endif
-ifneq (ok, $(shell [[ '$(RVERSION)' > '4.0.0' ]]  && echo ok ))
-	$(error "Please update the R version, and it must be greater than 4!")
+	mamba activate scrna-recom  && mamba install -c conda-forge r-base==4.1.3 r-essentials r-rcppeigen r-httr r-gert r-xml r-spdep gcc pkg-config udunits2 gdal lerc && mamba install -c bioconda bioconductor-rhdf5lib
 endif
 
 r-pkgs: conda-r
@@ -30,17 +28,18 @@ r-pkgs: conda-r
 	$(info Install R Libraries to $(RLIB))
 	#mamba install -c conda-forge r-seurat r-seuratdisk r-terra r-stringi r-reshape2
 	#mamba install -c bioconda bioconductor-clusterprofiler bioconductor-complexheatmap bioconductor-gsva bioconductor-singler r-monocle3 scvelo r-harmony && mamba install -c bioturing r-rliger r-seuratdata && mamba install -c paul.martin-2 r-doubletfinder
-	R --vanilla -e 'install.packages(c("devtools", "remotes", "BiocManager", "ragg", "docopt"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'install.packages(c("survival", "zoo", "data.table", "lazyeval", "Seurat", "rliger", "harmony", "scCATCH"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'install.packages(c("bit64", "rliger"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'install.packages(c("harmony", "scCATCH"), repos="https://mirrors.ustc.edu.cn/CRAN/", lib="$(RLIB)")'
-	R --vanilla -e 'BiocManager::install(version = "3.15", lib="$(RLIB)")'
+	R --vanilla -e 'install.packages(c("devtools", "remotes", "BiocManager", "ragg", "argparser"), repos="$(CRAN)", lib="$(RLIB)")'
+	R --vanilla -e 'install.packages(c("survival", "zoo", "data.table", "lazyeval", "Seurat"), repos="$(CRAN)", lib="$(RLIB)")'
+	R --vanilla -e 'install.packages(c("bit64", "rliger"), repos="$(CRAN)", lib="$(RLIB)")'
+	R --vanilla -e 'install.packages(c("harmony", "scCATCH"), repos="$(CRAN)", lib="$(RLIB)")'
+	#R --vanilla -e 'BiocManager::install(version = "3.14", lib="$(RLIB)")'
 	R --vanilla -e 'BiocManager::install(c("shape", "blob", "ComplexHeatmap"), lib="$(RLIB)")'
-	R --vanilla -e 'BiocManager::install(c("SingleR","clusterProfiler","GSVA"), lib="$(RLIB)")'
-	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder", "sqjin/CellChat", "wu-yc/scMetabolism", "satijalab/seurat-data"), lib="$(RLIB)")'
-	#R --vanilla -e 'remotes::install_github(c("YosefLab/VISION", "aertslab/SCENIC"), lib="$(RLIB)")'
-	pip install torch pyscenic
-	#pip install cellphonedb
+	R --vanilla -e 'BiocManager::install(c("SingleR","clusterProfiler","GSVA", "AUCell"), lib="$(RLIB)")'
+	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder", "sqjin/CellChat", "cole-trapnell-lab/monocle3"), lib="$(RLIB)")'
+	R --vanilla -e 'remotes::install_github(c("YosefLab/VISION", "wu-yc/scMetabolism", "aertslab/SCENIC"), lib="$(RLIB)")'
+	R --vanilla -e 'remotes::install_github(c("satijalab/seurat-data", "satijalab/seurat-wrappers", "mojaveazure/seurat-disk", "davismcc/scater", "LTLA/celldex"), lib="$(RLIB)")'
+	#pip install torch pyscenic
+	##pip install cellphonedb
 
 
 python-pkgs:

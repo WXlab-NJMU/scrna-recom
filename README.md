@@ -40,7 +40,7 @@ researchers to conduct the data analysis locally.
 
 ```shell
 # scrnaRecom
-devtools:install_github("Sue9104/scrna", subdir="scrna-recom")
+remotes:install_github("WXlab-NJMU/scrna-recom", subdir="scrna-recom")
 # pyscrnarecom
 python setup.py install
 ```
