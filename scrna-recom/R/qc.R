@@ -112,7 +112,7 @@ group_qc <- function (csv, outdir, project,
   sample.qcdata <- apply(inputs, 1, FUN = function(item) {
     indir  <- item[["path"]]
     sample  <- item[["sample"]]
-    print(item[["qc"]])
+    #print(item[["qc"]])
     if (is.na(item[["qc"]])) {
       text <- unlist(strsplit(item[["qc"]], split = '&'))
       thresolds <- setNames(
@@ -131,7 +131,7 @@ group_qc <- function (csv, outdir, project,
     print(sample)
     print(c("max.counts", "min.counts", "max.genes", "min.genes", "min.cells", "max.mt", "max.hb"))
     print(c(max.counts, min.counts, max.genes, min.genes, min.cells, max.mt, max.hb))
-    qc(indir, outdir, project, 
+    qc(indir, outdir, sample, 
        as.numeric(max.counts), as.numeric(min.counts), 
        as.numeric(max.genes), as.numeric(min.genes), 
        as.numeric(min.cells), as.numeric(max.mt), as.numeric(max.hb))
