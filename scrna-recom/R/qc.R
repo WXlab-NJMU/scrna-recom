@@ -100,13 +100,15 @@ group_qc <- function (csv, outdir, project,
   
   # plot before qc
   pdf(file.path(outdir, paste0(project,".qc_before.pdf")))
-  plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 4)
+  plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 2)
   #plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
   print(plot1)
   plot2 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+  print(plot2)
   plot3 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "percent.mt")
+  print(plot3)
   plot4 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "percent.hb")
-  print(plot2 + plot3 + plot4)
+  print(plot4)
   dev.off()
   # qc 
   sample.qcdata <- apply(inputs, 1, FUN = function(item) {
@@ -140,12 +142,14 @@ group_qc <- function (csv, outdir, project,
                     add.cell.ids = samples, project = project)
   # plot after qc
   pdf(file.path(outdir, paste0(project,".qc_after.pdf")))
-  plot1 <- Seurat::VlnPlot(qc.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 4)
+  plot1 <- Seurat::VlnPlot(qc.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 2)
   print(plot1)
-  plot2 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "percent.mt")
+  plot2 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+  print(plot2)
   plot3 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "percent.hb")
-  plot4 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
-  print(plot2 + plot3 + plot4)
+  print(plot3)
+  plot4 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "percent.mt")
+  print(plot4)
   dev.off()
   # merge stat
   stat <- do.call(cbind, lapply(samples, function(x) read.csv(file.path(outdir, paste0(x,".qc.stat.csv")))))
