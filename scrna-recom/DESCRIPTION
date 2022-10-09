@@ -18,6 +18,7 @@ Collate:
     'communication.R'
     'integration.R'
     'metabolism.R'
+    'qc.R'
     'trajectory.R'
 Imports: 
     dplyr,
