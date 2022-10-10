@@ -160,7 +160,7 @@ group_qc <- function (csv, outdir, project,
   for (sample in samples){ 
     file.remove(file.path(outdir, paste0(sample,".qc.stat.csv")))
   }
-  outrds = file.path(outdir, paste0(project,".qc.rds")
+  outrds = file.path(outdir, paste0(project,".qc.rds"))
   saveRDS(pbmc, outrds)
   return(pbmc)
 }
