@@ -29,8 +29,10 @@ Integration.SeuratCCA <- function(object, outdir, used,
     Seurat::FindIntegrationAnchors(anchor.features = features) %>%
     Seurat::IntegrateData() %>%
     Seurat::ScaleData() %>%
-    Seurat::RunPCA(npcs = 30, verbose = FALSE) %>%
-    Seurat::RunUMAP(reduction = "pca", dims = 1:30)
+    Seurat::RunPCA(npcs = 50, verbose = FALSE) %>%
+    Seurat::RunUMAP(reduction = "pca", dims = 1:50) %>%
+    Seurat::FindNeighbors() %>%
+    Seurat::FindClusters()
   saveRDS(combined.data, file.path(outdir, "integration.seurat-cca.rds"))
   pdf(file.path(outdir, "integration.seurat-cca.pdf"))
   p1 <- Seurat::DimPlot(combined.data, reduction = "pca", group.by = c("orig.ident", "ident"), ncol = 2)
@@ -71,14 +73,16 @@ Integration.SeuratLargeData <- function(object, outdir, used,
   # difference with SeruatCCA, run PCA first then
   projects <- lapply(projects, FUN = function(x) {
     x <- ScaleData(x, features = features, verbose = FALSE)
-    x <- RunPCA(x, features = features, verbose = FALSE)
+    x <- RunPCA(x, npcs = 50, features = features, verbose = FALSE)
   })
   anchors <- FindIntegrationAnchors(projects, dims = 1:50,
                                     reference = reference, reduction = "rpca")
   combined.data <- IntegrateData(anchorset = anchors, dims = 1:50) %>%
     Seurat::ScaleData(verbose = FALSE) %>%
-    Seurat::RunPCA(verbose = FALSE) %>%
-    Seurat::RunUMAP(dims = 1:50)
+    Seurat::RunPCA(npcs = 50, verbose = FALSE) %>%
+    Seurat::RunUMAP(dims = 1:50) %>%
+    Seurat::FindNeighbors() %>%
+    Seurat::FindClusters()
   DefaultAssay(combined.data) <- "integrated"
   saveRDS(combined.data, file.path(outdir, "integration.seurat-largedata.rds"))
   pdf(file.path(outdir, "integration.seurat-largedata.pdf"))
@@ -109,8 +113,10 @@ Integration.SCTransform <- function(object, outdir, used,
   pojects <- Seurat::PrepSCTIntegration(object.list = projects, anchor.features = features)
   anchors <- Seurat::FindIntegrationAnchors(object.list = pojects, normalization.method = "SCT", anchor.features = features)
   combined.data <- Seurat::IntegrateData(anchorset = anchors, normalization.method = "SCT") %>%
-    Seurat::RunPCA(verbose = FALSE)  %>%
-    Seurat::RunUMAP(reduction = "pca", dims = 1:30)
+    Seurat::RunPCA(npcs = 50, verbose = FALSE)  %>%
+    Seurat::RunUMAP(reduction = "pca", dims = 1:50) %>%
+    Seurat::FindNeighbors() %>%
+    Seurat::FindClusters() 
   saveRDS(combined.data, file.path(outdir, "integration.sctransform.rds"))
   pdf(file.path(outdir, "integration.sctransform.pdf"))
   p1 <- Seurat::DimPlot(combined.data, reduction = "pca", group.by = c("orig.ident", "ident"), ncol = 2)
@@ -139,10 +145,11 @@ Integration.Harmony <- function(object, outdir,used, mincell = 3, minrna = 200, 
     Seurat::NormalizeData()  %>%
     Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>%
     Seurat::ScaleData() %>%
-    Seurat::RunPCA()
+    Seurat::RunPCA(npcs = 50)
   combined.data <- harmony::RunHarmony(combined.data, group.by.vars = c("ident", "orig.ident"))
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["harmony"]]), reduction = "harmony")
+  combined.data <- Seurat::FindNeighbors(combined.data) %>% Seurat::FindClusters() 
   saveRDS(combined.data, file.path(outdir, "integration.harmony.rds"))
   pdf(file.path(outdir, "integration.harmony.pdf"))
   p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "ident"), ncol = 2)
@@ -177,7 +184,7 @@ Integration.Liger <- function(object, outdir, used,
     Seurat::ScaleData(split.by = "orig.ident", do.center = FALSE) %>%
     SeuratWrappers::RunOptimizeALS(k = 20, lambda = 5, split.by = "orig.ident")  %>%
     SeuratWrappers::RunQuantileNorm(split.by = "orig.ident") %>%
-    Seurat::FindNeighbors(reduction = "iNMF", dims = 1:20) %>%
+    Seurat::FindNeighbors(reduction = "iNMF", dims = 1:50) %>%
     Seurat::FindClusters(resolution = 0.55)
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["iNMF"]]), reduction = "iNMF")
