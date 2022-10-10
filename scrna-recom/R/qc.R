@@ -28,7 +28,7 @@ qc <- function (indir, outdir, project,
   cat("total cell counts: ", total.cells, "\n")
   cat("total gene counts: ", total.genes, "\n")
   pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^MT-")
-  pbmc[["percent.hb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^HB[AB]-")
+  pbmc[["percent.hb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^HB[AB]")
   # filt counts
   pbmc <- subset(pbmc, subset = nCount_RNA > min.counts & nCount_RNA < max.counts)
   count.filt = total.cells - ncol(x = pbmc)
