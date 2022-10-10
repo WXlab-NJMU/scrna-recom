@@ -14,28 +14,28 @@ NULL
 #' @rdname Integration
 #' @method Integration SeuratCCA
 #' @concept integration
-#' 
-Integration.SeuratCCA <- function(object, outdir, used, 
+#'
+Integration.SeuratCCA <- function(object, outdir, used,
                                   mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
-  #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt) 
+  #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #projects <- lapply(projects, FUN = function(x) {
-  #    Seurat::NormalizeData(x) %>% 
+  #    Seurat::NormalizeData(x) %>%
   #      Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
   #  })
   object <- Seurat::NormalizeData(object) %>% Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
   projects <- Seurat::SplitObject(object, split.by = "orig.ident")
   features <- Seurat::SelectIntegrationFeatures(object.list = projects)
-  combined.data <- projects %>% 
-    Seurat::FindIntegrationAnchors(anchor.features = features) %>% 
-    Seurat::IntegrateData() %>% 
-    Seurat::ScaleData() %>% 
-    Seurat::RunPCA(npcs = 30, verbose = FALSE) %>% 
+  combined.data <- projects %>%
+    Seurat::FindIntegrationAnchors(anchor.features = features) %>%
+    Seurat::IntegrateData() %>%
+    Seurat::ScaleData() %>%
+    Seurat::RunPCA(npcs = 30, verbose = FALSE) %>%
     Seurat::RunUMAP(reduction = "pca", dims = 1:30)
   saveRDS(combined.data, file.path(outdir, "integration.seurat-cca.rds"))
   pdf(file.path(outdir, "integration.seurat-cca.pdf"))
   p1 <- Seurat::DimPlot(combined.data, reduction = "pca", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p1)
-  p2 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2) 
+  p2 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p2)
   dev.off()
   return(combined.data)
@@ -43,32 +43,32 @@ Integration.SeuratCCA <- function(object, outdir, used,
 
 #' @section Seurat Large Data:
 #' For very large datasets, Seruat provide two options that can improve efficiency and runtimes:
-#' * Reciprocal PCA (RPCA): faster and more conservative 
+#' * Reciprocal PCA (RPCA): faster and more conservative
 #' * Reference-based integration
 #' - quick start: <https://satijalab.org/seurat/articles/integration_large_datasets.html>
 #' - RPCA: <https://satijalab.org/seurat/articles/integration_rpca.html>
 #' @md
-#' 
-#' @param reference Sample IDs to used as integration 
+#'
+#' @param reference Sample IDs to used as integration
 #' @import Seurat
 #' @export
 #' @rdname Integration
 #' @method Integration SeuratLargeData
 #' @concept integration
-#' 
+#'
 Integration.SeuratLargeData <- function(object, outdir, used,
                                         mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5,
                                         reference = c(1,2)
                                         ){
-  #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt) 
+  #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #projects <- lapply(projects, FUN = function(x) {
-  #  Seurat::NormalizeData(x) %>% 
+  #  Seurat::NormalizeData(x) %>%
   #    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
   #})
   object <- object %>% Seurat::NormalizeData() %>% Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
   projects <- Seurat::SplitObject(object, split.by = "orig.ident")
   features <- Seurat::SelectIntegrationFeatures(object.list = projects)
-  # difference with SeruatCCA, run PCA first then 
+  # difference with SeruatCCA, run PCA first then
   projects <- lapply(projects, FUN = function(x) {
     x <- ScaleData(x, features = features, verbose = FALSE)
     x <- RunPCA(x, features = features, verbose = FALSE)
@@ -84,10 +84,10 @@ Integration.SeuratLargeData <- function(object, outdir, used,
   pdf(file.path(outdir, "integration.seurat-largedata.pdf"))
   p1 <- Seurat::DimPlot(combined.data, reduction = "pca", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p1)
-  p2 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2) 
+  p2 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p2)
   dev.off()
-  return(combined.data) 
+  return(combined.data)
 }
 
 
@@ -97,9 +97,9 @@ Integration.SeuratLargeData <- function(object, outdir, used,
 #'
 #' @import Seurat
 #' @export
-#' @method Integration SCTransform 
+#' @method Integration SCTransform
 #' @rdname Integration
-#' 
+#'
 Integration.SCTransform <- function(object, outdir, used,
                                     mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt) %>% lapply(SCTransform)
@@ -115,7 +115,7 @@ Integration.SCTransform <- function(object, outdir, used,
   pdf(file.path(outdir, "integration.sctransform.pdf"))
   p1 <- Seurat::DimPlot(combined.data, reduction = "pca", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p1)
-  p2 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2) 
+  p2 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p2)
   dev.off()
   return(combined.data)
@@ -131,17 +131,16 @@ Integration.SCTransform <- function(object, outdir, used,
 #' @importFrom harmony RunHarmony
 #' @export
 #' @rdname Integration
-#' 
+#'
 Integration.Harmony <- function(object, outdir,used, mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
-  #combined.data <- merge(projects[[1]], tail(projects, length(projects)-1)) 
-  combined.data <- object
-  combined.data <- combined.data %>%
-    Seurat::NormalizeData()  %>% 
-    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>% 
-    Seurat::ScaleData() %>% 
-    Seurat::RunPCA()  %>%
-    harmony::RunHarmony(group.by.vars = c("ident", "orig.ident")) 
+  #combined.data <- merge(projects[[1]], tail(projects, length(projects)-1))
+  combined.data <- object %>%
+    Seurat::NormalizeData()  %>%
+    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>%
+    Seurat::ScaleData() %>%
+    Seurat::RunPCA()
+  combined.data <- harmony::RunHarmony(combined.data, group.by.vars = c("ident", "orig.ident"))
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["harmony"]]), reduction = "harmony")
   saveRDS(combined.data, file.path(outdir, "integration.harmony.rds"))
@@ -157,26 +156,26 @@ Integration.Harmony <- function(object, outdir,used, mincell = 3, minrna = 200, 
 }
 
 
-#' @section Integration Using Liger: 
+#' @section Integration Using Liger:
 #' * source code: <https://github.com/welch-lab/liger>
 #' * quick start: <https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/liger.html>
-#' 
+#'
 #' @import Seurat
 #' @importFrom SeuratWrappers RunOptimizeALS RunQuantileNorm
 #' @export
 #' @method Integration Liger
 #' @rdname Integration
-#' 
+#'
 Integration.Liger <- function(object, outdir, used,
                               mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #combined.data <- merge(projects[[1]], tail(projects, length(projects)-1))
   combined.data <- object
   combined.data <- combined.data %>%
-    Seurat::NormalizeData()  %>% 
-    Seurat::FindVariableFeatures() %>% 
-    Seurat::ScaleData(split.by = "orig.ident", do.center = FALSE) %>% 
-    SeuratWrappers::RunOptimizeALS(k = 20, lambda = 5, split.by = "orig.ident")  %>% 
+    Seurat::NormalizeData()  %>%
+    Seurat::FindVariableFeatures() %>%
+    Seurat::ScaleData(split.by = "orig.ident", do.center = FALSE) %>%
+    SeuratWrappers::RunOptimizeALS(k = 20, lambda = 5, split.by = "orig.ident")  %>%
     SeuratWrappers::RunQuantileNorm(split.by = "orig.ident") %>%
     Seurat::FindNeighbors(reduction = "iNMF", dims = 1:20) %>%
     Seurat::FindClusters(resolution = 0.55)
