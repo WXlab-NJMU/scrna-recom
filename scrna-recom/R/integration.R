@@ -141,7 +141,7 @@ Integration.Harmony <- function(object, outdir,used, mincell = 3, minrna = 200, 
     Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>% 
     Seurat::ScaleData() %>% 
     Seurat::RunPCA()  %>%
-    harmony::RunHarmony("ident") 
+    harmony::RunHarmony(group.by.vars = c("ident", "orig.ident")) 
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["harmony"]]), reduction = "harmony")
   saveRDS(combined.data, file.path(outdir, "integration.harmony.rds"))
@@ -189,7 +189,7 @@ Integration.Liger <- function(object, outdir, used,
   p2 <- Seurat::DimPlot(object = combined.data, reduction = "iNMF", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p2)
   p3 <- Seurat::VlnPlot(object = combined.data, features = "iNMF_1", group.by = c("orig.ident", "ident"), ncol = 2)
-  p4 <- Seurat::VlnPlot(object = combined.data, features = "iNMF_1", group.by = c("orig.ident", "ident"), ncol = 2)
+  p4 <- Seurat::VlnPlot(object = combined.data, features = "iNMF_2", group.by = c("orig.ident", "ident"), ncol = 2)
   print(p3+p4)
   dev.off()
   return(combined.data)
