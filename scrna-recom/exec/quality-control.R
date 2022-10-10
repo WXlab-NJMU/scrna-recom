@@ -9,7 +9,7 @@ p <- add_argument(p, "--max.counts", help="nCount_RNA maximum", type="numeric", 
 p <- add_argument(p, "--min.counts", help="nCount_RNA minimum", type="numeric", default = 500)
 p <- add_argument(p, "--min.cells", help="cell minimum", type="numeric", default = 3)
 p <- add_argument(p, "--max.mt", help="percent of maximum mt genes", type="numeric", default = 10)
-p <- add_argument(p, "--max.hb", help="percent of maximum hb genes", type="numeric", default = 10)
+p <- add_argument(p, "--max.hb", help="percent of maximum hb genes", type="numeric", default = 5)
 argv <- parse_args(p)
 #print(argv)
 
