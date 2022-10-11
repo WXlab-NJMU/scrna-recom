@@ -133,7 +133,7 @@ make html
             <td>https://github.com/sqjin/CellChat</td>
         </tr>
         <tr>
-            <td rowspan=2>Metabolic flux estimation</td>
+            <td rowspan=2>Metabolic analysis</td>
             <td>scMetabolism</td>
             <td>https://github.com/wu-yc/scMetabolism</td>
         </tr>
