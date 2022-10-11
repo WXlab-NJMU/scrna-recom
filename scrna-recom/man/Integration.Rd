@@ -9,73 +9,24 @@
 \alias{Integration.Liger}
 \title{Project Data Integration}
 \usage{
-Integration(
-  csv,
-  outdir,
-  used = "SeuratCCA",
-  mincell = 3,
-  minrna = 200,
-  maxrna = 2500,
-  maxmt = 5
-)
+Integration(csv, outdir, project, used = "SeuratCCA")
 
-\method{Integration}{SeuratCCA}(
-  csv,
-  outdir,
-  used,
-  mincell = 3,
-  minrna = 200,
-  maxrna = 2500,
-  maxmt = 5
-)
+\method{Integration}{SeuratCCA}(object, outdir, project, used)
 
-\method{Integration}{SeuratLargeData}(
-  csv,
-  outdir,
-  used,
-  mincell = 3,
-  minrna = 200,
-  maxrna = 2500,
-  maxmt = 5,
-  reference = c(1, 2)
-)
+\method{Integration}{SeuratLargeData}(object, outdir, project, used, reference = c(1, 2))
 
-\method{Integration}{SCTransform}(
-  csv,
-  outdir,
-  used,
-  mincell = 3,
-  minrna = 200,
-  maxrna = 2500,
-  maxmt = 5
-)
+\method{Integration}{SCTransform}(object, outdir, project, used)
 
-\method{Integration}{Harmony}(
-  csv,
-  outdir,
-  used,
-  mincell = 3,
-  minrna = 200,
-  maxrna = 2500,
-  maxmt = 5
-)
+\method{Integration}{Harmony}(object, outdir, project, used)
 
-\method{Integration}{Liger}(
-  csv,
-  outdir,
-  used,
-  mincell = 3,
-  minrna = 200,
-  maxrna = 2500,
-  maxmt = 5
-)
+\method{Integration}{Liger}(object, outdir, project, used)
 }
 \arguments{
-\item{csv}{The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv}
-
 \item{outdir}{The ouput directory for rds and plot}
 
 \item{used}{Methods for integration: SeuratCCA, SCTransform, Harmony, Liger, default is SeuratCCA}
+
+\item{object}{Seurat object including samples to integration}
 
 \item{reference}{Sample IDs to used as integration}
 }

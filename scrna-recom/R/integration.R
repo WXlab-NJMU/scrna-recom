@@ -223,8 +223,10 @@ Integration.Liger <- function(object, outdir, project, used){
     Seurat::NormalizeData()  %>%
     Seurat::FindVariableFeatures() %>%
     Seurat::ScaleData(split.by = "orig.ident", do.center = FALSE) %>%
+    Seurat::RunPCA(npcs = 50) %>%
     SeuratWrappers::RunOptimizeALS(k = 20, lambda = 5, split.by = "orig.ident")  %>%
     SeuratWrappers::RunQuantileNorm(split.by = "orig.ident")
+  # run pca to display, liger only need scaled data
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["iNMF"]]), reduction = "iNMF")
   combined.data <- Seurat::FindNeighbors(combined.data, reduction = "iNMF") %>% Seurat::FindClusters()
