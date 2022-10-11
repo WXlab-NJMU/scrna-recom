@@ -176,7 +176,7 @@ Integration.Harmony <- function(object, outdir, project, used){
   combined.data <- harmony::RunHarmony(combined.data, group.by.vars = c("seurat_clusters", "orig.ident"))
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["harmony"]]), reduction = "harmony")
-  combined.data <- Seurat::FindNeighbors(combined.data, reduction = "harmony") %>% FindClusters()
+  combined.data <- Seurat::FindNeighbors(combined.data, reduction = "harmony") %>% Seurat::FindClusters()
   saveRDS(combined.data, file.path(outdir, paste0(project, ".harmony.rds")))
   pdf(file.path(outdir, paste0(project, ".harmony.pdf")))
   p1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("orig.ident"))
@@ -227,7 +227,7 @@ Integration.Liger <- function(object, outdir, project, used){
     SeuratWrappers::RunQuantileNorm(split.by = "orig.ident")
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["iNMF"]]), reduction = "iNMF")
-  combined.data <- Seurat::FindNeighbors(combined.data, reduction = "iNMF") %>% FindClusters()
+  combined.data <- Seurat::FindNeighbors(combined.data, reduction = "iNMF") %>% Seurat::FindClusters()
   saveRDS(combined.data, file.path(outdir, paste0(project, ".liger.rds")))
   pdf(file.path(outdir, paste0(project, ".liger.pdf")))
   p1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("orig.ident"))
