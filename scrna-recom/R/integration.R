@@ -15,8 +15,7 @@ NULL
 #' @method Integration SeuratCCA
 #' @concept integration
 #'
-Integration.SeuratCCA <- function(object, outdir, used,
-                                  mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+Integration.SeuratCCA <- function(object, outdir, project, used){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #projects <- lapply(projects, FUN = function(x) {
   #    Seurat::NormalizeData(x) %>%
@@ -33,15 +32,19 @@ Integration.SeuratCCA <- function(object, outdir, used,
     Seurat::RunUMAP(reduction = "pca", dims = 1:50) %>%
     Seurat::FindNeighbors() %>%
     Seurat::FindClusters()
-  saveRDS(combined.data, file.path(outdir, "integration.seurat-cca.rds"))
-  pdf(file.path(outdir, "integration.seurat-cca.pdf"))
-  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"), ncol = 2)
+  saveRDS(combined.data, file.path(outdir, paste0(project, ".seurat-cca.rds")))
+  pdf(file.path(outdir, paste0(project, ".seurat-cca.pdf")))
+  p1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("orig.ident"))
   print(p1)
+  p1_1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("seurat_clusters"))
+  print(p1_1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", group.by = c("orig.ident", "seurat_clusters"))
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p2 + p3)
-  p7 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
+  p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
   print(p7)
+  p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"))
+  print(p7_1)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
   p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p8 + p9)
@@ -64,10 +67,7 @@ Integration.SeuratCCA <- function(object, outdir, used,
 #' @method Integration SeuratLargeData
 #' @concept integration
 #'
-Integration.SeuratLargeData <- function(object, outdir, used,
-                                        mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5,
-                                        reference = c(1,2)
-                                        ){
+Integration.SeuratLargeData <- function(object, outdir, project, used, reference = c(1,2)){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #projects <- lapply(projects, FUN = function(x) {
   #  Seurat::NormalizeData(x) %>%
@@ -90,15 +90,19 @@ Integration.SeuratLargeData <- function(object, outdir, used,
     Seurat::FindNeighbors() %>%
     Seurat::FindClusters()
   DefaultAssay(combined.data) <- "integrated"
-  saveRDS(combined.data, file.path(outdir, "integration.seurat-largedata.rds"))
-  pdf(file.path(outdir, "integration.seurat-largedata.pdf"))
-  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"), ncol = 2)
+  saveRDS(combined.data, file.path(outdir, paste0(project, ".seurat-largedata.rds")))
+  pdf(file.path(outdir, paste0(project, ".seurat-largedata.pdf")))
+  p1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("orig.ident"))
   print(p1)
+  p1_1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("seurat_clusters"))
+  print(p1_1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", group.by = c("orig.ident", "seurat_clusters"))
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p2 + p3)
-  p7 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
+  p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
   print(p7)
+  p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"))
+  print(p7_1)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
   p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p8 + p9)
@@ -116,8 +120,7 @@ Integration.SeuratLargeData <- function(object, outdir, used,
 #' @method Integration SCTransform
 #' @rdname Integration
 #'
-Integration.SCTransform <- function(object, outdir, used,
-                                    mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+Integration.SCTransform <- function(object, outdir, project, used){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt) %>% lapply(SCTransform)
   object <- Seurat::SCTransform(object)
   projects <- Seurat::SplitObject(object, split.by = "orig.ident")
@@ -129,15 +132,19 @@ Integration.SCTransform <- function(object, outdir, used,
     Seurat::RunUMAP(reduction = "pca", dims = 1:50) %>%
     Seurat::FindNeighbors() %>%
     Seurat::FindClusters() 
-  saveRDS(combined.data, file.path(outdir, "integration.sctransform.rds"))
-  pdf(file.path(outdir, "integration.sctransform.pdf"))
-  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"), ncol = 2)
+  saveRDS(combined.data, file.path(outdir, paste0(project, ".sctransform.rds")))
+  pdf(file.path(outdir, paste0(project, ".sctransform.pdf")))
+  p1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("orig.ident"))
   print(p1)
+  p1_1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("seurat_clusters"))
+  print(p1_1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", group.by = c("orig.ident", "seurat_clusters"))
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p2 + p3)
-  p7 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
+  p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
   print(p7)
+  p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"))
+  print(p7_1)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
   p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p8 + p9)
@@ -156,7 +163,7 @@ Integration.SCTransform <- function(object, outdir, used,
 #' @export
 #' @rdname Integration
 #'
-Integration.Harmony <- function(object, outdir,used, mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+Integration.Harmony <- function(object, outdir, project, used){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #combined.data <- merge(projects[[1]], tail(projects, length(projects)-1))
   combined.data <- object %>%
@@ -164,25 +171,32 @@ Integration.Harmony <- function(object, outdir,used, mincell = 3, minrna = 200, 
     Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>%
     Seurat::ScaleData() %>%
     Seurat::RunPCA(npcs = 50) %>%
-    Seurat::FindNeighbors(combined.data) %>% 
+    Seurat::FindNeighbors() %>% 
     Seurat::FindClusters() 
   combined.data <- harmony::RunHarmony(combined.data, group.by.vars = c("seurat_clusters", "orig.ident"))
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["harmony"]]), reduction = "harmony")
-  saveRDS(combined.data, file.path(outdir, "integration.harmony.rds"))
-  pdf(file.path(outdir, "integration.harmony.pdf"))
-  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"), ncol = 2)
+  combined.data <- Seurat::FindNeighbors(combined.data, reduction = "harmony") %>% FindClusters()
+  saveRDS(combined.data, file.path(outdir, paste0(project, ".harmony.rds")))
+  pdf(file.path(outdir, paste0(project, ".harmony.pdf")))
+  p1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("orig.ident"))
   print(p1)
+  p1_1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("seurat_clusters"))
+  print(p1_1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", group.by = c("orig.ident", "seurat_clusters"))
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p2 + p3)
-  p4 <- Seurat::DimPlot(object = combined.data, reduction = "harmony", group.by = c("orig.ident", "seurat_clusters"), ncol = 2)
+  p4 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "harmony", group.by = c("orig.ident"))
   print(p4)
+  p4_1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "harmony", group.by = c("seurat_clusters"))
+  print(p4_1)
   p5 <- Seurat::VlnPlot(object = combined.data, features = "harmony_1", group.by = c("orig.ident", "seurat_clusters"))
   p6 <- Seurat::VlnPlot(object = combined.data, features = "harmony_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p5 + p6)
-  p7 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
+  p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
   print(p7)
+  p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"))
+  print(p7_1)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
   p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p8 + p9)
@@ -201,8 +215,7 @@ Integration.Harmony <- function(object, outdir,used, mincell = 3, minrna = 200, 
 #' @method Integration Liger
 #' @rdname Integration
 #'
-Integration.Liger <- function(object, outdir, used,
-                              mincell = 3, minrna = 200, maxrna = 2500, maxmt = 5){
+Integration.Liger <- function(object, outdir, project, used){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #combined.data <- merge(projects[[1]], tail(projects, length(projects)-1))
   combined.data <- object
@@ -211,25 +224,30 @@ Integration.Liger <- function(object, outdir, used,
     Seurat::FindVariableFeatures() %>%
     Seurat::ScaleData(split.by = "orig.ident", do.center = FALSE) %>%
     SeuratWrappers::RunOptimizeALS(k = 20, lambda = 5, split.by = "orig.ident")  %>%
-    SeuratWrappers::RunQuantileNorm(split.by = "orig.ident") %>%
-    Seurat::FindNeighbors(reduction = "iNMF", dims = 1:50) %>%
-    Seurat::FindClusters(resolution = 0.55)
+    SeuratWrappers::RunQuantileNorm(split.by = "orig.ident")
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["iNMF"]]), reduction = "iNMF")
-  saveRDS(combined.data, file.path(outdir, "integration.liger.rds"))
-  pdf(file.path(outdir, "integration.liger.pdf"))
-  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"), ncol = 2)
+  combined.data <- Seurat::FindNeighbors(combined.data, reduction = "harmony") %>% FindClusters()
+  saveRDS(combined.data, file.path(outdir, paste0(project, ".liger.rds")))
+  pdf(file.path(outdir, paste0(project, ".liger.pdf")))
+  p1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("orig.ident"))
   print(p1)
+  p1_1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "pca", group.by = c("seurat_clusters"))
+  print(p1_1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", group.by = c("orig.ident", "seurat_clusters"))
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p2 + p3)
-  p4 <- Seurat::DimPlot(object = combined.data, reduction = "iNMF", group.by = c("orig.ident", "seurat_clusters"), ncol = 2)
+  p4 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "iNMF", group.by = c("orig.ident"))
   print(p4)
+  p4_1 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "iNMF", group.by = c("seurat_clusters"))
+  print(p4_1)
   p5 <- Seurat::VlnPlot(object = combined.data, features = "iNMF_1", group.by = c("orig.ident", "seurat_clusters"))
   p6 <- Seurat::VlnPlot(object = combined.data, features = "iNMF_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p5 + p6)
-  p7 <- Seurat::DimPlot(combined.data, reduction = "umap", group.by = c("orig.ident", "ident"), ncol = 2)
+  p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
   print(p7)
+  p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"))
+  print(p7_1)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
   p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
   print(p8 + p9)
