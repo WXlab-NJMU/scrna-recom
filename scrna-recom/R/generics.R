@@ -18,7 +18,7 @@ setGeneric("basic_analysis", function(object) {
 #' @export Integration
 #'
 #'
-Integration <- function (csv, outdir, project, used = "SeuratCCA") {
+Integration <- function (csv, outdir, project, used = "SeuratCCA", dim) {
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
   }

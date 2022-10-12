@@ -3,32 +3,32 @@
 \name{Integration}
 \alias{Integration}
 \alias{Integration.SeuratCCA}
-\alias{Integration.SeuratLargeData}
+\alias{Integration.SeuratRPCA}
 \alias{Integration.SCTransform}
 \alias{Integration.Harmony}
 \alias{Integration.Liger}
 \title{Project Data Integration}
 \usage{
-Integration(csv, outdir, project, used = "SeuratCCA")
+Integration(csv, outdir, project, used = "SeuratCCA", dim)
 
-\method{Integration}{SeuratCCA}(object, outdir, project, used)
+\method{Integration}{SeuratCCA}(object, outdir, project, used, dim)
 
-\method{Integration}{SeuratLargeData}(object, outdir, project, used, reference = c(1, 2))
+\method{Integration}{SeuratRPCA}(object, outdir, project, used, dim, reference = c(1, 2))
 
-\method{Integration}{SCTransform}(object, outdir, project, used)
+\method{Integration}{SCTransform}(object, outdir, project, used, dim)
 
-\method{Integration}{Harmony}(object, outdir, project, used)
+\method{Integration}{Harmony}(object, outdir, project, used, dim)
 
-\method{Integration}{Liger}(object, outdir, project, used)
+\method{Integration}{Liger}(object, outdir, project, used, dim)
 }
 \arguments{
+\item{csv}{The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv}
+
 \item{outdir}{The ouput directory for rds and plot}
 
 \item{used}{Methods for integration: SeuratCCA, SCTransform, Harmony, Liger, default is SeuratCCA}
 
-\item{object}{Seurat object including samples to integration}
-
-\item{reference}{Sample IDs to used as integration}
+\item{reference}{Sample IDs to used, dim as integration}
 }
 \value{
 Return a combined object
