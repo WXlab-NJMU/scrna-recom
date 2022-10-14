@@ -31,13 +31,13 @@ Integration <- function (csv, outdir, project, used = "SeuratCCA", dim) {
 #'
 #' @param input Seurat input object
 #' @param outdir The ouput directory for rds and plot
-#' @param used Methods for cell type annotation: scCATCH, singleR
+#' @param used Methods for cell type annotation: scCATCH, SingleR
 #' @return Return a combined object
 #'
 #' @concept cell type annotation
 #' @export AnnotateCellType
 #'
-AnnotateCellType <- function(input, outdir, used = "scCATCH") {
+AnnotateCellType <- function(input, outdir, project, used = "SingleR", ...) {
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
   }
