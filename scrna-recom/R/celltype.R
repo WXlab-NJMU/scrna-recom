@@ -31,7 +31,6 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
                                      geneinfo = scCATCH::geneinfo,
                                      cellmatch = scCATCH::cellmatch,
                                      cell_min_pct = 0.25, logfc = 0.25, pvalue = 0.05) {
-  # test
   geneinfo = scCATCH::geneinfo
   cellmatch = scCATCH::cellmatch
   # revise gene symbol for scRNA data
@@ -51,15 +50,25 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
                          function(x) clusters[clusters$cluster == as.character(x),]$cell_type)
   input <- Seurat::AddMetaData(input, metadata = meta.cluster, col.name = "scCATCH.cluster_type")
   
-  prefix <- file.path(outdir, sprintf("%s.celltype.scCATCH.tissue=%s", project, tissue))
+  prefix <- file.path(outdir, sprintf("%s.celltype.scCATCH.tissue=%s", project, sub(" ","",tissue)))
   saveRDS(input, paste0(prefix, ".rds"))
   write.table(obj@celltype, paste0(prefix, ".detail.csv"), sep = ",")
   pdf(paste0(prefix, ".pdf"))
   p5 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("scCATCH.cluster_type"))
   p5 <- p5 + ggplot2::theme(legend.position="bottom", 
-                            legend.text = ggplot2::element_text(size=10), 
-                            legend.key.size = ggplot2::unit(0.15, 'cm'))
+                            legend.text = ggplot2::element_text(size=8), 
+                            legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5)
+  p6 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"))
+  p6 <- p6 + ggplot2::theme(legend.position="bottom", 
+                            legend.text = ggplot2::element_text(size=8), 
+                            legend.key.size = ggplot2::unit(0.1, 'cm'))
+  print(p6)
+  p7 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
+  p7 <- p7 + ggplot2::theme(legend.position="bottom", 
+                            legend.text = ggplot2::element_text(size=8), 
+                            legend.key.size = ggplot2::unit(0.1, 'cm'))
+  print(p7)
   dev.off()
 }
 
@@ -136,12 +145,22 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   print(p4)
   p5 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("SingleR.cluster_type"))
   p5 <- p5 + ggplot2::theme(legend.position="bottom", 
-                            legend.text = ggplot2::element_text(size=10), 
-                            legend.key.size = ggplot2::unit(0.15, 'cm'))
+                            legend.text = ggplot2::element_text(size=8), 
+                            legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5)
+  p6 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"))
+  p6 <- p6 + ggplot2::theme(legend.position="bottom", 
+                            legend.text = ggplot2::element_text(size=8), 
+                            legend.key.size = ggplot2::unit(0.1, 'cm'))
+  print(p6)
+  p7 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
+  p7 <- p7 + ggplot2::theme(legend.position="bottom", 
+                            legend.text = ggplot2::element_text(size=8), 
+                            legend.key.size = ggplot2::unit(0.1, 'cm'))
+  print(p7)
   
-  p1 <- SingleR::plotScoreHeatmap(out.cluster)
-  print(p1)
+  #p1 <- SingleR::plotScoreHeatmap(out.cluster)
+  #print(p1)
   p2 <- SingleR::plotDeltaDistribution(out.cluster, ncol = 3)
   print(p2)
   #all.markers <- metadata(out.cluster)$de.genes
