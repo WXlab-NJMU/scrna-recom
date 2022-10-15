@@ -1,6 +1,6 @@
 library(argparser)
 p <- arg_parser("scRNA Basic Data Analysis Using Seurat")
-p <- add_argument(p, "indir", help="input matrix folder", type="character")
+p <- add_argument(p, "infile", help="input seurat object", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")
 
@@ -11,8 +11,12 @@ p <- add_argument(p, "--resolution", help="resolution of cluster", type="numeric
 p <- add_argument(p, "--plot", nargs='*', type="character", 
                   default = c("nFeature_RNA", "percent.mt", "percent.rb"),
                   help="features to plot on umap")
-
+argv <- parse_args(p)
 input <- readRDS(argv$infile)
-clustering(input, argv$outdir, argv$project, 
-           nfeatures = argv$nfeatures, plot.features = argv$plot,
-           reduction = argv$reduction, dims = argv$dims, resolution = argv$resolution)
+print(argv$infile)
+print(head(input))
+
+library(scrnaRecom)
+scrnaRecom::clustering(input, argv$outdir, argv$project, 
+                       nfeatures = argv$nfeatures, plot.features = argv$plot,
+                       reduction = argv$reduction, dims = argv$dims, resolution = argv$resolution)

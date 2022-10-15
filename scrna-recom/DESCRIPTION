@@ -15,6 +15,7 @@ Collate:
     'objects.R'
     'basic.R'
     'celltype.R'
+    'cluster.R'
     'communication.R'
     'integration.R'
     'metabolism.R'

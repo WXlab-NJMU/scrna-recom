@@ -6,11 +6,13 @@
 \alias{AnnotateCellType.SingleR}
 \title{Cell Type Annotation}
 \usage{
-AnnotateCellType(input, outdir, used = "scCATCH")
+AnnotateCellType(input, outdir, project, used = "SingleR", ...)
 
 \method{AnnotateCellType}{scCATCH}(
   input,
   outdir,
+  project,
+  used,
   species = "Human",
   tissue = NULL,
   strict = FALSE,
@@ -21,18 +23,18 @@ AnnotateCellType(input, outdir, used = "scCATCH")
   pvalue = 0.05
 )
 
-\method{AnnotateCellType}{SingleR}(input, used, reference = NULL)
+\method{AnnotateCellType}{SingleR}(input, outdir, project, used, reference = NULL, level = NULL)
 }
 \arguments{
 \item{input}{Seurat input object}
 
 \item{outdir}{The ouput directory for rds and plot}
 
-\item{used}{Methods for cell type annotation: scCATCH, singleR}
+\item{used}{Methods for cell type annotation: scCATCH, SingleR}
 
 \item{species}{Value: Human or 'Mouse'}
 
-\item{tissue}{Tissue name}
+\item{tissue}{Tissue name in scCATCH database, default Blood is used}
 
 \item{strict}{Use the most strict condition to identify marker genes, default is FALSE}
 
@@ -45,6 +47,12 @@ AnnotateCellType(input, outdir, used = "scCATCH")
 \item{logfc}{Include the gene with at least this fold change of average gene expression compared to every other clusters, default is 0.25}
 
 \item{pvalue}{Include the significantly highly expressed gene with this cutoff of p value from wilcox test compared to every other clusters, default is 0.05}
+
+\item{reference}{Reference dataset in celldex,
+HumanPrimaryCellAtlasData、BlueprintEncodeData、MouseRNAseqData、
+DatabaseImmuneCellExpressionData、NovershternHematopoieticData、MonacoImmuneData}
+
+\item{level}{Label levels: main (broad), fine (fine-grained), ont (standard in Cell Ontology)}
 }
 \value{
 Return a combined object
@@ -75,8 +83,8 @@ Support species is 'Human' or 'Mouse'
 \subsection{Two mode:}{
 \itemize{
 \item use built-in reference: HumanPrimaryCellAtlasData、BlueprintEncodeData、MouseRNAseqData、
-DatabaseImmuneCellExpressionData、NovershternHematopoieticData、MonacoImmuneData，
-see details in \code{browseVignettes("celldex")}
+DatabaseImmuneCellExpressionData、NovershternHematopoieticData、MonacoImmuneData
+see details in \code{browseVignettes("celldex")} or https://bioconductor.org/packages/release/data/experiment/vignettes/celldex/inst/doc/userguide.html#2_General-purpose_references
 \item use pre-labelled dataset to annotate: (todo)
 See \code{browseVignettes("SingleR::trainSingleR")}
 }

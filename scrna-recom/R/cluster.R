@@ -1,12 +1,19 @@
 library(dplyr)
 
 
-#' @section Clustering
+#' Clustering on seurat object
 #'
 #' @import Seurat
 #' @import ggplot2
 #' @export
-#' @method Clustering
+#' @param input Input seurat object
+#' @param outdir Output folder
+#' @param project Project name
+#' @param nfeatures Number of variable features to used
+#' @param plot.features Features to plot on UMAP, default is c("nFeature_RNA", "percent.mt", "percent.rb")
+#' @param reduction Reduction method, current support is pca, harmony, iNMF (liger)
+#' @param dim Dimensions to use for clustering
+#' @param resolution Resolution to use for clustering
 #' @rdname clustering
 #'
 clustering <- function (input, outdir, project,
