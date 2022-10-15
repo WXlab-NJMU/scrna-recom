@@ -9,17 +9,25 @@
 \alias{Integration.Liger}
 \title{Project Data Integration}
 \usage{
-Integration(csv, outdir, project, used = "SeuratCCA", dim)
+Integration(csv, outdir, project, used = "SeuratCCA", dim, ...)
 
-\method{Integration}{SeuratCCA}(object, outdir, project, used, dim)
+\method{Integration}{SeuratCCA}(object, outdir, project, used, dim, nfeatures = 2000)
 
-\method{Integration}{SeuratRPCA}(object, outdir, project, used, dim, reference = c(1, 2))
+\method{Integration}{SeuratRPCA}(
+  object,
+  outdir,
+  project,
+  used,
+  dim,
+  reference = c(1, 2),
+  nfeatures = 2000
+)
 
-\method{Integration}{SCTransform}(object, outdir, project, used, dim)
+\method{Integration}{SCTransform}(object, outdir, project, used, dim, nfeatures = 2000)
 
-\method{Integration}{Harmony}(object, outdir, project, used, dim)
+\method{Integration}{Harmony}(object, outdir, project, used, dim, nfeatures = 2000)
 
-\method{Integration}{Liger}(object, outdir, project, used, dim)
+\method{Integration}{Liger}(object, outdir, project, used, dim, nfeatures = 2000)
 }
 \arguments{
 \item{csv}{The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv}

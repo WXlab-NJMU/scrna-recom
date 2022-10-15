@@ -8,9 +8,11 @@ p <- add_argument(p, "--method", help="SeuratCCA, SeuratRPCA, Harmony, Liger",
                   type="character", default = "SeuratCCA")
 p <- add_argument(p, "--dim", type="numeric", default=30,
                   help="feature nums, npc in Seurat::RunPCA or k in rliger::optimizeALS")
+p <- add_argument(p, "--nfeatures", type="numeric", default=2000,
+                  help="number of variable features to use for scaledata and pca")
 argv <- parse_args(p)
 #print(argv)
 
 library(scrnaRecom)
 object <- readRDS(argv$input)
-Integration(object, argv$outdir, argv$project, argv$method, argv$dim)
+Integration(object, argv$outdir, argv$project, argv$method, argv$dim, nfeatures = argv$nfeatures)

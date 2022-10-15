@@ -15,10 +15,10 @@ NULL
 #' @method Integration SeuratCCA
 #' @concept integration
 #'
-Integration.SeuratCCA <- function(object, outdir, project, used, dim){
+Integration.SeuratCCA <- function(object, outdir, project, used, dim, nfeatures = 2000){
   #all.genes <- rownames(object)
   object <- Seurat::NormalizeData(object) %>% 
-    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 4000)
+    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = nfeatures)
   projects <- Seurat::SplitObject(object, split.by = "orig.ident")
   anchors <- Seurat::SelectIntegrationFeatures(object.list = projects)
   combined.data <- projects %>%
@@ -65,14 +65,9 @@ Integration.SeuratCCA <- function(object, outdir, project, used, dim){
 #' @method Integration SeuratRPCA
 #' @concept integration
 #'
-Integration.SeuratRPCA <- function(object, outdir, project, used, dim, reference = c(1,2)){
-  #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
-  #projects <- lapply(projects, FUN = function(x) {
-  #  Seurat::NormalizeData(x) %>%
-  #    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 2000)
-  #})
+Integration.SeuratRPCA <- function(object, outdir, project, used, dim, reference = c(1,2), nfeatures = 2000){
   object <- object %>% Seurat::NormalizeData() %>% 
-    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 4000)
+    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = nfeatures)
   projects <- Seurat::SplitObject(object, split.by = "orig.ident")
   anchors <- Seurat::SelectIntegrationFeatures(object.list = projects)
   # difference with SeruatCCA, run PCA first then
@@ -120,10 +115,10 @@ Integration.SeuratRPCA <- function(object, outdir, project, used, dim, reference
 #' @method Integration SCTransform
 #' @rdname Integration
 #'
-Integration.SCTransform <- function(object, outdir, project, used, dim){
+Integration.SCTransform <- function(object, outdir, project, used, dim, nfeatures = 2000){
   object <- Seurat::SCTransform(object)
   projects <- Seurat::SplitObject(object, split.by = "orig.ident")
-  features <- Seurat::SelectIntegrationFeatures(object.list = projects, nfeatures = 4000)
+  features <- Seurat::SelectIntegrationFeatures(object.list = projects, nfeatures = nfeatures)
   pojects <- Seurat::PrepSCTIntegration(object.list = projects, anchor.features = features)
   anchors <- Seurat::FindIntegrationAnchors(object.list = pojects, normalization.method = "SCT", anchor.features = features)
   combined.data <- Seurat::IntegrateData(anchorset = anchors, normalization.method = "SCT") %>%
@@ -163,11 +158,11 @@ Integration.SCTransform <- function(object, outdir, project, used, dim){
 #' @export
 #' @rdname Integration
 #'
-Integration.Harmony <- function(object, outdir, project, used, dim){
+Integration.Harmony <- function(object, outdir, project, used, dim, nfeatures = 2000){
   all.genes <- rownames(object)
   combined.data <- object %>%
     Seurat::NormalizeData()  %>%
-    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = 4000) %>%
+    Seurat::FindVariableFeatures(selection.method = "vst", nfeatures = nfeatures) %>%
     Seurat::ScaleData() %>%
     Seurat::RunPCA(npcs = dim) %>%
     Seurat::FindNeighbors() %>%
@@ -215,14 +210,14 @@ Integration.Harmony <- function(object, outdir, project, used, dim){
 #' @method Integration Liger
 #' @rdname Integration
 #'
-Integration.Liger <- function(object, outdir, project, used, dim){
+Integration.Liger <- function(object, outdir, project, used, dim, nfeatures = 2000){
   #projects <- MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
   #combined.data <- merge(projects[[1]], tail(projects, length(projects)-1))
   all.genes <- rownames(object)
   combined.data <- object
   combined.data <- combined.data %>%
     Seurat::NormalizeData()  %>%
-    Seurat::FindVariableFeatures(nfeatures = 4000) %>%
+    Seurat::FindVariableFeatures(nfeatures = nfeatures) %>%
     Seurat::ScaleData(split.by = "orig.ident", do.center = FALSE) %>%
     Seurat::RunPCA(npcs = dim) %>%
     SeuratWrappers::RunOptimizeALS(k = dim, split.by = "orig.ident")  %>%
