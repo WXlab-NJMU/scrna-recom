@@ -172,7 +172,7 @@ Integration.Harmony <- function(object, outdir, project, used, dim){
     Seurat::RunPCA(npcs = dim) %>%
     Seurat::FindNeighbors() %>%
     Seurat::FindClusters()
-  combined.data <- harmony::RunHarmony(combined.data, group.by.vars = c("seurat_clusters", "orig.ident"))
+  combined.data <- harmony::RunHarmony(combined.data, group.by.vars = c("orig.ident"))
   combined.data <- Seurat::RunUMAP(combined.data,
                                    dims = 1:ncol(combined.data[["harmony"]]), reduction = "harmony")
   combined.data <- Seurat::FindNeighbors(combined.data, reduction = "harmony") %>% Seurat::FindClusters()

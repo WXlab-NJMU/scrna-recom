@@ -92,13 +92,12 @@ group_qc <- function (csv, outdir, project,
   # read raw data
   inputs <- read.csv(csv)
   samples <- inputs[["sample"]]
-  sample.data <- apply(inputs, 1, FUN = function(item) {
-    indir  <- item[["path"]]
-    sample  <- item[["sample"]]
-    data <- Seurat::Read10X(data.dir = indir) %>% Seurat::CreateSeuratObject(project = sample)
-    data[["percent.mt"]] <- Seurat::PercentageFeatureSet(data, pattern = "^MT-")
-    data[["percent.hb"]] <- Seurat::PercentageFeatureSet(data, pattern = "^HB[AB]")
-    data
+  sample.data <- apply(inputs, 1, function(item) {
+    data <- Seurat::Read10X(data.dir = item[["path"]])
+    object <- Seurat::CreateSeuratObject(counts = data, project = item[["sample"]])
+    object[["percent.mt"]] <- Seurat::PercentageFeatureSet(object, pattern = "^MT-")
+    object[["percent.hb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^HB[AB]")
+    object
   })
   raw.data <- merge(sample.data[[1]], tail(sample.data, length(sample.data)-1),
                     add.cell.ids = samples, project = project)
