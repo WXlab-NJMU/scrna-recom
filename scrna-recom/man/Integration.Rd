@@ -9,25 +9,68 @@
 \alias{Integration.Liger}
 \title{Project Data Integration}
 \usage{
-Integration(csv, outdir, project, used = "SeuratCCA", dim, ...)
+Integration(csv, outdir, project, used = "SeuratCCA", ...)
 
-\method{Integration}{SeuratCCA}(object, outdir, project, used, dim, nfeatures = 2000)
+\method{Integration}{SeuratCCA}(
+  object,
+  outdir,
+  project,
+  used,
+  dim = 30,
+  nfeatures = 2000,
+  k = 20,
+  resolution = 0.5,
+  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
+)
 
 \method{Integration}{SeuratRPCA}(
   object,
   outdir,
   project,
   used,
-  dim,
-  reference = c(1, 2),
-  nfeatures = 2000
+  ref.samples = c(0, 1),
+  dim = 30,
+  nfeatures = 2000,
+  k = 20,
+  resolution = 0.5,
+  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 
-\method{Integration}{SCTransform}(object, outdir, project, used, dim, nfeatures = 2000)
+\method{Integration}{SCTransform}(
+  object,
+  outdir,
+  project,
+  used,
+  dim = 30,
+  nfeatures = 2000,
+  k = 20,
+  resolution = 0.5,
+  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
+)
 
-\method{Integration}{Harmony}(object, outdir, project, used, dim, nfeatures = 2000)
+\method{Integration}{Harmony}(
+  object,
+  outdir,
+  project,
+  used,
+  dim = 30,
+  nfeatures = 2000,
+  k = 20,
+  resolution = 0.5,
+  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
+)
 
-\method{Integration}{Liger}(object, outdir, project, used, dim, nfeatures = 2000)
+\method{Integration}{Liger}(
+  object,
+  outdir,
+  project,
+  used,
+  dim = 30,
+  nfeatures = 2000,
+  k = 20,
+  resolution = 0.5,
+  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
+)
 }
 \arguments{
 \item{csv}{The header is "project,path", the path must included matrix.mtx, genes.tsv, bardcodes.tsv}

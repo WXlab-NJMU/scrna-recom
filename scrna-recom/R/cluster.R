@@ -18,7 +18,7 @@ library(dplyr)
 #'
 clustering <- function (input, outdir, project, 
                         nfeatures = 2000, plot.features = c("nFeature_RNA", "percent.mt", "percent.rb"),
-                        reduction = "pca", dims = 30, resolution = 0.5){
+                        reduction = "pca", dims = 30, k =20, resolution = 0.5){
   # create outdir
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
@@ -43,20 +43,25 @@ clustering <- function (input, outdir, project,
   }
   ## features
   input <- Seurat::FindVariableFeatures(input, selection.method = "vst", nfeatures = as.numeric(nfeatures))
+  top10 <- head(Seurat::VariableFeatures(input), 10)
+  p <- Seurat::VariableFeaturePlot(input)
+  p <- Seurat::LabelPoints(plot = p, points = top10, 
+                           repel = TRUE, xnudge = 0, ynudge = 0) + ggplot2::theme(legend.position="bottom")
+  print(p)
   if (reduction == "pca") {
     # pca
     input <- Seurat::ScaleData(input)
-    input <- Seurat::RunPCA(input, npcs = as.numeric(dims), 
+    input <- Seurat::RunPCA(input, npcs = dims, 
                             features = Seurat::VariableFeatures(object = input))
-    p1 <- Seurat::DimPlot(input, reduction = reduction)
+    p1 <- Seurat::DimPlot(input, reduction = reduction, shuffle = TRUE, group.by = c("orig.ident")) 
     print(p1)
     p2 <- Seurat::VizDimLoadings(input, dims = 1:9, reduction = reduction) & 
       ggplot2::theme(axis.text=ggplot2::element_text(size=5), 
                      axis.title=ggplot2::element_text(size=8,face="bold"))
     print(p2)
-    p3 <- Seurat::DimHeatmap(input, dims = 1:6, nfeatures = 20, cells = 500, balanced = T)
+    p3 <- Seurat::DimHeatmap(input, reduction = reduction, dims = 1:6, nfeatures = 20, cells = 500, balanced = T)
     print(p3)
-    p4 <- Seurat::ElbowPlot(input)
+    p4 <- Seurat::ElbowPlot(input, reduction = reduction)
     print(p4)
   } else if (reduction == "harmony"){
     input <- Seurat::ScaleData(input)
@@ -64,6 +69,16 @@ clustering <- function (input, outdir, project,
       input <- Seurat::RunPCA(input, npcs = dims)
       input <- harmony::RunHarmony(input, group.by.vars = c("orig.ident"))
     }
+    p1 <- Seurat::DimPlot(input, reduction = reduction, shuffle = TRUE, group.by = c("orig.ident")) 
+    print(p1)
+    p2 <- Seurat::VizDimLoadings(input, dims = 1:9, reduction = reduction) & 
+      ggplot2::theme(axis.text=ggplot2::element_text(size=5), 
+                     axis.title=ggplot2::element_text(size=8,face="bold"))
+    print(p2)
+    p3 <- Seurat::DimHeatmap(input, reduction = reduction, dims = 1:6, nfeatures = 20, cells = 500, balanced = T)
+    print(p3)
+    p4 <- Seurat::ElbowPlot(input, reduction = reduction)
+    print(p4)
   } else if (reduction == "iNMF") {
     ## scale
     input <- Seurat::ScaleData(input, split.by = "orig.ident", do.center = FALSE)
@@ -72,22 +87,30 @@ clustering <- function (input, outdir, project,
       input <- SeuratWrappers::RunOptimizeALS(input, k = dims, split.by = "orig.ident") %>%
         SeuratWrappers::RunQuantileNorm(split.by = "orig.ident")  
     }
+    p1 <- Seurat::DimPlot(input, reduction = reduction, shuffle = TRUE, group.by = c("orig.ident"))     
+    print(p1)
   }
   # cluster
-  input <- Seurat::FindNeighbors(input, reduction = reduction, dims = 1:as.numeric(dims))
+  input <- Seurat::FindNeighbors(input, reduction = reduction, k.param = k, dims = 1:dims)
   input <- Seurat::FindClusters(input, resolution = resolution)
   # umap
-  input <- Seurat::RunUMAP(input, dims = 1:as.numeric(dims), verbose = F)
-  write.table(table(input@meta.data$seurat_clusters), 
+  input <- Seurat::RunUMAP(input, dims = 1:dims, reduction = reduction)
+  write.table(table(input@meta.data$seurat_clusters, input@meta.data$orig.ident), 
               paste0(prefix, ".clusters.tsv"),
               quote = FALSE, row.names = FALSE)
-  p5 <- Seurat::DimPlot(input, label.size = 5, repel = T,label = T)
+  p5 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
+                        label.size = 5, repel = T,label = T)
   print(p5)
+  p6 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
+  print(p6)
+  p7 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", split.by = "orig.ident") 
+  print(p7)
   # plot features
   for (feature in plot.features){
-    p <- Seurat::FeaturePlot(input, features = feature) & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+    p <- Seurat::FeaturePlot(input, reduction = "umap", features = feature) & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
   dev.off()
   saveRDS(input, paste0(prefix, ".rds"))
+  return(input)
 }
