@@ -23,6 +23,7 @@ print(argv$plot)
 # prepare
 object <- readRDS(argv$input)
 outdir <- argv$outdir
+if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
 project <- argv$project
 dim = argv$dim
 nfeatures = argv$nfeatures
