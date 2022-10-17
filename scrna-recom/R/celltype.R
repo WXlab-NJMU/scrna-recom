@@ -75,8 +75,14 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
   p7 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T, label.size = 3, raster = T,
                         reduction = "umap", group.by = c("seurat_clusters", "orig.ident")) & Seurat::NoLegend()
   print(p7)
-  for (feature in plot.features){
-    p <- Seurat::FeaturePlot(input, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+  # plot 9 features in one
+  max.id <- length(plot.features)
+  for (i in seq(1, ceiling(max.id/9))){
+    start.id <- 9 * (i-1) + 1
+    end.id <- ifelse(i*9 > max.id, max.id, i*9)
+    features <- plot.features[start.id:end.id]
+    p <- Seurat::FeaturePlot(input, features = features, ncol = 3,
+                             reduction = "umap") & Seurat::NoLegend() & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
   dev.off()
@@ -177,10 +183,20 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   p7 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 3, 
                         reduction = "umap", group.by = c("seurat_clusters", "orig.ident")) & Seurat::NoLegend()
   print(p7)
-  for (feature in plot.features){
-    p <- Seurat::FeaturePlot(input, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+  # plot 9 features in one
+  max.id <- length(plot.features)
+  for (i in seq(1, ceiling(max.id/9))){
+    start.id <- 9 * (i-1) + 1
+    end.id <- ifelse(i*9 > max.id, max.id, i*9)
+    features <- plot.features[start.id:end.id]
+    p <- Seurat::FeaturePlot(input, features = features, ncol = 3,
+                             reduction = "umap") & Seurat::NoLegend() & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
+  #for (feature in plot.features){
+  #  p <- Seurat::FeaturePlot(input, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+  #  print(p)
+  #}
   
 
   #p1 <- SingleR::plotScoreHeatmap(out.cluster)
