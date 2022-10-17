@@ -59,20 +59,20 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
   saveRDS(input, paste0(prefix, ".rds"))
   write.table(obj@celltype, paste0(prefix, ".detail.csv"), sep = ",")
   pdf(paste0(prefix, ".pdf"))
-  p5 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T, label.size = 4,
+  p5 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 4,
                         reduction = "umap", group.by = c("scCATCH.cluster_type"))
   p5 <- p5 + ggplot2::theme(legend.position="bottom",
                             legend.text = ggplot2::element_text(size=8),
                             legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5)
   p5_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T,
-                          reduction = "umap", 
+                          reduction = "umap",
                           group.by = c("scCATCH.cluster_type"), split.by = "orig.ident")
   p5_1 <- p5_1 + ggplot2::theme(legend.position="bottom",
                                 legend.text = ggplot2::element_text(size=8),
                                 legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5_1)
-  p7 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T, label.size = 3, raster = T,
+  p7 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 3,
                         reduction = "umap", group.by = c("seurat_clusters", "orig.ident")) & Seurat::NoLegend()
   print(p7)
   # plot 9 features in one
@@ -81,7 +81,7 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
     start.id <- 9 * (i-1) + 1
     end.id <- ifelse(i*9 > max.id, max.id, i*9)
     features <- plot.features[start.id:end.id]
-    p <- Seurat::FeaturePlot(input, features = features, ncol = 3,
+    p <- Seurat::FeaturePlot(input, raster = T, features = features, ncol = 3,
                              reduction = "umap") & Seurat::NoLegend() & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
@@ -156,31 +156,31 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   write.table(out.cluster, paste0(prefix, ".clusters.detail.tsv"), row.names = F)
   write.table(out.barcode, paste0(prefix, ".barcodes.detail.tsv"), row.names = F)
   pdf(paste0(prefix, ".pdf"))
-  p4 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, 
+  p4 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T,
                         reduction = "umap", group.by = c("SingleR.cell_type"))
   p4 <- p4 + ggplot2::theme(legend.position="bottom",
                             legend.text = ggplot2::element_text(size=8),
                             legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p4)
-  p4_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, reduction = "umap", 
+  p4_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, reduction = "umap",
                         group.by = c("SingleR.cell_type"), split.by = "orig.ident")
   p4_1 <- p4_1 + ggplot2::theme(legend.position="bottom",
                                 legend.text = ggplot2::element_text(size=8),
                                 legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p4_1)
-  p5 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T, label.size = 3,
+  p5 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 3,
                         reduction = "umap", group.by = c("SingleR.cluster_type"))
   p5 <- p5 + ggplot2::theme(legend.position="bottom",
                             legend.text = ggplot2::element_text(size=8),
                             legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5)
-  p5_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, reduction = "umap", 
+  p5_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, reduction = "umap",
                           group.by = c("SingleR.cluster_type"), split.by = "orig.ident")
   p5_1 <- p5_1 + ggplot2::theme(legend.position="bottom",
                                 legend.text = ggplot2::element_text(size=8),
                                 legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5_1)
-  p7 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 3, 
+  p7 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 3,
                         reduction = "umap", group.by = c("seurat_clusters", "orig.ident")) & Seurat::NoLegend()
   print(p7)
   # plot 9 features in one
@@ -189,7 +189,7 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
     start.id <- 9 * (i-1) + 1
     end.id <- ifelse(i*9 > max.id, max.id, i*9)
     features <- plot.features[start.id:end.id]
-    p <- Seurat::FeaturePlot(input, features = features, ncol = 3,
+    p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,
                              reduction = "umap") & Seurat::NoLegend() & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
@@ -197,7 +197,7 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   #  p <- Seurat::FeaturePlot(input, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
   #  print(p)
   #}
-  
+
 
   #p1 <- SingleR::plotScoreHeatmap(out.cluster)
   #print(p1)
