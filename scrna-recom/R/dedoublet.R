@@ -62,7 +62,6 @@ remove_doublet <- function (input, outdir, project,
   p4 <- Seurat::DimPlot(input, reduction = "tsne", shuffle = TRUE, raster = T,
                   split.by = "orig.ident", group.by = c(classify.pANN2)) & Seurat::NoLegend()
   print(p4)
-  dev.off()
   saveRDS(input, paste0(prefix, ".before.rds"))
   # keep only singlet
   classify <- input@meta.data[classify.pANN2]
@@ -92,6 +91,7 @@ remove_doublet <- function (input, outdir, project,
       ggplot2::theme(legend.position="bottom", legend.text = ggplot2::element_text(size=8))
     print(p6_1)   
   }
+  dev.off()
   saveRDS(output, paste0(prefix, ".after.rds"))
   return(output)
 }
