@@ -10,7 +10,7 @@ p <- add_argument(p, "--method", help="reduction method, pca harmony or iNMF", t
 p <- add_argument(p, "--dims", help="dimensions", type="numeric", default = 30)
 p <- add_argument(p, "--resolution", help="resolution of cluster", type="numeric", default = 0.5)
 p <- add_argument(p, "--kparam", help="k of knn in FindNeighbor", type="numeric", default = 20)
-p <- add_argument(p, "--plot", nargs='*', 
+p <- add_argument(p, "--plot", nargs='*', type="character",
                   default = c("nFeature_RNA", "percent.mt", "percent.rb"),
                   help="features to plot on umap")
 argv <- parse_args(p)

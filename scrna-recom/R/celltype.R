@@ -30,9 +30,10 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
                                      strict = FALSE,
                                      geneinfo = scCATCH::geneinfo,
                                      cellmatch = scCATCH::cellmatch,
-                                     cell_min_pct = 0.25, logfc = 0.25, pvalue = 0.05) {
-  #geneinfo = scCATCH::geneinfo
-  #cellmatch = scCATCH::cellmatch
+                                     cell_min_pct = 0.25, logfc = 0.25, pvalue = 0.05,
+                                     plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")) {
+  if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
+  prefix <- file.path(outdir, sprintf("%s.celltype.scCATCH.tissue=%s", project, sub(" ","_",tissue)))
   # revise gene symbol for scRNA data
   expr.norm.data <- input[['RNA']]@data
   expr.norm.data <- scCATCH::rev_gene(data = expr.norm.data, species = species,
@@ -47,34 +48,37 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
   obj <- scCATCH::findcelltype(object = obj)
   # write output
   clusters <- obj@celltype
-  clusters <- sapply(input@active.ident,
-                     function(x) ifelse(x %in% clusters$cluster,
-                                        clusters[clusters$cluster == x,]$cell_type,
-                                        "unknown"))
-  meta.cluster <- data.frame(clusters, row.names = Seurat::Cells(input))
+  write.table(clusters, paste0(prefix, ".clusters.detail.tsv"))
+  meta.clusters <- sapply(input@active.ident,
+                          function(x) ifelse(x %in% clusters$cluster,
+                                            clusters[clusters$cluster == x,]$cell_type,
+                                            "unknown"))
+  meta.cluster <- data.frame(meta.clusters, row.names = Seurat::Cells(input))
   input <- Seurat::AddMetaData(input, metadata = meta.cluster,
                                col.name = "scCATCH.cluster_type")
-
-  prefix <- file.path(outdir, sprintf("%s.celltype.scCATCH.tissue=%s",
-                                      project, sub(" ","_",tissue)))
   saveRDS(input, paste0(prefix, ".rds"))
   write.table(obj@celltype, paste0(prefix, ".detail.csv"), sep = ",")
   pdf(paste0(prefix, ".pdf"))
-  p5 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T,
+  p5 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T, label.size = 4,
                         reduction = "umap", group.by = c("scCATCH.cluster_type"))
   p5 <- p5 + ggplot2::theme(legend.position="bottom",
                             legend.text = ggplot2::element_text(size=8),
                             legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5)
-  p5_1 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T, label.size = 3,
+  p5_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T,
                           reduction = "umap", 
                           group.by = c("scCATCH.cluster_type"), split.by = "orig.ident")
   p5_1 <- p5_1 + ggplot2::theme(legend.position="bottom",
                                 legend.text = ggplot2::element_text(size=8),
                                 legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5_1)
-  p7 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
+  p7 <- Seurat::DimPlot(input, shuffle = TRUE, label = T, repel = T, label.size = 3, raster = T,
+                        reduction = "umap", group.by = c("seurat_clusters", "orig.ident")) & Seurat::NoLegend()
   print(p7)
+  for (feature in plot.features){
+    p <- Seurat::FeaturePlot(input, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+    print(p)
+  }
   dev.off()
 }
 
@@ -103,7 +107,10 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
 #' @concept cell type annotation
 #'
 AnnotateCellType.SingleR <- function(input, outdir, project, used,
-                                     reference = NULL, level = NULL) {
+                                     reference = NULL, level = NULL,
+                                     plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")) {
+  if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
+  prefix <- file.path(outdir, sprintf("%s.celltype.SingleR.dataset=%s", project, reference))
   if (reference == "HumanPrimaryCellAtlasData") {
     refdata <- celldex::HumanPrimaryCellAtlasData() #general, 158 entries
   }else if (reference == "BlueprintEncodeData"){
@@ -126,6 +133,7 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   } else if (level == "ont") {
     labels <- refdata$label.ont
   }
+
   # scale data: input@assays[["integrated"]]@scale.data
   # use norm data: input@assays[["integrated"]]@data
   out.cluster <- SingleR::SingleR(test = input@assays[["RNA"]]@data, clusters = input@active.ident,
@@ -135,21 +143,20 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   table(out.cluster$labels)
   table(out.barcode$labels)
 
-  input <- Seurat::AddMetaData(input, metadata = factor(out.barcode$pruned.labels), col.name = "SingleR.cell_type")
-  meta.cluster <- sapply(input@active.ident, function(x) out.cluster$pruned.labels[as.integer(x)+1])
+  input <- Seurat::AddMetaData(input, metadata = out.barcode$pruned.labels, col.name = "SingleR.cell_type")
+  meta.cluster <- sapply(input@active.ident, function(x) out.cluster$pruned.labels[as.integer(x)])
   input <- Seurat::AddMetaData(input, metadata = meta.cluster, col.name = "SingleR.cluster_type")
-
-  prefix <- file.path(outdir, sprintf("%s.celltype.SingleR.dataset=%s", project, reference))
   saveRDS(input, paste0(prefix, ".rds"))
-  write.table(out.cluster, paste0(prefix, ".clusters.detail.csv"), sep = ",")
-  write.table(out.barcode, paste0(prefix, ".barcodes.detail.csv"), sep = ",")
+  write.table(out.cluster, paste0(prefix, ".clusters.detail.tsv"), row.names = F)
+  write.table(out.barcode, paste0(prefix, ".barcodes.detail.tsv"), row.names = F)
   pdf(paste0(prefix, ".pdf"))
-  p4 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("SingleR.cell_type"))
+  p4 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, 
+                        reduction = "umap", group.by = c("SingleR.cell_type"))
   p4 <- p4 + ggplot2::theme(legend.position="bottom",
                             legend.text = ggplot2::element_text(size=8),
                             legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p4)
-  p4_1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", 
+  p4_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, reduction = "umap", 
                         group.by = c("SingleR.cell_type"), split.by = "orig.ident")
   p4_1 <- p4_1 + ggplot2::theme(legend.position="bottom",
                                 legend.text = ggplot2::element_text(size=8),
@@ -161,17 +168,20 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
                             legend.text = ggplot2::element_text(size=8),
                             legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5)
-  p5_1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", 
+  p5_1 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, reduction = "umap", 
                           group.by = c("SingleR.cluster_type"), split.by = "orig.ident")
   p5_1 <- p5_1 + ggplot2::theme(legend.position="bottom",
                                 legend.text = ggplot2::element_text(size=8),
                                 legend.key.size = ggplot2::unit(0.1, 'cm'))
   print(p5_1)
-  p7 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"))
-  p7 <- p7 + ggplot2::theme(legend.position="bottom",
-                            legend.text = ggplot2::element_text(size=8),
-                            legend.key.size = ggplot2::unit(0.1, 'cm'))
+  p7 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 3, 
+                        reduction = "umap", group.by = c("seurat_clusters", "orig.ident")) & Seurat::NoLegend()
   print(p7)
+  for (feature in plot.features){
+    p <- Seurat::FeaturePlot(input, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+    print(p)
+  }
+  
 
   #p1 <- SingleR::plotScoreHeatmap(out.cluster)
   #print(p1)
