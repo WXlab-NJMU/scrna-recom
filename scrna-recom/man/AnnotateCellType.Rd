@@ -20,10 +20,19 @@ AnnotateCellType(input, outdir, project, used = "SingleR", ...)
   cellmatch = scCATCH::cellmatch,
   cell_min_pct = 0.25,
   logfc = 0.25,
-  pvalue = 0.05
+  pvalue = 0.05,
+  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 
-\method{AnnotateCellType}{SingleR}(input, outdir, project, used, reference = NULL, level = NULL)
+\method{AnnotateCellType}{SingleR}(
+  input,
+  outdir,
+  project,
+  used,
+  reference = NULL,
+  level = NULL,
+  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
+)
 }
 \arguments{
 \item{input}{Seurat input object}

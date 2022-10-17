@@ -129,27 +129,6 @@ CellType <- function (input, outdir) {
   return(outrds)
 }
 
-RemoveDoublet <- function (input, outdir) {
-  # input seurat object after NormalizeData, FindVariableGenes, ScaleData, RunPCA, and RunTSNE
-  pbmc <- readRDS(c(input))
-  # pk
-  sweep.res <- DoubletFinder::paramSweep_v3(pbmc, PCs = 1:20, sct = FALSE)
-  sweep.stats <- DoubletFinder::summarizeSweep(sweep.res, GT = FALSE)
-  bcmvn <- DoubletFinder::find.pK(sweep.stats)
-  mpK<-as.numeric(as.vector(bcmvn$pK[which.max(bcmvn$BCmetric)]))
-  # nExp
-  annotations <- pbmc@meta.data$seurat_clusters
-  homotypic.prop <- DoubletFinder::modelHomotypic(annotations)      ## ex: annotations <- seu_kidney@meta.data$ClusteringResults
-  nExp_poi <- round(0.075*nrow(pbmc@meta.data))   ## Assuming 7.5% doublet formation rate - tailor for your dataset
-  nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
-  # final
-  pbmc <- DoubletFinder::doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = mpK, nExp = nExp_poi, reuse.pANN = FALSE, sct = FALSE)
-  pbmc <- DoubletFinder::doubletFinder_v3(pbmc, PCs = 1:10, pN = 0.25, pK = mpK, nExp = nExp_poi.adj, reuse.pANN = paste("pANN", 0.25, mpK, nExp_poi, sep="_"), sct = FALSE)
-  outrds = file.path(outdir, "remove_doublet.rds")
-  saveRDS(pbmc, outrds)
-  return(outrds)
-  
-}
 
 #' Basic Analysis Using Seurat
 #'

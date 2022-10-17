@@ -17,6 +17,7 @@ Collate:
     'celltype.R'
     'cluster.R'
     'communication.R'
+    'dedoublet.R'
     'integration.R'
     'metabolism.R'
     'qc.R'
