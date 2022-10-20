@@ -13,6 +13,6 @@ print(argv$plot)
 
 library(scrnaRecom)
 input <- readRDS(argv$input)
-remove_doublet(input, argv$outdir, argv$project, 
+group_remove_doublet(input, argv$outdir, argv$project, 
                nfeatures = argv$nfeatures, dims = argv$dims)
 

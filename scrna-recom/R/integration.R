@@ -33,27 +33,27 @@ Integration.SeuratCCA <- function(object, outdir, project, used,
     Seurat::RunUMAP(reduction = "pca", dims = 1:dim) %>%
     Seurat::FindNeighbors(reduction = "pca", dims = 1:dim, k.param = k) %>%
     Seurat::FindClusters(resolution = resolution)
-  p1 <- Seurat::DimPlot(
-    object = combined.data, reduction = "pca", 
-    group.by = c("orig.ident", "seurat_clusters"),
-    shuffle = TRUE, label = T, repel = T) & Seurat::NoLegend() & ggplot2::labs(title = "after integration")
+  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"),shuffle = TRUE, raster = T, label = T, repel = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(title = "after integration")
   print(p1)
-  p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
-  p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+  p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
+  p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   print(p2 + p3)
-  p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                        group.by = c("orig.ident")) & ggplot2::labs(title = "after integration")
+  p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) & 
+    ggplot2::labs(title = "after integration")
   print(p7)
-  p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                          group.by = c("seurat_clusters")) & ggplot2::labs(title = "after integration")
+  p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7_1)
-  p7_2 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, 
-                          split.by = "orig.ident") + Seurat::NoLegend() & ggplot2::labs(caption = "after integration")
+  p7_2 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, split.by = "orig.ident", raster = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(caption = "after integration")
   print(p7_2)
-  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
-  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
+  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"), raster = T)
+  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"), raster = T)
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
@@ -66,7 +66,8 @@ Integration.SeuratCCA <- function(object, outdir, project, used,
     combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")  
   }
   for (feature in plot.features){
-    p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+    p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap", raster = T) & 
+      ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
   dev.off()
@@ -113,27 +114,35 @@ Integration.SeuratRPCA <- function(object, outdir, project, used, ref.samples = 
     Seurat::FindNeighbors(reduction = "pca", dims = 1:dim, k.param = k) %>%
     Seurat::FindClusters(resolution = resolution)
   DefaultAssay(combined.data) <- "integrated"
-  p1 <- Seurat::DimPlot(
-    object = combined.data, reduction = "pca", 
-    group.by = c("orig.ident", "seurat_clusters"),
-    shuffle = TRUE, label = T, repel = T) & Seurat::NoLegend() & ggplot2::labs(title = "after integration")
+  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"),
+                        shuffle = TRUE, label = T, repel = T, raster = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(title = "after integration")
   print(p1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   print(p2 + p3)
   p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                        group.by = c("orig.ident")) & ggplot2::labs(title = "after integration")
+                        group.by = c("orig.ident"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7)
   p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                          group.by = c("seurat_clusters")) & ggplot2::labs(title = "after integration")
+                          group.by = c("seurat_clusters"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7_1)
   p7_2 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, 
-                          split.by = "orig.ident") + Seurat::NoLegend() & ggplot2::labs(caption = "after integration")
+                          split.by = "orig.ident", raster = T) &
+    Seurat::NoLegend() & 
+    ggplot2::labs(caption = "after integration")
   print(p7_2)
-  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
-  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
+  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", 
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T)
+  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", 
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T)
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
@@ -146,7 +155,8 @@ Integration.SeuratRPCA <- function(object, outdir, project, used, ref.samples = 
     combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")  
   }
   for (feature in plot.features){
-    p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
+    p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap", raster = T) & 
+      ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
   dev.off()
@@ -180,27 +190,33 @@ Integration.SCTransform <- function(object, outdir, project, used,
     Seurat::RunUMAP(reduction = "pca", dims = 1:dim) %>%
     Seurat::FindNeighbors(reduction = "pca", dims = 1:dim, k.param = k) %>%
     Seurat::FindClusters(resolution = resolution)
-  p1 <- Seurat::DimPlot(
-    object = combined.data, reduction = "pca", 
-    group.by = c("orig.ident", "seurat_clusters"),
-    shuffle = TRUE, label = T, repel = T) & Seurat::NoLegend() & ggplot2::labs(title = "after integration")
+  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", group.by = c("orig.ident", "seurat_clusters"),
+                        shuffle = TRUE, label = T, repel = T, raster = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(title = "after integration")
   print(p1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   print(p2 + p3)
   p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                        group.by = c("orig.ident")) & ggplot2::labs(title = "after integration")
+                        group.by = c("orig.ident"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7)
   p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                          group.by = c("seurat_clusters")) & ggplot2::labs(title = "after integration")
+                          group.by = c("seurat_clusters"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7_1)
   p7_2 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, 
-                          split.by = "orig.ident") + Seurat::NoLegend() & ggplot2::labs(caption = "after integration")
+                          split.by = "orig.ident", raster = T) &
+    Seurat::NoLegend() & 
+    ggplot2::labs(caption = "after integration")
   print(p7_2)
-  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
-  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
+  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"), raster = T)
+  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"), raster = T)
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
@@ -247,18 +263,23 @@ Integration.Harmony <- function(object, outdir, project, used,
     Seurat::RunUMAP(reduction = "pca", dims = 1:dim) %>%
     Seurat::FindNeighbors(reduction = "pca", dims = 1:dim, k.param = k) %>%
     Seurat::FindClusters(resolution = resolution)
-  p1 <- Seurat::DimPlot(
-    object = combined.data, reduction = "pca", 
-    group.by = c("orig.ident", "seurat_clusters"),
-    shuffle = TRUE, label = T, repel = T) & Seurat::NoLegend() & ggplot2::labs(title = "before integration")
+  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", 
+                        group.by = c("orig.ident", "seurat_clusters"),
+                        shuffle = TRUE, label = T, repel = T, raster = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(title = "before integration")
   print(p1)
   p1_1 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, 
-                          split.by = "orig.ident") + Seurat::NoLegend() & ggplot2::labs(caption = "before integration")
+                          split.by = "orig.ident", raster = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(caption = "before integration")
   print(p1_1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "before integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "before integration")
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "before integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "before integration")
   print(p2 + p3)
   
   # do harmony
@@ -267,26 +288,34 @@ Integration.Harmony <- function(object, outdir, project, used,
     Seurat::RunUMAP(reduction = "harmony", dims = 1:ncol(combined.data[["harmony"]])) %>%
     Seurat::FindNeighbors(reduction = "harmony", dims = 1:dim, k.param = k) %>%
     Seurat::FindClusters(resolution = resolution)
-  p4 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, 
-                        group.by = c("orig.ident"),
-                        reduction = "harmony")  & ggplot2::labs(title = "after integration")
+  p4 <- Seurat::DimPlot(object = combined.data, reduction = "harmony", group.by = c("orig.ident"),
+                        shuffle = TRUE, raster = T)  & 
+    ggplot2::labs(title = "after integration")
   print(p4)
   p5 <- Seurat::VlnPlot(object = combined.data, features = "harmony_1", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   p6 <- Seurat::VlnPlot(object = combined.data, features = "harmony_2", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   print(p5 + p6)
   p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                        group.by = c("orig.ident")) & ggplot2::labs(title = "after integration")
+                        group.by = c("orig.ident"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7)
   p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                          group.by = c("seurat_clusters")) & ggplot2::labs(title = "after integration")
+                          group.by = c("seurat_clusters"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7_1)
   p7_2 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, 
-                          split.by = "orig.ident") + Seurat::NoLegend() & ggplot2::labs(caption = "after integration")
+                          split.by = "orig.ident", raster = T) &
+    Seurat::NoLegend() & 
+    ggplot2::labs(caption = "after integration")
   print(p7_2)
-  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
-  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
+  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", 
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T)
+  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", 
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T)
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
@@ -332,18 +361,23 @@ Integration.Liger <- function(object, outdir, project, used,
     Seurat::RunUMAP(reduction = "pca", dims = 1:dim) %>%
     Seurat::FindNeighbors(reduction = "pca", dims = 1:dim, k.param = k) %>%
     Seurat::FindClusters(resolution = resolution)
-  p1 <- Seurat::DimPlot(
-    object = combined.data, reduction = "pca", 
-    group.by = c("orig.ident", "seurat_clusters"),
-    shuffle = TRUE, label = T, repel = T) & Seurat::NoLegend() & ggplot2::labs(title = "before integration")
+  p1 <- Seurat::DimPlot(object = combined.data, reduction = "pca", 
+                        group.by = c("orig.ident", "seurat_clusters"),
+                        shuffle = TRUE, label = T, repel = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(title = "before integration")
   print(p1)
   p1_1 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, 
-                          split.by = "orig.ident") + Seurat::NoLegend() & ggplot2::labs(caption = "before integration")
+                          split.by = "orig.ident", raster = T) &
+    Seurat::NoLegend() & 
+    ggplot2::labs(caption = "before integration")
   print(p1_1)
   p2 <- Seurat::VlnPlot(object = combined.data, features = "PC_1", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "before integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "before integration")
   p3 <- Seurat::VlnPlot(object = combined.data, features = "PC_2", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "before integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "before integration")
   print(p2 + p3)
   
   # do liger
@@ -355,24 +389,33 @@ Integration.Liger <- function(object, outdir, project, used,
     Seurat::FindNeighbors(reduction = "iNMF", k.param = k) %>% 
     Seurat::FindClusters(resolution = resolution)
   p4 <- Seurat::DimPlot(object = combined.data, shuffle = TRUE, reduction = "iNMF", 
-                        group.by = c("orig.ident")) & ggplot2::labs(title = "after integration")
+                        group.by = c("orig.ident"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p4)
   p5 <- Seurat::VlnPlot(object = combined.data, features = "iNMF_1", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   p6 <- Seurat::VlnPlot(object = combined.data, features = "iNMF_2", 
-                        group.by = c("orig.ident", "seurat_clusters")) & ggplot2::labs(caption = "after integration")
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T) & 
+    ggplot2::labs(caption = "after integration")
   print(p5 + p6)
   p7 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                        group.by = c("orig.ident")) & ggplot2::labs(title = "after integration")
+                        group.by = c("orig.ident"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7)
   p7_1 <- Seurat::DimPlot(combined.data, shuffle = TRUE, reduction = "umap", 
-                          group.by = c("seurat_clusters")) & ggplot2::labs(title = "after integration")
+                          group.by = c("seurat_clusters"), raster = T) & 
+    ggplot2::labs(title = "after integration")
   print(p7_1)
   p7_2 <- Seurat::DimPlot(combined.data, reduction = "umap", ncol = 3, 
-                          split.by = "orig.ident") + Seurat::NoLegend() & ggplot2::labs(caption = "after integration")
+                          split.by = "orig.ident", raster = T) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(caption = "after integration")
   print(p7_2)
-  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"))
-  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"))
+  p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", 
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T)
+  p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", 
+                        group.by = c("orig.ident", "seurat_clusters"), raster = T)
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
