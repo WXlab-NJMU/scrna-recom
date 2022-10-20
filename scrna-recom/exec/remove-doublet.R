@@ -1,11 +1,10 @@
 library(argparser)
-p <- arg_parser("scRNA Batch Correction")
-#p <- add_argument(p, "csv", help="input matrix folder", type="character")
+p <- arg_parser("scRNA Doublet Removal")
 p <- add_argument(p, "input", help="input seurat rds file", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")
 p <- add_argument(p, "--dims", type="numeric", default=50,
-                  help="feature nums, npcs in Seurat::RunPCA, default is 30")
+                  help="npcs in Seurat::RunPCA, default is 50")
 p <- add_argument(p, "--nfeatures", type="numeric", default=2000,
                   help="number of variable features to use for scaledata and pca, default is 2000")
 

@@ -18,7 +18,7 @@ library(dplyr)
 #'
 clustering <- function (input, outdir, project, 
                         nfeatures = 2000, plot.features = c("nFeature_RNA", "percent.mt", "percent.rb"),
-                        reduction = "pca", dims = 30, k =20, resolution = 0.5){
+                        reduction = "pca", dims = 30, k =20, resolution = 0.8){
   # create outdir
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)

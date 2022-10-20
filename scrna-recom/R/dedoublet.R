@@ -83,7 +83,7 @@ remove_doublet <- function (input, outdir, project,
     ggplot2::labs(title = project, caption = "After doublet removal") 
   print(p5 + p6)
   dev.off()
-  #saveRDS(output, paste0(prefix, ".after.rds"))
+  saveRDS(output, paste0(prefix, ".after.rds"))
   return(output)
 }
 
@@ -112,6 +112,6 @@ group_remove_doublet <- function(input, outdir, project,
     remove_doublet(obj, outdir, sample, nfeatures = nfeatures, dims = dims, cores = cores)
   })
   output <- merge(obj.dedoublet[[1]], tail(obj.dedoublet, length(obj.dedoublet)-1), add.cell.ids = samples, project = project)
-  saveRDS(outdir, paste0(prefix, ".rds"))
+  saveRDS(output, paste0(prefix, ".rds"))
   return(output)
 }

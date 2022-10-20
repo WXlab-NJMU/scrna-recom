@@ -16,7 +16,7 @@ NULL
 #' @concept integration
 #'
 Integration.SeuratCCA <- function(object, outdir, project, used, 
-                                  dim = 30, nfeatures = 2000, k = 20, resolution = 0.5,
+                                  dim = 30, nfeatures = 2000, k = 20, resolution = 0.8,
                                   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")){
   prefix <- file.path(outdir, sprintf("%s.debatch.seurat-cca.dim=%d", project, dim))
   pdf(paste0(prefix, ".pdf"))
@@ -90,7 +90,7 @@ Integration.SeuratCCA <- function(object, outdir, project, used,
 #' @concept integration
 #'
 Integration.SeuratRPCA <- function(object, outdir, project, used, ref.samples = c(0, 1),
-                                   dim = 30, nfeatures = 2000, k = 20, resolution = 0.5,
+                                   dim = 30, nfeatures = 2000, k = 20, resolution = 0.8,
                                    plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")){
   prefix <- file.path(outdir, sprintf("%s.debatch.seurat-rpca.dim=%d", project, dim))
   pdf(paste0(prefix, ".pdf"))
@@ -165,7 +165,7 @@ Integration.SeuratRPCA <- function(object, outdir, project, used, ref.samples = 
 #' @rdname Integration
 #'
 Integration.SCTransform <- function(object, outdir, project, used, 
-                                    dim = 30, nfeatures = 2000,k = 20, resolution = 0.5,
+                                    dim = 30, nfeatures = 2000,k = 20, resolution = 0.8,
                                     plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")){
   prefix <- file.path(outdir, sprintf("%s.debatch.seurat-sctransform.dim=%d", project, dim))
   pdf(paste0(prefix, ".pdf"))
@@ -233,7 +233,7 @@ Integration.SCTransform <- function(object, outdir, project, used,
 #' @rdname Integration
 #'
 Integration.Harmony <- function(object, outdir, project, used, 
-                                dim = 30, nfeatures = 2000, k = 20, resolution = 0.5,
+                                dim = 30, nfeatures = 2000, k = 20, resolution = 0.8,
                                 plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")){
   prefix <- file.path(outdir, sprintf("%s.debatch.harmony.dim=%d", project, dim))
   pdf(paste0(prefix, ".pdf"))
@@ -319,7 +319,7 @@ Integration.Harmony <- function(object, outdir, project, used,
 #' @rdname Integration
 #'
 Integration.Liger <- function(object, outdir, project, used, 
-                              dim = 30, nfeatures = 2000, k = 20, resolution = 0.5,
+                              dim = 30, nfeatures = 2000, k = 20, resolution = 0.8,
                               plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")){
   prefix <- file.path(outdir, sprintf("%s.debatch.liger.dim=%d", project, dim))
   pdf(paste0(prefix, ".pdf"))
