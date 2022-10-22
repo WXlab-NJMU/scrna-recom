@@ -4,6 +4,8 @@
 \alias{AnnotateCellType}
 \alias{AnnotateCellType.scCATCH}
 \alias{AnnotateCellType.SingleR}
+\alias{AnnotateCellType.CellMarker}
+\alias{AnnotateCellType.SelfMarker}
 \title{Cell Type Annotation}
 \usage{
 AnnotateCellType(input, outdir, project, used = "SingleR", ...)
@@ -33,6 +35,10 @@ AnnotateCellType(input, outdir, project, used = "SingleR", ...)
   level = NULL,
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
+
+\method{AnnotateCellType}{CellMarker}(input, outdir, project, used, tissue = NULL)
+
+\method{AnnotateCellType}{SelfMarker}(input, outdir, project, used, marker.file = NULL)
 }
 \arguments{
 \item{input}{Seurat input object}
@@ -43,7 +49,7 @@ AnnotateCellType(input, outdir, project, used = "SingleR", ...)
 
 \item{species}{Value: Human or 'Mouse'}
 
-\item{tissue}{Tissue name in scCATCH database, default Blood is used}
+\item{tissue}{tissue name in cellmarker database}
 
 \item{strict}{Use the most strict condition to identify marker genes, default is FALSE}
 
@@ -62,6 +68,8 @@ HumanPrimaryCellAtlasData、BlueprintEncodeData、MouseRNAseqData、
 DatabaseImmuneCellExpressionData、NovershternHematopoieticData、MonacoImmuneData}
 
 \item{level}{Label levels: main (broad), fine (fine-grained), ont (standard in Cell Ontology)}
+
+\item{marker.file}{csv file, including cell_name,marker_genes}
 }
 \value{
 Return a combined object
@@ -103,6 +111,20 @@ See \code{browseVignettes("SingleR::trainSingleR")}
 \itemize{
 \item input:
 }
+}
+}
+
+\section{CellMarker}{
+
+\itemize{
+\item homepage: \url{http://bio-bigdata.hrbmu.edu.cn/CellMarker/index.html}
+}
+}
+
+\section{SelfMarker}{
+
+\itemize{
+\item homepage: \url{http://bio-bigdata.hrbmu.edu.cn/CellMarker/index.html}
 }
 }
 

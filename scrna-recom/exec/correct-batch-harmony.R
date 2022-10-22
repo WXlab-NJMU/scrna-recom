@@ -1,4 +1,5 @@
 library(argparser)
+library(dplyr)
 p <- arg_parser("scRNA Batch Correction")
 #p <- add_argument(p, "csv", help="input matrix folder", type="character")
 p <- add_argument(p, "input", help="input seurat rds file", type="character")

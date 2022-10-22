@@ -56,7 +56,6 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
   meta.cluster <- data.frame(meta.clusters, row.names = Seurat::Cells(input))
   input <- Seurat::AddMetaData(input, metadata = meta.cluster,
                                col.name = "scCATCH.cluster_type")
-  saveRDS(input, paste0(prefix, ".rds"))
   write.table(obj@celltype, paste0(prefix, ".detail.csv"), sep = ",")
   pdf(paste0(prefix, ".pdf"))
   p5 <- Seurat::DimPlot(input, shuffle = TRUE, raster = T, label = T, repel = T, label.size = 4,
@@ -86,6 +85,7 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
     print(p)
   }
   dev.off()
+  saveRDS(input, paste0(prefix, ".rds"))
 }
 
 #' @section SingleR:
@@ -208,4 +208,107 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   #                          features=unique(unlist(all.markers$beta)))
   #print(p3)
   dev.off()
+}
+
+#' @section CellMarker:
+#' * homepage: <http://bio-bigdata.hrbmu.edu.cn/CellMarker/index.html>
+#' @md
+#' @param tissue tissue name in cellmarker database
+#' @import dplyr
+#' @import ggplot2
+#' @import Seurat
+#' @export
+#' @rdname AnnotateCellType
+#' @method AnnotateCellType CellMarker
+#' @concept cell type annotation
+#'
+AnnotateCellType.CellMarker <- function(input, outdir, project, used, tissue = NULL) {
+  if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
+  prefix <- file.path(outdir, sprintf("%s.celltype.CellMarker.tissue=%s", project, tissue))
+  pdf(paste0(prefix, ".pdf"))
+  markers <- dplyr::filter(cellmarkers, tissue_class == tissue)
+  cells <- markers$cell_name
+  for (cell in cells){
+    genes <- unlist(strsplit(markers[markers["cell_name"] == cell,]$marker_genes, split="\\|"))
+    genes <- intersect(genes, rownames(input))
+    cat(cell, ":", genes, "\n")
+    if (length(genes) > 1){
+      input[[cell]] <- sqrt(colMeans(as.matrix(input@assays$RNA@data)[genes,]))  
+    } else if(length(genes) == 1){
+      input[[cell]] <- as.matrix(input@assays$RNA@data)[genes,] 
+    } else {
+      cells <- cells[cells != cell]
+    }
+  }
+  p1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
+                        label.size = 5, repel = T,label = T, raster = T)
+  print(p1)
+  p2 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T) 
+  print(p2)
+  # plot 9 different cells in one
+  max.id <- length(cells)
+  for (i in seq(1, ceiling(max.id/9))){
+    start.id <- 9 * (i-1) + 1
+    end.id <- ifelse(i*9 > max.id, max.id, i*9)
+    features <- cells[start.id:end.id]
+    p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") & 
+      Seurat::NoLegend() & 
+      ggplot2::theme(plot.title = ggplot2::element_text(size=10)) 
+    print(p)
+  }
+  dev.off()
+  #saveRDS(input, paste0(prefix, ".rds"))
+  return(input)
+}
+
+#' @section SelfMarker:
+#' * homepage: <http://bio-bigdata.hrbmu.edu.cn/CellMarker/index.html>
+#' @md
+#' @param marker.file csv file, including cell_name,marker_genes
+#' @import dplyr
+#' @import ggplot2
+#' @import Seurat
+#' @export
+#' @rdname AnnotateCellType
+#' @method AnnotateCellType SelfMarker
+#' @concept cell type annotation
+#'
+AnnotateCellType.SelfMarker <- function(input, outdir, project, used, 
+                                        marker.file = NULL) {
+  if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
+  prefix <- file.path(outdir, sprintf("%s.celltype.SelfMarker", project))
+  pdf(paste0(prefix, ".pdf"))
+  selfmarkers <- readxl::read_excel(marker.file)
+  cells <- selfmarkers$cell_name
+  for (cell in cells){
+    genes <- unlist(strsplit(selfmarkers[selfmarkers["cell_name"] == cell,]$marker_genes, split=","))
+    genes <- intersect(genes, rownames(input))
+    cat(cell, ":", genes, "\n")
+    if (length(genes) > 1){
+      input[[cell]] <- sqrt(colMeans(as.matrix(input@assays$RNA@data)[genes,]))  
+    } else if(length(genes) == 1){
+      input[[cell]] <- as.matrix(input@assays$RNA@data)[genes,] 
+    } else {
+      cells <- cells[cells != cell]
+    }
+  }
+  p1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
+                        label.size = 5, repel = T,label = T, raster = T)
+  print(p1)
+  p2 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T) 
+  print(p2)
+  # plot 9 different cells in one
+  max.id <- length(cells)
+  for (i in seq(1, ceiling(max.id/9))){
+    start.id <- 9 * (i-1) + 1
+    end.id <- ifelse(i*9 > max.id, max.id, i*9)
+    features <- cells[start.id:end.id]
+    p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") & 
+      Seurat::NoLegend() & 
+      ggplot2::theme(plot.title = ggplot2::element_text(size=10)) 
+    print(p)
+  }
+  dev.off()
+  #saveRDS(input, paste0(prefix, ".rds"))
+  return(input)
 }

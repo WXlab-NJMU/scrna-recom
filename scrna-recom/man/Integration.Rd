@@ -19,7 +19,7 @@ Integration(csv, outdir, project, used = "SeuratCCA", ...)
   dim = 30,
   nfeatures = 2000,
   k = 20,
-  resolution = 0.5,
+  resolution = 0.8,
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 
@@ -32,7 +32,7 @@ Integration(csv, outdir, project, used = "SeuratCCA", ...)
   dim = 30,
   nfeatures = 2000,
   k = 20,
-  resolution = 0.5,
+  resolution = 0.8,
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 
@@ -44,7 +44,7 @@ Integration(csv, outdir, project, used = "SeuratCCA", ...)
   dim = 30,
   nfeatures = 2000,
   k = 20,
-  resolution = 0.5,
+  resolution = 0.8,
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 
@@ -56,7 +56,7 @@ Integration(csv, outdir, project, used = "SeuratCCA", ...)
   dim = 30,
   nfeatures = 2000,
   k = 20,
-  resolution = 0.5,
+  resolution = 0.8,
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 
@@ -68,7 +68,7 @@ Integration(csv, outdir, project, used = "SeuratCCA", ...)
   dim = 30,
   nfeatures = 2000,
   k = 20,
-  resolution = 0.5,
+  resolution = 0.8,
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 }

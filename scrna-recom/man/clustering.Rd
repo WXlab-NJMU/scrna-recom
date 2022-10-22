@@ -13,7 +13,7 @@ clustering(
   reduction = "pca",
   dims = 30,
   k = 20,
-  resolution = 0.5
+  resolution = 0.8
 )
 }
 \arguments{

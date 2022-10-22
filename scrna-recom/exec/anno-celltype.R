@@ -4,7 +4,7 @@ p <- arg_parser("scRNA Batch Correction")
 p <- add_argument(p, "input", help="input seurat rds file", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")
-p <- add_argument(p, "--method", help="SingleR or scCATCH",
+p <- add_argument(p, "--method", help="SingleR, scCATCH, CellMarker, SelfMarker",
                   type="character", default = "SingleR")
 p <- add_argument(p, "--reference", type="character",
                   default="MonacoImmuneData",
@@ -20,7 +20,7 @@ p <- add_argument(p, "--species", type="character", default="Human",
                   help="set when using scCATCH,
                   Human or Mouse")
 p <- add_argument(p, "--tissue", type="character", 
-                  help="set when using scCATCH,
+                  help="set when using scCATCH or CellMarker,
                   Tissue name in scCATCH database")
 p <- add_argument(p, "--minpct", type="numeric", default = 0.25, 
                   help="set when using scCATCH,
@@ -34,6 +34,9 @@ p <- add_argument(p, "--pvalue", type="numeric", default = 0.05,
 p <- add_argument(p, "--plot", nargs='*', type="character",
                   default = c("nFeature_RNA", "percent.mt", "percent.rb"),
                   help="features to plot on umap")
+p <- add_argument(p, "--markerfile", type="character", 
+                  help="set when using SelfMarker,
+                  local marker xlsx files, including cell_name,marker_genes")
 argv <- parse_args(p)
 print(argv$plot)
 
@@ -48,6 +51,10 @@ if (argv$method == "SingleR"){
                    species = argv$species, tissue = argv$tissue, 
                    cell_min_pct = argv$minpct, logfc = argv$logfc, pvalue = argv$pvalue,
                    plot.features = argv$plot)
+} else if (argv$method == "CellMarker"){
+  AnnotateCellType(object, argv$outdir, argv$project, argv$method, tissue = argv$tissue)
+} else if (argv$method == "SelfMarker"){
+  AnnotateCellType(object, argv$outdir, argv$project, argv$method, marker.file = argv$markerfile)
 } else {
   print("Method not supported!!!")
   exit()
