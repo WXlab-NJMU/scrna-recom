@@ -34,6 +34,8 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
                                      plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.celltype.scCATCH.tissue=%s", project, sub(" ","_",tissue)))
+  # Human or Mouse
+  species <- stringr::str_to_title(species)
   # revise gene symbol for scRNA data
   expr.norm.data <- input[['RNA']]@data
   expr.norm.data <- scCATCH::rev_gene(data = expr.norm.data, species = species,
@@ -113,31 +115,50 @@ AnnotateCellType.scCATCH <- function(input, outdir, project, used,
 #' @concept cell type annotation
 #'
 AnnotateCellType.SingleR <- function(input, outdir, project, used,
-                                     reference = NULL, level = NULL,
+                                     reference = NULL, level = NULL, species = "Human",
                                      plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.celltype.SingleR.dataset=%s", project, reference))
+  # Human or Mouse
+  species <- stringr::str_to_title(species)
+  # human
+  hpc <- celldex::HumanPrimaryCellAtlasData() #general, 158 entries
+  bpe <- celldex::BlueprintEncodeData() # pure stroma and immune cells, 43 entries
+  ice <- celldex::DatabaseImmuneCellExpressionData() # CD4+ T cell subsets, 15 entires
+  nh <- celldex::NovershternHematopoieticData() # greatest resolution for myeloid and progenitor cells, 38 entries
+  mi <- celldex::MonacoImmuneData() #best covers all of a typical PBMC sample, 29 entries
+  # mouse
+  mr <- celldex::MouseRNAseqData() # 28 entries
+  mig <- elldex::ImmGenData() # mouse, exhaustive coverage, 356 entries
+  
   if (reference == "HumanPrimaryCellAtlasData") {
-    refdata <- celldex::HumanPrimaryCellAtlasData() #general, 158 entries
-  }else if (reference == "BlueprintEncodeData"){
-    refdata <- celldex::BlueprintEncodeData() # pure stroma and immune cells, 43 entries
-  }else if (reference == "MouseRNAseqData"){
-    refdata <- celldex::MouseRNAseqData() # 28 entries
-  }else if (reference == "ImmGenData"){
-    refdata <- celldex::ImmGenData() # exhaustive coverage, need to remove certain samples, 356 entries
-  }else if (reference == "DatabaseImmuneCellExpressionData"){
-    refdata <- celldex::DatabaseImmuneCellExpressionData() # CD4+ T cell subsets, 15 entires
+    refdata <- hpc
+  } else if (reference == "BlueprintEncodeData"){
+    refdata <- bpe
+  } else if (reference == "DatabaseImmuneCellExpressionData"){
+    refdata <- ice
   } else if (reference == "NovershternHematopoieticData"){
-    refdata <- celldex::NovershternHematopoieticData() # greatest resolution for myeloid and progenitor cells, 38 entries
+    refdata <- nh
   } else if (reference == "MonacoImmuneData"){
-    refdata <- celldex::MonacoImmuneData() #best covers all of the bases for a typical PBMC sample, 29 entries
+    refdata <- mi
+  } else if (reference == "MouseRNAseqData"){
+    refdata <- mr
+  } else if (reference == "ImmGenData"){
+    refdata <- mig
+  } else if (reference == "combined"){
+    if (species == "Human"){
+      refdata <- list(HPC=hpc, BPE=bpe, ICE=ice, NH=nh, MI=mi)
+    } else if (species == "Mouse"){
+      refdata <- list(MR=mr, MIG=mig)
+    }
   }
+  
   if (level == "main") {
-    labels <- refdata$label.main
+    labels <- if (reference == "combined") lapply(refdata, function(x) x$label.main) else refdata$label.main
   } else if (level == "fine") {
-    labels <- refdata$label.fine
+    labels <- if (reference == "combined") lapply(refdata, function(x) x$label.fine) else refdata$label.fine
   } else if (level == "ont") {
-    labels <- refdata$label.ont
+    labels <- if (reference == "combined") lapply(refdata, function(x) x$label.ont) else refdata$label.ont
   }
 
   # scale data: input@assays[["integrated"]]@scale.data
@@ -222,11 +243,15 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
 #' @method AnnotateCellType CellMarker
 #' @concept cell type annotation
 #'
-AnnotateCellType.CellMarker <- function(input, outdir, project, used, tissue = NULL) {
+AnnotateCellType.CellMarker <- function(input, outdir, project, used, 
+                                        species = "Human",  tissue = NULL) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.celltype.CellMarker.tissue=%s", project, tissue))
   pdf(paste0(prefix, ".pdf"))
-  markers <- dplyr::filter(cellmarkers, tissue_class == tissue)
+  # Human or Mouse
+  species <- stringr::str_to_title(species)
+  markers <- cellmarkers %>% filter(species == species) %>% filter(tissue_class == tissue) 
+    
   cells <- markers$cell_name
   for (cell in cells){
     genes <- unlist(strsplit(markers[markers["cell_name"] == cell,]$marker_genes, split="\\|"))

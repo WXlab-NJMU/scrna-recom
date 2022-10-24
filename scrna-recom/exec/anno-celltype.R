@@ -6,8 +6,11 @@ p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")
 p <- add_argument(p, "--method", help="SingleR, scCATCH, CellMarker, SelfMarker",
                   type="character", default = "SingleR")
+p <- add_argument(p, "--species", type="character", default="Human",
+                  help="set when using scCATCH, SingleR, CellMarker, SelfMarker,
+                  Human or Mouse")
 p <- add_argument(p, "--reference", type="character",
-                  default="MonacoImmuneData",
+                  default="combined",
                   help="set when using SingleR,
                   HumanPrimaryCellAtlasData (general)、BlueprintEncodeData (pure stroma and immune)、MouseRNAseqData ( low-resolution bulk tissues)、
                   DatabaseImmuneCellExpressionData (exhaustive coverage)、DatabaseImmuneCellExpressionData(CD4+ T cell subsets)、
@@ -16,9 +19,6 @@ p <- add_argument(p, "--reference", type="character",
 p <- add_argument(p, "--level", type="character", default="main",
                   help="set when using SingleR,
                   main (broad), fine (fine-grained), ont (standard in Cell Ontology)")
-p <- add_argument(p, "--species", type="character", default="Human",
-                  help="set when using scCATCH,
-                  Human or Mouse")
 p <- add_argument(p, "--tissue", type="character", 
                   help="set when using scCATCH or CellMarker,
                   Tissue name in scCATCH database")
@@ -44,7 +44,7 @@ library(scrnaRecom)
 object <- readRDS(argv$input)
 if (argv$method == "SingleR"){
   AnnotateCellType(object, argv$outdir, argv$project, argv$method, 
-                   reference = argv$reference, level = argv$level, 
+                   species = argv$species, reference = argv$reference, level = argv$level, 
                    plot.features = argv$plot)
 } else if (argv$method == "scCATCH"){
   AnnotateCellType(object, argv$outdir, argv$project, argv$method, 
@@ -52,7 +52,8 @@ if (argv$method == "SingleR"){
                    cell_min_pct = argv$minpct, logfc = argv$logfc, pvalue = argv$pvalue,
                    plot.features = argv$plot)
 } else if (argv$method == "CellMarker"){
-  AnnotateCellType(object, argv$outdir, argv$project, argv$method, tissue = argv$tissue)
+  AnnotateCellType(object, argv$outdir, argv$project, argv$method, 
+                   species = argv$species, tissue = argv$tissue)
 } else if (argv$method == "SelfMarker"){
   AnnotateCellType(object, argv$outdir, argv$project, argv$method, marker.file = argv$markerfile)
 } else {
