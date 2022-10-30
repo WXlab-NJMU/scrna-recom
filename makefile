@@ -38,6 +38,9 @@ r-pkgs: conda-r
 	R --vanilla -e 'remotes::install_github(c("chris-mcginnis-ucsf/DoubletFinder", "sqjin/CellChat", "cole-trapnell-lab/monocle3"), lib="$(RLIB)")'
 	R --vanilla -e 'remotes::install_github(c("YosefLab/VISION", "wu-yc/scMetabolism", "aertslab/SCENIC"), lib="$(RLIB)")'
 	R --vanilla -e 'remotes::install_github(c("satijalab/seurat-data", "satijalab/seurat-wrappers", "mojaveazure/seurat-disk", "davismcc/scater", "LTLA/celldex"), lib="$(RLIB)")'
+	# install SoupX
+	R --vanilla -e 'install.packages(c("SoupX"), repos="$(CRAN)", lib="$(RLIB)")'
+	R --vanilla -e 'BiocManager::install(c("DropletUtils"), lib="$(RLIB)")
 	#pip install torch pyscenic
 	##pip install cellphonedb
 

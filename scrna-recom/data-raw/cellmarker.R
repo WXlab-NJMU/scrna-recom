@@ -2,6 +2,8 @@ library(readxl)
 data <- readxl::read_excel("data-raw/Cell_marker_Seq.xlsx")
 cellmarkers <- data %>% 
   filter(Symbol != "")  %>% 
+  filter(PMID != "")  %>% 
+  filter(cellontology_id != "")  %>% 
   mutate(across('cell_name', ~ gsub(' ', '_', .x))) %>%
   mutate(across('cell_name', ~ gsub('\\.', '_', .x))) %>%
   mutate(across('cell_name', ~ gsub('\\+', 'p_', .x))) %>%

@@ -18,6 +18,7 @@ Collate:
     'cluster.R'
     'communication.R'
     'data.R'
+    'debackground.R'
     'dedoublet.R'
     'integration.R'
     'metabolism.R'

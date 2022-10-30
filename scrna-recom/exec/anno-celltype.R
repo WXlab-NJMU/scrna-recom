@@ -1,7 +1,7 @@
 library(argparser)
-p <- arg_parser("scRNA Batch Correction")
+p <- arg_parser("scRNA-seq Celltype Annotation using SingleR, scCATCH, CellMarker")
 #p <- add_argument(p, "csv", help="input matrix folder", type="character")
-p <- add_argument(p, "input", help="input seurat rds file", type="character")
+p <- add_argument(p, "input", help="input SeuratObject rds file", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")
 p <- add_argument(p, "--method", help="SingleR, scCATCH, CellMarker, SelfMarker",
@@ -13,7 +13,7 @@ p <- add_argument(p, "--reference", type="character",
                   default="combined",
                   help="set when using SingleR,
                   HumanPrimaryCellAtlasData (general)、BlueprintEncodeData (pure stroma and immune)、MouseRNAseqData ( low-resolution bulk tissues)、
-                  DatabaseImmuneCellExpressionData (exhaustive coverage)、DatabaseImmuneCellExpressionData(CD4+ T cell subsets)、
+                  DatabaseImmuneCellExpressionData (mouse immune cells with exhaustive coverage)、DatabaseImmuneCellExpressionData(CD4+ T cell subsets)、
                   NovershternHematopoieticData (greatest resolution for myeloid and progenitor cells)、
                   MonacoImmuneData (best covers all of the bases for a typical PBMC sample)")
 p <- add_argument(p, "--level", type="character", default="main",

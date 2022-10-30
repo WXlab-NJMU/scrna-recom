@@ -20,9 +20,7 @@ clustering <- function (input, outdir, project,
                         nfeatures = 2000, plot.features = c("nFeature_RNA", "percent.mt", "percent.rb"),
                         reduction = "pca", dims = 30, k =20, resolution = 0.8){
   # create outdir
-  if (!dir.exists(outdir)) {
-    dir.create(outdir, recursive = TRUE)
-  }
+  if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.cluster.fs=%d.ds=%s.dims=%d.reso=%.2f", 
                                       project, nfeatures, reduction, dims, resolution))
   pdf(paste0(prefix, ".pdf"))
@@ -50,7 +48,7 @@ clustering <- function (input, outdir, project,
   print(p)
   if (reduction == "pca") {
     # pca
-    input <- Seurat::ScaleData(input)
+    input <- Seurat::ScaleData(input, features= rownames(input))
     input <- Seurat::RunPCA(input, npcs = dims, 
                             features = Seurat::VariableFeatures(object = input))
     p1 <- Seurat::DimPlot(input, reduction = reduction, group.by = c("orig.ident"),
@@ -114,6 +112,17 @@ clustering <- function (input, outdir, project,
     p <- Seurat::FeaturePlot(input, reduction = "umap", features = feature, raster = T) & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }
+  # markers
+  markers <- Seurat::FindAllMarkers(input, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  markers %>% group_by(cluster) %>% slice_max(n = 20, order_by = avg_log2FC) -> top20
+  write.csv(top20, paste0(prefix, ".top20_genes.csv"))
+  markers %>% group_by(cluster) %>% slice_max(n = 3, order_by = avg_log2FC) -> top3
+  Seurat::DotPlot(input, features = top3$gene[1:20]) & 
+    Seurat::NoLegend() & 
+    ggplot2::labs(title = "Top3 markers") &
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust=1)) -> p  
+  print(p)
+  
   dev.off()
   saveRDS(input, paste0(prefix, ".rds"))
   return(input)

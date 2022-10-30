@@ -4,7 +4,15 @@
 \alias{remove_doublet}
 \title{Remove doublet on seurat object}
 \usage{
-remove_doublet(input, outdir, project, nfeatures = 2000, dims = 50, cores = 10)
+remove_doublet(
+  input,
+  outdir,
+  project,
+  nfeatures = 2000,
+  dims = 30,
+  resolution = 0.8,
+  cores = 10
+)
 }
 \arguments{
 \item{input}{Input seurat object}

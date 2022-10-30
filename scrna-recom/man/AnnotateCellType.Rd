@@ -33,10 +33,18 @@ AnnotateCellType(input, outdir, project, used = "SingleR", ...)
   used,
   reference = NULL,
   level = NULL,
+  species = "Human",
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
 )
 
-\method{AnnotateCellType}{CellMarker}(input, outdir, project, used, tissue = NULL)
+\method{AnnotateCellType}{CellMarker}(
+  input,
+  outdir,
+  project,
+  used,
+  species = "Human",
+  tissue = NULL
+)
 
 \method{AnnotateCellType}{SelfMarker}(input, outdir, project, used, marker.file = NULL)
 }

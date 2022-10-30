@@ -1,5 +1,5 @@
 library(argparser)
-p <- arg_parser("scRNA Basic Data Analysis Using Seurat")
+p <- arg_parser("scRNA-seq quality control using Seurat")
 p <- add_argument(p, "csv", help="csv file including sample, path, qc(specific to sample)", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")

@@ -9,7 +9,8 @@ group_remove_doublet(
   outdir,
   project,
   nfeatures = 2000,
-  dims = 50,
+  dims = 30,
+  resolution = 0.8,
   cores = 10
 )
 }

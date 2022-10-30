@@ -129,7 +129,7 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   mi <- celldex::MonacoImmuneData() #best covers all of a typical PBMC sample, 29 entries
   # mouse
   mr <- celldex::MouseRNAseqData() # 28 entries
-  mig <- elldex::ImmGenData() # mouse, exhaustive coverage, 356 entries
+  mig <- celldex::ImmGenData() # mouse, exhaustive coverage, 356 entries
   
   if (reference == "HumanPrimaryCellAtlasData") {
     refdata <- hpc
@@ -255,7 +255,8 @@ AnnotateCellType.CellMarker <- function(input, outdir, project, used,
   cells <- markers$cell_name
   for (cell in cells){
     genes <- unlist(strsplit(markers[markers["cell_name"] == cell,]$marker_genes, split="\\|"))
-    genes <- intersect(genes, rownames(input))
+    genes <- names(sort(table(genes), decreasing=TRUE)[1:8])
+    genes <- intersect(unique(genes), rownames(input))
     cat(cell, ":", genes, "\n")
     if (length(genes) > 1){
       input[[cell]] <- sqrt(colMeans(as.matrix(input@assays$RNA@data)[genes,]))  
