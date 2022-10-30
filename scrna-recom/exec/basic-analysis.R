@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(argparser)
 p <- arg_parser("scRNA Basic Data Analysis Using Seurat")
 p <- add_argument(p, "indir", help="input matrix folder", type="character")

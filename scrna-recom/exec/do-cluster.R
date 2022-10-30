@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(argparser)
 library(Seurat)
 p <- arg_parser("scRNA-seq Dimension Reduction and Clustering using Seurat")

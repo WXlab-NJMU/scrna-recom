@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(argparser)
 p <- arg_parser("scRNA-seq Background RNA Removal using SoupX")
 p <- add_argument(p, "raw", help="cellranger raw_feature_bc_matrix folder", type="character")

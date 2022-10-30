@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(argparser)
 library(dplyr)
 p <- arg_parser("scRNA Batch Correction")

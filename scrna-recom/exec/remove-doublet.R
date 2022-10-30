@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(argparser)
 p <- arg_parser("scRNA-seq Doublet Removal using DoubletFinder")
 p <- add_argument(p, "input", help="input SeuratObject rds file", type="character")

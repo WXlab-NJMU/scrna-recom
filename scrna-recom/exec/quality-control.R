@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(argparser)
 p <- arg_parser("scRNA-seq quality control using Seurat")
 p <- add_argument(p, "csv", help="csv file including sample, path, qc(specific to sample)", type="character")

@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(argparser)
 p <- arg_parser("scRNA-seq Celltype Annotation using SingleR, scCATCH, CellMarker")
 #p <- add_argument(p, "csv", help="input matrix folder", type="character")
