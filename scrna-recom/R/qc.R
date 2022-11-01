@@ -45,7 +45,6 @@ qc <- function (indir, outdir, project,
   mt.filt = total.cells - count.filt - ncol(x = pbmc)
   sprintf("filt cells using mt<%i: %i", max.mt, mt.filt)
   # filt hb
-  print(subset(pbmc, subset = percent.hb > 0))
   pbmc <- subset(pbmc, subset = percent.hb < max.hb)
   hb.filt = total.cells - count.filt - mt.filt - ncol(x = pbmc)
   sprintf("filt cells using hb<%i: %i", max.hb, hb.filt)
