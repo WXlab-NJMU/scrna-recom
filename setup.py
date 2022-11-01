@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 setup(
     name="pyscrnarecom",
-    version="1.0",
+    version="0.1.0",
     author="SuMin",
     author_email="sumin2012@163.com",
     description=" ...",
-    url="http://github.com/",
+    url="https://github.com/WXlab-NJMU/scrna-recom/",
     python_requires=">=3.10",
     license = "MIT",
 
@@ -20,12 +20,12 @@ setup(
     #   'cli-name = mypkg.mymodule:some_func',
     entry_points={
         'console_scripts': [
-            'basic-scanpy=pyscrnarecom.processing:run_scanpy_cli',
-            'basic-plot-focus=pyscrnarecom.processing:plot_genes_cli',
-            'basic-rawdata=pyscrnarecom.rawdata:run_cellranger_cli',
-            'trajectory-scvelo=pyscrnarecom.trajectory:run_scvelo',
-            'network-pysenic=pyscrnarecom.network:run_pyscenic_cli',
-            'metabolism-scfea=pyscrnarecom.metabolism:run_scfea_cli'
+            'scrna-basic=pyscrnarecom.processing:run_scanpy_cli',
+            'scrna-basic-plot-focus=pyscrnarecom.processing:plot_genes_cli',
+            'scrna-rawdata=pyscrnarecom.rawdata:run_cellranger_cli',
+            'scrna-trajectory=pyscrnarecom.trajectory:run_scvelo',
+            'scrna-regulon=pyscrnarecom.network:run_pyscenic_cli',
+            'scrna-metabolism=pyscrnarecom.metabolism:run_scfea_cli'
         ]
     },
 
@@ -46,8 +46,9 @@ setup(
         "loompy",
         "matplotlib",
         "seaborn",
-        "MulticoreTSNE",
+        "multicoretsne",
         "umap-learn",
+        "anndata",
     ],
     # extra requirements: identifier: [required_packages]
     extras_require={
