@@ -13,6 +13,11 @@ Along with the recommended workflow, we also provide example computational
 scripts together with the software environment setting, which may facilitate 
 researchers to conduct the data analysis locally. 
 
+**Instructions and documentation** can be found at:
+-  https://github.com/WXlab-NJMU/scrna-recom/wiki
+
+**Complete list of tools** in the paper can be found at:
+- https://github.com/Sue9104/scrna/blob/main/mics/tools.xlsx
 
 ## Workflow
 
@@ -21,8 +26,8 @@ researchers to conduct the data analysis locally.
 ## Framework
 
 - R packages are wrapped in ***scrnaRecom***:
-  - *qc*: DoubletFinder, Seurat
-  - *integration*: liger and harmony
+  - *qc*: DoubletFinder, SoupX, Seurat
+  - *integration*: Liger and Harmony
   - *normalization, reduction and cluster*: Seurat
   - *cell annotation*: singR and scCATCH
   - *trajectory prediction*: Monocle3
@@ -30,7 +35,7 @@ researchers to conduct the data analysis locally.
   - *metabolic flux*: scMetabolism
 
 - Python packages and executations are wrapped in ***pyscrnarecom***:
-  - *rawdata*: cellranger
+  - *rawdata*: CellRanger
   - *qc, normalization, reduction and cluster*: scanpy
   - *regulon analysis*: pySCENIC
   - *trajectory prediction*: scVelo
@@ -68,13 +73,17 @@ make html
             <td>https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger</td>
         </tr>
         <tr>
-            <td rowspan=2>Quality Control</td>
+            <td rowspan=3>Quality Control</td>
             <td>DoubletFinder</td>
             <td>https://github.com/chris-mcginnis-ucsf/DoubletFinder</td>
         </tr>
         <tr>
             <td>Seurat</td>
             <td>https://satijalab.org/seurat/articles/pbmc3k_tutorial.html</td>
+        </tr>
+        <tr>
+            <td>SoupX</td>
+            <td>https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html</td>
         </tr>
         <tr>
             <td rowspan=1>Normalization</td>
