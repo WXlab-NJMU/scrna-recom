@@ -21,7 +21,7 @@ researchers to conduct the data analysis locally.
 
 ## Workflow
 
-<img src="https://github.com/WXlab-NJMU/scrna-recom/blob/main/img/workflow.png" width="50%" height="80%">
+<img src="https://github.com/WXlab-NJMU/scrna-recom/blob/main/img/workflow.png" width="80%" height="100%">
 
 ## Framework
 
