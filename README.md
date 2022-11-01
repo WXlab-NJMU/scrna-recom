@@ -17,7 +17,7 @@ researchers to conduct the data analysis locally.
 -  https://github.com/WXlab-NJMU/scrna-recom/wiki
 
 **Complete list of tools** in the paper can be found at:
-- https://github.com/WXlab-NJMU/scrna-recom/blob/main/misc/tools.xlsx
+- https://github.com/WXlab-NJMU/scrna-recom/blob/main/misc/tools.md
 
 ## Workflow
 
