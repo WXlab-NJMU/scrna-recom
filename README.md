@@ -17,11 +17,11 @@ researchers to conduct the data analysis locally.
 -  https://github.com/WXlab-NJMU/scrna-recom/wiki
 
 **Complete list of tools** in the paper can be found at:
-- https://github.com/Sue9104/scrna/blob/main/mics/tools.xlsx
+- https://github.com/WXlab-NJMU/scrna-recom/blob/main/misc/tools.xlsx
 
 ## Workflow
 
-<img src="https://github.com/Sue9104/scrna/blob/main/img/workflow.png" width="50%" height="80%">
+<img src="https://github.com/WXlab-NJMU/scrna-recom/blob/main/img/workflow.png" width="50%" height="80%">
 
 ## Framework
 
@@ -40,22 +40,6 @@ researchers to conduct the data analysis locally.
   - *regulon analysis*: pySCENIC
   - *trajectory prediction*: scVelo
   - *metabolic flux*: scFEA
-
-## Installation
-
-```shell
-# scrnaRecom
-remotes::install_github("WXlab-NJMU/scrna-recom", subdir="scrna-recom")
-# pyscrnarecom
-python setup.py install
-```
-
-## Manual
-
-```
-cd scr/doc
-make html
-```
 
 ## Current wrapped tools
 <table>
