@@ -13,7 +13,7 @@ Along with the recommended workflow, we also provide example computational
 scripts together with the software environment setting, which may facilitate 
 researchers to conduct the data analysis locally. 
 
-**Instructions and documentation** can be found at:
+**Instructions with practical examples** can be found at:
 -  https://github.com/WXlab-NJMU/scrna-recom/wiki
 
 **Complete list of tools** in the paper can be found at:
