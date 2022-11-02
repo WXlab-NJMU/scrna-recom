@@ -117,7 +117,7 @@ clustering <- function (input, outdir, project,
   markers %>% group_by(cluster) %>% slice_max(n = 20, order_by = avg_log2FC) -> top20
   write.csv(top20, paste0(prefix, ".top20_genes.csv"))
   markers %>% group_by(cluster) %>% slice_max(n = 3, order_by = avg_log2FC) -> top3
-  Seurat::DotPlot(input, features = top3$gene[1:20]) & 
+  Seurat::DotPlot(input, features = unique(top3$gene[1:20])) & 
     Seurat::NoLegend() & 
     ggplot2::labs(title = "Top3 markers") &
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust=1)) -> p  
