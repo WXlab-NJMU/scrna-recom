@@ -67,15 +67,15 @@ remove_doublet <- function (input, outdir, project,
   # keep only singlet
   count <- t(table(input@meta.data[c(classify.pANN2, "seurat_clusters")]))
   cluster <- as.numeric(attributes(count)$dimnames$seurat_clusters) 
-  freq <- cbind(cluster, count, prop.table(count))
+  freq <- cbind(cluster, count, prop.table(count) * 100)
   colnames(freq) <- c("cluster","doublet", "singlet", "percent.doublet","percent.singlet")
   count.doublets <- sum(freq[,2])
-  percent.doublets <- sum(freq[,2])/(sum(freq[,2]) + sum(freq[,3]))
+  percent.doublets <- sum(freq[,2])/(sum(freq[,2]) + sum(freq[,3])) 
   p3 <- ggplot(as.data.frame(freq)) + 
     geom_bar(aes(x=factor(cluster), y=percent.doublet),stat="identity") + 
     labs(x="cluster", 
          title = "Doublets among clusters", 
-         subtitle = sprintf("Total doublets: %d(%.2f%%)", count.doublets, percent.doublets))
+         subtitle = sprintf("Total doublets: %d(%.2f%%)", count.doublets, percent.doublets * 100))
   print(p3)
   freq <- rbind(freq, Total=c(max(freq[,1]) + 1,
                               sum(freq[,2]),

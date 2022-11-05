@@ -157,7 +157,7 @@ group_qc <- function (csv, outdir, project,
   # merge stat
   stat <- do.call(cbind, lapply(samples, function(x) read.csv(file.path(outdir, paste0(x,".qc.stat.csv")))))
   cols <- append(1, seq(1, length(samples))*2 )
-  write.table(stat[cols], file.path(outdir, paste0(project,".qc.stat.csv")),
+  write.table(t(stat[cols]), file.path(outdir, paste0(project,".qc.stat.csv")),
               row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "," )
   for (sample in samples){
     file.remove(file.path(outdir, paste0(sample,".qc.stat.csv")))
