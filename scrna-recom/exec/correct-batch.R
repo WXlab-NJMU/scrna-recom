@@ -13,9 +13,9 @@ p <- add_argument(p, "--nfeatures", type="numeric", default=2000,
                   help="number of variable features to use for scaledata and pca, default is 2000")
 p <- add_argument(p, "--kparam", type="numeric", default=20,
                   help="k.param of knn in FindNeighbor, default is 20")
-p <- add_argument(p, "--resolution", type="numeric", default=0.8,
-                  help="resolution of cluster, default is 0.8")
-p <- add_argument(p, "--plot", nargs='*', 
+p <- add_argument(p, "--resolution", type="numeric", default=2,
+                  help="resolution of cluster, default is 2")
+p <- add_argument(p, "--plot", nargs='*',
                   default = c("nFeature_RNA", "percent.mt", "percent.rb"),
                   help="features to plot on umap")
 argv <- parse_args(p)
@@ -23,7 +23,7 @@ print(argv$plot)
 
 library(scrnaRecom)
 object <- readRDS(argv$input)
-Integration(object, argv$outdir, argv$project, argv$method, 
+Integration(object, argv$outdir, argv$project, argv$method,
             dim = argv$dim, nfeatures = argv$nfeatures,
             resolution = argv$resolution, k = argv$kparam,
             plot.features = argv$plot)

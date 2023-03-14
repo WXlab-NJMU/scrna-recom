@@ -75,7 +75,7 @@ DimensionReduction <- function (input, outdir) {
   dev.off()
   # cluster
   pbmc <- Seurat::FindNeighbors(pbmc, dims = 1:10)
-  pbmc <- Seurat::FindClusters(pbmc, resolution = 0.5)
+  pbmc <- Seurat::FindClusters(pbmc, resolution = 2)
   # umap
   pbmc <- Seurat::RunUMAP(pbmc, dims = 1:10)
   pdf(file.path(outdir, "05_umap.pdf"))

@@ -11,22 +11,22 @@ library(ggplot2)
 #' @param project Project name
 #' @param nfeatures Number of variable features to used
 #' @param dims Dimensions to use for clustering
-#' @param cores Cores to compute 
+#' @param cores Cores to compute
 #'
-remove_doublet <- function (input, outdir, project, 
-                            nfeatures = 2000, dims = 30, resolution = 0.8,
+remove_doublet <- function (input, outdir, project,
+                            nfeatures = 2000, dims = 30, resolution = 2,
                             cores = 10) {
   # create outdir
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.dedoublet.dims=%d", project, dims))
 
-  # check input seurat object 
+  # check input seurat object
   ## NormalizeData, FindVariableGenes, ScaleData, RunPCA, and RunTSNE
   ## only support assay=RNA
   if (! "pca" %in% names(input@reductions)) {
     if (input@active.assay == "RNA") input <- Seurat::NormalizeData(input)
     ## features
-    input <- Seurat::FindVariableFeatures(input, selection.method = "vst", nfeatures = nfeatures) 
+    input <- Seurat::FindVariableFeatures(input, selection.method = "vst", nfeatures = nfeatures)
     input <- Seurat::ScaleData(input) %>%
       Seurat::RunPCA(npcs = dims, features = Seurat::VariableFeatures(object = input)) %>%
       Seurat::FindNeighbors(reduction = "pca", dims = 1:dims) %>%
@@ -34,7 +34,7 @@ remove_doublet <- function (input, outdir, project,
   }
   if (! "umap" %in% names(input@reductions))  input <- Seurat::RunUMAP(input, reduction = "pca", dims = 1:dims)
   if (! "tsne" %in% names(input@reductions)) input <- Seurat::RunTSNE(input, reduction="pca", dims=1:dims)
-  
+
   # pk
   sweep.res <- DoubletFinder::paramSweep_v3(input, PCs = 1:dims, sct = FALSE, num.cores = cores)
   sweep.stats <- DoubletFinder::summarizeSweep(sweep.res, GT = FALSE)
@@ -54,7 +54,7 @@ remove_doublet <- function (input, outdir, project,
   classify.pANN2 <- paste0("DF.classifications_", pANN2)
   pdf(paste0(prefix, ".pdf"))
   p1 <- Seurat::DimPlot(input, reduction = "umap", shuffle = TRUE, raster = T, label.size = 6,
-                        group.by = c(classify.pANN1, classify.pANN2)) & 
+                        group.by = c(classify.pANN1, classify.pANN2)) &
     ggplot2::labs(caption = "Before doublet removal") &
     ggplot2::theme(plot.title = ggplot2::element_text(size=10), legend.position="bottom")
   print(p1)
@@ -66,15 +66,15 @@ remove_doublet <- function (input, outdir, project,
   #saveRDS(input, paste0(prefix, ".before.rds"))
   # keep only singlet
   count <- t(table(input@meta.data[c(classify.pANN2, "seurat_clusters")]))
-  cluster <- as.numeric(attributes(count)$dimnames$seurat_clusters) 
+  cluster <- as.numeric(attributes(count)$dimnames$seurat_clusters)
   freq <- cbind(cluster, count, prop.table(count) * 100)
   colnames(freq) <- c("cluster","doublet", "singlet", "percent.doublet","percent.singlet")
   count.doublets <- sum(freq[,2])
-  percent.doublets <- sum(freq[,2])/(sum(freq[,2]) + sum(freq[,3])) 
-  p3 <- ggplot(as.data.frame(freq)) + 
-    geom_bar(aes(x=factor(cluster), y=percent.doublet),stat="identity") + 
-    labs(x="cluster", 
-         title = "Doublets among clusters", 
+  percent.doublets <- sum(freq[,2])/(sum(freq[,2]) + sum(freq[,3]))
+  p3 <- ggplot(as.data.frame(freq)) +
+    geom_bar(aes(x=factor(cluster), y=percent.doublet),stat="identity") +
+    labs(x="cluster",
+         title = "Doublets among clusters",
          subtitle = sprintf("Total doublets: %d(%.2f%%)", count.doublets, percent.doublets * 100))
   print(p3)
   freq <- rbind(freq, Total=c(max(freq[,1]) + 1,
@@ -86,12 +86,12 @@ remove_doublet <- function (input, outdir, project,
   classify <- input@meta.data[classify.pANN2]
   singlet <- Seurat::Cells(input)[classify == "Singlet"]
   output <- subset(input, cells = singlet)
-  p5 <- Seurat::DimPlot(output, reduction = "umap", shuffle = TRUE, raster = T) & 
+  p5 <- Seurat::DimPlot(output, reduction = "umap", shuffle = TRUE, raster = T) &
     Seurat::NoLegend() &
     ggplot2::labs(title = project, caption = "After doublet removal")
-  p6 <- Seurat::DimPlot(output, reduction = "tsne", shuffle = TRUE, raster = T) & 
+  p6 <- Seurat::DimPlot(output, reduction = "tsne", shuffle = TRUE, raster = T) &
     Seurat::NoLegend() &
-    ggplot2::labs(title = project, caption = "After doublet removal") 
+    ggplot2::labs(title = project, caption = "After doublet removal")
   print(p5 + p6)
   dev.off()
   saveRDS(output, paste0(prefix, ".after.rds"))
@@ -112,7 +112,7 @@ remove_doublet <- function (input, outdir, project,
 #' @param dims Dimensions to use for clustering
 #'
 group_remove_doublet <- function(input, outdir, project,
-                                 nfeatures = 2000, dims = 30, resolution = 0.8,
+                                 nfeatures = 2000, dims = 30, resolution = 2,
                                  cores = 10) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.dedoublet", project))
@@ -121,13 +121,13 @@ group_remove_doublet <- function(input, outdir, project,
   obj.dedoublet <- lapply(seq(obj.list), FUN = function(i){
     sample <- names(obj.list)[i]
     obj <- obj.list[[sample]]
-    remove_doublet(obj, outdir, sample, 
-                   nfeatures = nfeatures, dims = dims, resolution = resolution, 
+    remove_doublet(obj, outdir, sample,
+                   nfeatures = nfeatures, dims = dims, resolution = resolution,
                    cores = cores)
   })
   output <- merge(obj.dedoublet[[1]], tail(obj.dedoublet, length(obj.dedoublet)-1), add.cell.ids = samples, project = project)
   saveRDS(output, paste0(prefix, ".rds"))
-  stat <- do.call("rbind", 
+  stat <- do.call("rbind",
                   lapply(samples, function (sample){
                     file <- file.path(outdir, sprintf("%s.dedoublet.dims=%d.stat.csv", sample, dims))
                     total <- tail(read.csv(file), 1)

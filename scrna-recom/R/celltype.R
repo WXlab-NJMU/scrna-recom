@@ -130,7 +130,7 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
   # mouse
   mr <- celldex::MouseRNAseqData() # 28 entries
   mig <- celldex::ImmGenData() # mouse, exhaustive coverage, 356 entries
-  
+
   if (reference == "HumanPrimaryCellAtlasData") {
     refdata <- hpc
   } else if (reference == "BlueprintEncodeData"){
@@ -152,7 +152,7 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
       refdata <- list(MR=mr, MIG=mig)
     }
   }
-  
+
   if (level == "main") {
     labels <- if (reference == "combined") lapply(refdata, function(x) x$label.main) else refdata$label.main
   } else if (level == "fine") {
@@ -243,43 +243,61 @@ AnnotateCellType.SingleR <- function(input, outdir, project, used,
 #' @method AnnotateCellType CellMarker
 #' @concept cell type annotation
 #'
-AnnotateCellType.CellMarker <- function(input, outdir, project, used, 
+AnnotateCellType.CellMarker <- function(input, outdir, project, used,
                                         species = "Human",  tissue = NULL) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.celltype.CellMarker.tissue=%s", project, tissue))
   pdf(paste0(prefix, ".pdf"))
+  p1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
+                        label.size = 5, repel = T,label = T, raster = T)
+  print(p1)
+  p2 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T)
+  print(p2)
   # Human or Mouse
   species <- stringr::str_to_title(species)
-  markers <- cellmarkers %>% filter(species == species) %>% filter(tissue_class == tissue) 
-    
+  markers <- cellmarkers %>% filter(species == species) %>% filter(tissue_class == tissue)
+
   cells <- markers$cell_name
   for (cell in cells){
-    genes <- unlist(strsplit(markers[markers["cell_name"] == cell,]$marker_genes, split="\\|"))
-    genes <- names(sort(table(genes), decreasing=TRUE)[1:8])
-    genes <- intersect(unique(genes), rownames(input))
+    markergenes <- unlist(strsplit(markers[markers["cell_name"] == cell,]$marker_genes, split="\\|"))
+    markergenes <- names(sort(table(markergenes), decreasing=TRUE)[1:8])
+    #genes <- intersect(unique(markergenes), rownames(input))
+    # transcript: AT1.1
+    genes <- rownames(input)
+    genes <- genes[grepl(paste0('^', markergenes, collapse = '|'), genes)]
     cat(cell, ":", genes, "\n")
+    # plot marker genes expression
+    max.id <- length(genes)
+    if (max.id > 0){
+      for (i in seq(1, ceiling(max.id/9))){
+        start.id <- 9 * (i-1) + 1
+        end.id <- ifelse(i*9 > max.id, max.id, i*9)
+        features <- genes[start.id:end.id]
+        p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") &
+          Seurat::NoLegend() &
+          ggplot2::labs(subtitle = paste0("Cell Type: ", cell)) &
+          ggplot2::theme(plot.title = ggplot2::element_text(size=12), plot.subtitle = ggplot2::element_text(size=8))
+        print(p)
+      }
+    }
     if (length(genes) > 1){
-      input[[cell]] <- sqrt(colMeans(as.matrix(input@assays$RNA@data)[genes,]))  
+      input[[cell]] <- sqrt(colMeans(as.matrix(input@assays$RNA@data)[genes,]))
     } else if(length(genes) == 1){
-      input[[cell]] <- as.matrix(input@assays$RNA@data)[genes,] 
+      input[[cell]] <- as.matrix(input@assays$RNA@data)[genes,]
     } else {
       cells <- cells[cells != cell]
     }
   }
-  p1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
-                        label.size = 5, repel = T,label = T, raster = T)
-  print(p1)
-  p2 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T) 
-  print(p2)
   # plot 9 different cells in one
   max.id <- length(cells)
   for (i in seq(1, ceiling(max.id/9))){
     start.id <- 9 * (i-1) + 1
     end.id <- ifelse(i*9 > max.id, max.id, i*9)
     features <- cells[start.id:end.id]
-    p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") & 
-      Seurat::NoLegend() & 
-      ggplot2::theme(plot.title = ggplot2::element_text(size=10)) 
+    p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") &
+      Seurat::NoLegend() &
+      ggplot2::theme(plot.title = ggplot2::element_text(size=10)) &
+      ggplot2::labs(subtitle="B")
     print(p)
   }
   dev.off()
@@ -299,39 +317,60 @@ AnnotateCellType.CellMarker <- function(input, outdir, project, used,
 #' @method AnnotateCellType SelfMarker
 #' @concept cell type annotation
 #'
-AnnotateCellType.SelfMarker <- function(input, outdir, project, used, 
+AnnotateCellType.SelfMarker <- function(input, outdir, project, used,
                                         marker.file = NULL) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.celltype.SelfMarker", project))
   pdf(paste0(prefix, ".pdf"))
-  selfmarkers <- readxl::read_excel(marker.file)
+  p1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
+                        label.size = 5, repel = T,label = T, raster = T)
+  print(p1)
+  p2 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T)
+  print(p2)
+  #selfmarkers <- readxl::read_excel(marker.file)
+  selfmarkers <- read.table(marker.file, header = TRUE)
   cells <- selfmarkers$cell_name
   for (cell in cells){
-    genes <- unlist(strsplit(selfmarkers[selfmarkers["cell_name"] == cell,]$marker_genes, split=","))
-    genes <- intersect(genes, rownames(input))
+    genes <- rownames(input)
+    markers <- unlist(strsplit(selfmarkers[selfmarkers["cell_name"] == cell,]$marker_genes, split=","))
+    #genes <- intersect(genes, rownames(input)) # different genes
+    # transcript: AT1.1
+    genes <- genes[grepl(paste0('^', markers, collapse = '|'), genes)]
     cat(cell, ":", genes, "\n")
+    # plot marker genes expression
+    max.id <- length(genes)
+    if (max.id > 0){
+      for (i in seq(1, ceiling(max.id/9))){
+        start.id <- 9 * (i-1) + 1
+        end.id <- ifelse(i*9 > max.id, max.id, i*9)
+        features <- genes[start.id:end.id]
+        p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") &
+          Seurat::NoLegend() &
+          ggplot2::labs(subtitle = paste0("Cell Type: ", cell)) &
+          ggplot2::theme(plot.title = ggplot2::element_text(size=12), plot.subtitle = ggplot2::element_text(size=8))
+        print(p)
+      }
+    }
+    # calculate average expression of each celltype
     if (length(genes) > 1){
-      input[[cell]] <- sqrt(colMeans(as.matrix(input@assays$RNA@data)[genes,]))  
+      input[[cell]] <- sqrt(colMeans(as.matrix(input@assays$RNA@data)[genes,]))
     } else if(length(genes) == 1){
-      input[[cell]] <- as.matrix(input@assays$RNA@data)[genes,] 
+      input[[cell]] <- as.matrix(input@assays$RNA@data)[genes,]
     } else {
       cells <- cells[cells != cell]
     }
   }
-  p1 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
-                        label.size = 5, repel = T,label = T, raster = T)
-  print(p1)
-  p2 <- Seurat::DimPlot(input, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T) 
-  print(p2)
-  # plot 9 different cells in one
+  print(cells)
+
+  # plot avaerge expression of each celltype in one
   max.id <- length(cells)
   for (i in seq(1, ceiling(max.id/9))){
     start.id <- 9 * (i-1) + 1
     end.id <- ifelse(i*9 > max.id, max.id, i*9)
     features <- cells[start.id:end.id]
-    p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") & 
-      Seurat::NoLegend() & 
-      ggplot2::theme(plot.title = ggplot2::element_text(size=10)) 
+    p <- Seurat::FeaturePlot(input, features = features, ncol = 3, raster = T,reduction = "umap") &
+      Seurat::NoLegend() &
+      ggplot2::theme(plot.title = ggplot2::element_text(size=12), plot.subtitle = ggplot2::element_text(size=8))
     print(p)
   }
   dev.off()

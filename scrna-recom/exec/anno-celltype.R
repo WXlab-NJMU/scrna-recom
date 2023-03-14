@@ -20,40 +20,40 @@ p <- add_argument(p, "--reference", type="character",
 p <- add_argument(p, "--level", type="character", default="main",
                   help="set when using SingleR,
                   main (broad), fine (fine-grained), ont (standard in Cell Ontology)")
-p <- add_argument(p, "--tissue", type="character", 
+p <- add_argument(p, "--tissue", type="character",
                   help="set when using scCATCH or CellMarker,
                   Tissue name in scCATCH database")
-p <- add_argument(p, "--minpct", type="numeric", default = 0.25, 
+p <- add_argument(p, "--minpct", type="numeric", default = 0.25,
                   help="set when using scCATCH,
                   Include the gene detected in at least this many cells in each cluster")
-p <- add_argument(p, "--logfc", type="numeric", default = 0.25, 
+p <- add_argument(p, "--logfc", type="numeric", default = 0.25,
                   help="set when using scCATCH,
                   Include the gene with at least this fold change of average gene expression compared to every other clusters")
-p <- add_argument(p, "--pvalue", type="numeric", default = 0.05, 
+p <- add_argument(p, "--pvalue", type="numeric", default = 0.05,
                   help="set when using scCATCH,
                   Include the significantly highly expressed gene with this cutoff of p value from wilcox test compared to every other clusters")
 p <- add_argument(p, "--plot", nargs='*', type="character",
                   default = c("nFeature_RNA", "percent.mt", "percent.rb"),
                   help="features to plot on umap")
-p <- add_argument(p, "--markerfile", type="character", 
+p <- add_argument(p, "--markerfile", type="character",
                   help="set when using SelfMarker,
-                  local marker xlsx files, including cell_name,marker_genes")
+                  local marker tsv files, including cell_name,marker_genes")
 argv <- parse_args(p)
 print(argv$plot)
 
 library(scrnaRecom)
 object <- readRDS(argv$input)
 if (argv$method == "SingleR"){
-  AnnotateCellType(object, argv$outdir, argv$project, argv$method, 
-                   species = argv$species, reference = argv$reference, level = argv$level, 
+  AnnotateCellType(object, argv$outdir, argv$project, argv$method,
+                   species = argv$species, reference = argv$reference, level = argv$level,
                    plot.features = argv$plot)
 } else if (argv$method == "scCATCH"){
-  AnnotateCellType(object, argv$outdir, argv$project, argv$method, 
-                   species = argv$species, tissue = argv$tissue, 
+  AnnotateCellType(object, argv$outdir, argv$project, argv$method,
+                   species = argv$species, tissue = argv$tissue,
                    cell_min_pct = argv$minpct, logfc = argv$logfc, pvalue = argv$pvalue,
                    plot.features = argv$plot)
 } else if (argv$method == "CellMarker"){
-  AnnotateCellType(object, argv$outdir, argv$project, argv$method, 
+  AnnotateCellType(object, argv$outdir, argv$project, argv$method,
                    species = argv$species, tissue = argv$tissue)
 } else if (argv$method == "SelfMarker"){
   AnnotateCellType(object, argv$outdir, argv$project, argv$method, marker.file = argv$markerfile)

@@ -27,9 +27,9 @@ qc <- function (indir, outdir, project,
   print(project)
   cat("total cell counts: ", total.cells, "\n")
   cat("total gene counts: ", total.genes, "\n")
-  pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^MT-")
-  pbmc[["percent.hb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^HB[AB]")
-  pbmc[["percent.rb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^RP[SL]")
+  pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^MT-?(ND|CO|ATP|CYB)")
+  pbmc[["percent.hb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^HB[ABDEGMQZ]")
+  pbmc[["percent.rb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^M?RP[SL]")
   # filt counts
   pbmc <- subset(pbmc, subset = nCount_RNA > min.counts & nCount_RNA < max.counts)
   count.filt = total.cells - ncol(x = pbmc)
@@ -94,8 +94,9 @@ group_qc <- function (csv, outdir, project,
   sample.data <- apply(inputs, 1, function(item) {
     data <- Seurat::Read10X(data.dir = item[["path"]])
     object <- Seurat::CreateSeuratObject(counts = data, project = item[["sample"]])
-    object[["percent.mt"]] <- Seurat::PercentageFeatureSet(object, pattern = "^MT-")
-    object[["percent.hb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^HB[AB]")
+    object[["percent.mt"]] <- Seurat::PercentageFeatureSet(object, pattern = "^MT-?(ND|CO|ATP|CYB)")
+    object[["percent.hb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^HB[ABDEGMQZ]")
+    object[["percent.rb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^M?RP[LS]")
     object
   })
   raw.data <- merge(sample.data[[1]], tail(sample.data, length(sample.data)-1),
@@ -143,6 +144,8 @@ group_qc <- function (csv, outdir, project,
   })
   qc.data <- merge(sample.qcdata[[1]], tail(sample.qcdata, length(sample.qcdata)-1),
                     add.cell.ids = samples, project = project)
+  outrds = file.path(outdir, paste0(project,".qc.rds"))
+  saveRDS(qc.data, outrds)
   # plot after qc
   pdf(file.path(outdir, paste0(project,".qc_after.pdf")))
   plot1 <- Seurat::VlnPlot(qc.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 2)
@@ -162,8 +165,6 @@ group_qc <- function (csv, outdir, project,
   for (sample in samples){
     file.remove(file.path(outdir, paste0(sample,".qc.stat.csv")))
   }
-  outrds = file.path(outdir, paste0(project,".qc.rds"))
-  saveRDS(qc.data, outrds)
   return(qc.data)
 }
 
