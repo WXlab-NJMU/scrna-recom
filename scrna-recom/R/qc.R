@@ -4,7 +4,9 @@
 NULL
 
 library(dplyr)
-
+library(ggplot2)
+library(Seurat)
+library(ggpubr)
 #' Quality Control
 #'
 #' @description
@@ -78,6 +80,8 @@ qc <- function (indir, outdir, project,
 #'
 #' @import Seurat
 #' @import dplyr
+#' @import tidyr
+#' @import ggpubr
 #' @rdname qc
 #' @export
 #'
@@ -94,7 +98,7 @@ group_qc <- function (csv, outdir, project,
   sample.data <- apply(inputs, 1, function(item) {
     data <- Seurat::Read10X(data.dir = item[["path"]])
     object <- Seurat::CreateSeuratObject(counts = data, project = item[["sample"]])
-    object[["percent.mt"]] <- Seurat::PercentageFeatureSet(object, pattern = "^MT-?(ND|CO|ATP|CYB)")
+    object[["percent.mt"]] <- Seurat::PercentageFeatureSet(object, pattern = "^MT-")
     object[["percent.hb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^HB[ABDEGMQZ]")
     object[["percent.rb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^M?RP[LS]")
     object
@@ -103,17 +107,38 @@ group_qc <- function (csv, outdir, project,
                     add.cell.ids = samples, project = project)
 
   # plot before qc
-  pdf(file.path(outdir, paste0(project,".qc_before.pdf")))
+  pdf(file.path(outdir, paste0(project,".qc.pdf")))
   plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 2)
   #plot1 <- Seurat::VlnPlot(raw.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
   print(plot1)
-  plot2 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle=TRUE)
+  plot2 <- tibble(FetchData(raw.data,"orig.ident"), FetchData(raw.data,"nCount_RNA"), FetchData(raw.data,"nFeature_RNA")) %>%
+    ggplot(aes(x = nCount_RNA, y = nFeature_RNA, col = orig.ident)) +
+    geom_point(size = 1) + facet_grid(~orig.ident) +
+    theme(legend.position="none",
+          strip.text = element_text(size=14, face = "bold"),
+          strip.background = element_rect(fill = "white")) +
+    guides(x = guide_axis(n.dodge = 2)) +
+    stat_cor(method = "pearson")
   print(plot2)
-  plot3 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle=TRUE)
+  plot3 <- tibble(FetchData(raw.data,"orig.ident"), FetchData(raw.data,"nCount_RNA"), FetchData(raw.data,"percent.mt")) %>%
+    ggplot(aes(x = nCount_RNA, y = percent.mt, col = orig.ident)) +
+    geom_point(size = 1) + facet_grid(~orig.ident) +
+    theme(legend.position="none",
+          strip.text = element_text(size=14, face = "bold"),
+          strip.background = element_rect(fill = "white")) +
+    guides(x = guide_axis(n.dodge = 2)) +
+    stat_cor(method = "pearson")
   print(plot3)
-  plot4 <- Seurat::FeatureScatter(raw.data, feature1 = "nCount_RNA", feature2 = "percent.hb", shuffle=TRUE)
+  plot4 <- tibble(FetchData(raw.data,"orig.ident"), FetchData(raw.data,"nCount_RNA"), FetchData(raw.data,"percent.hb")) %>%
+    ggplot(aes(x = nCount_RNA, y = percent.hb, col = orig.ident)) +
+    geom_point(size = 1) + facet_grid(~orig.ident) +
+    theme(legend.position="none",
+          strip.text = element_text(size=14, face = "bold"),
+          strip.background = element_rect(fill = "white")) +
+    guides(x = guide_axis(n.dodge = 2)) +
+    stat_cor(method = "pearson")
   print(plot4)
-  dev.off()
+  #dev.off()
   # qc
   sample.qcdata <- apply(inputs, 1, FUN = function(item) {
     indir  <- item[["path"]]
@@ -147,14 +172,35 @@ group_qc <- function (csv, outdir, project,
   outrds = file.path(outdir, paste0(project,".qc.rds"))
   saveRDS(qc.data, outrds)
   # plot after qc
-  pdf(file.path(outdir, paste0(project,".qc_after.pdf")))
+  #pdf(file.path(outdir, paste0(project,".qc_after.pdf")))
   plot1 <- Seurat::VlnPlot(qc.data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt", "percent.hb"), ncol = 2)
   print(plot1)
-  plot2 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle=TRUE)
+  plot2 <- tibble(FetchData(qc.data,"orig.ident"), FetchData(qc.data,"nCount_RNA"), FetchData(qc.data,"nFeature_RNA")) %>%
+    ggplot(aes(x = nCount_RNA, y = nFeature_RNA, col = orig.ident)) +
+    geom_point(size = 1) + facet_grid(~orig.ident) +
+    theme(legend.position="none",
+          strip.text = element_text(size=14, face = "bold"),
+          strip.background = element_rect(fill = "white")) +
+    guides(x = guide_axis(n.dodge = 2)) +
+    stat_cor(method = "pearson")
   print(plot2)
-  plot3 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "percent.hb", shuffle=TRUE)
+  plot3 <- tibble(FetchData(qc.data,"orig.ident"), FetchData(qc.data,"nCount_RNA"), FetchData(qc.data,"percent.mt")) %>%
+    ggplot(aes(x = nCount_RNA, y = percent.mt, col = orig.ident)) +
+    geom_point(size = 1) + facet_grid(~orig.ident) +
+    theme(legend.position="none",
+          strip.text = element_text(size=14, face = "bold"),
+          strip.background = element_rect(fill = "white")) +
+    guides(x = guide_axis(n.dodge = 2)) +
+    stat_cor(method = "pearson")
   print(plot3)
-  plot4 <- Seurat::FeatureScatter(qc.data, feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle=TRUE)
+  plot4 <- tibble(FetchData(qc.data,"orig.ident"), FetchData(qc.data,"nCount_RNA"), FetchData(qc.data,"percent.hb")) %>%
+    ggplot(aes(x = nCount_RNA, y = percent.hb, col = orig.ident)) +
+    geom_point(size = 1) + facet_grid(~orig.ident) +
+    theme(legend.position="none",
+          strip.text = element_text(size=14, face = "bold"),
+          strip.background = element_rect(fill = "white")) +
+    guides(x = guide_axis(n.dodge = 2)) +
+    stat_cor(method = "pearson")
   print(plot4)
   dev.off()
   # merge stat

@@ -36,7 +36,23 @@ Imports:
     scater,
     GSVA,
     scMetabolism,
-    argparser
+    argparser,
+    purrr,
+    CellChat,
+    DoubletFinder,
+    patchwork,
+    stringr,
+    tidyr,
+    monocle3,
+    ggsci,
+    ggpubr,
+    ggplot2,
+    ggalluvial,
+    SummarizedExperiment,
+    SoupX,
+    SeuratDisk,
+    NMF,
+    DropletUtils
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
