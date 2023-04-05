@@ -76,6 +76,69 @@ ReadtoSeuratObject <- function(infile) {
   final
 }
 
+
+#' Read H5ad to Seurat Object
+#'
+#' @description
+#' Merge data included in the csvfile to one list
+#'
+#' @param infile input is h5ad file
+#' @return Returns Seurat objects
+#'
+#' @concept utility
+#' @import Seurat
+#' @import SeuratDisk
+#' @importFrom reticulate import
+#' @export
+#'
+ConvertH5adToSeuratFile <- function(infile, outfile){
+  scanpy <- reticulate::import("scanpy")
+  pandas <- reticulate::import("pandas")
+
+  adata <- scanpy$read(infile)
+  meta <- adata$obs
+  gene <- adata$var
+
+  adata2 <- t(as.matrix(adata$X))
+  genes <- rownames(gene)
+  barcodes <- rownames(meta)
+  rownames(adata2) <- genes # gene 21606
+  colnames(adata2) <- barcodes # barcodes 12262
+
+  seu <- CreateSeuratObject(adata2)
+  seu <- AddMetaData(seu, meta)
+  seu <- NormalizeData(seu)%>% ScaleData()
+  seu$RNA@var.features <- genes[adata$var[["highly_variable"]]]
+
+
+  pca.embeddings <- adata$obsm[["X_pca"]]
+  rownames(pca.embeddings) <- barcodes
+  pca.loadings = adata$varm[["PCs"]]
+  rownames(pca.loadings) <- genes
+  pca.stdev <- as.vector(adata$uns[["pca"]]$variance)
+
+  pca.dr <- CreateDimReducObject(
+    embeddings = pca.embeddings,
+    loadings = pca.loadings,
+    stdev = pca.stdev,
+    key = "PC",
+    assay = "RNA"
+  )
+  seu@reductions[["pca"]] <- pca.dr
+
+  umap.embeddings <- adata$obsm[["X_umap"]]
+  rownames(umap.embeddings) <- barcodes
+
+  umap.dr <- CreateDimReducObject(
+    embeddings = umap.embeddings,
+    key = "UMAP",
+    assay = "RNA"
+  )
+  seu@reductions[["umap"]] <- umap.dr
+  saveRDS(seu, outfile)
+  seu
+}
+
 #' Convert Seurat Object to Other Format
 #'
 #' @description
