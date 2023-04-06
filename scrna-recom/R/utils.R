@@ -91,7 +91,7 @@ ReadtoSeuratObject <- function(infile) {
 #' @importFrom reticulate import
 #' @export
 #'
-ConvertH5adToSeuratFile <- function(infile, outfile){
+ConvertH5adToSeurat <- function(infile, outfile){
   scanpy <- reticulate::import("scanpy")
   pandas <- reticulate::import("pandas")
 
@@ -217,7 +217,8 @@ scicolors <- function(x, journal="nature") {
 #' @return Returns plot object
 #'
 #' @concept utility
-addTag <- function(p, aspect.ratio = 1, strip.font.size = 8,
+#' @export
+AddTag <- function(p, aspect.ratio = 1, strip.font.size = 8,
                        legend.position = "right", legend.font.size = 5,
                        line.length=3, line.color = "black", line.lab.size =2) {
 
@@ -266,7 +267,8 @@ addTag <- function(p, aspect.ratio = 1, strip.font.size = 8,
 #' @import dplyr
 #'
 #' @concept utility
-plotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clusters"){
+#' @export
+PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clusters"){
   ratio.info <- input@meta.data %>% group_by(.data[[sample]],.data[[celltype]]) %>%
     summarise(num = n()) %>% mutate(rel_num = num/sum(num))
   p <- ggplot2::ggplot(ratio.info,ggplot2::aes_string(x = sample,y = "rel_num")) +
@@ -300,7 +302,8 @@ plotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clust
 #' @import ggplot2
 #' @import dplyr
 #' @importFrom ggsci pal_npg
-plotCellMarkerExpression <- function(input, genes, kw = "celltype"){
+#' @export
+PlotCellMarkerExpression <- function(input, genes, kw = "celltype"){
   p <- DotPlot(input,group.by = 'seurat_clusters',features = genes, assay = "RNA",
                cols = ggsci::pal_npg("nrc", alpha = 0.7)(3))
   ann <- input@meta.data[,c('seurat_clusters',kw)] %>% distinct()
@@ -327,6 +330,7 @@ plotCellMarkerExpression <- function(input, genes, kw = "celltype"){
 #'
 #' @import tidyr
 #' @import dplyr
+#' @export
 determineOptimalDims <- function(data){
   data2 <- tibble(dims=head(data$dims,-1),
                 stdev=head(data$stdev,-1),

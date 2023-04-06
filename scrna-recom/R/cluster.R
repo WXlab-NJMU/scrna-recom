@@ -120,13 +120,13 @@ clustering <- function (input, outdir, project, dims,
               quote = FALSE, row.names = FALSE)
   cluster.cols <- scicolors(length(unique(input@meta.data$seurat_clusters)))
   p5 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
-                        label.size = 5, repel = T,label = T, raster = T) %>% addTag()
+                        label.size = 5, repel = T,label = T, raster = T) %>% AddTag()
   print(p5)
-  p6 <- Seurat::DimPlot(input, cols = sample.cols, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster = T) %>% addTag()
+  p6 <- Seurat::DimPlot(input, cols = sample.cols, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster = T) %>% AddTag()
   print(p6)
-  p7 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T) %>% addTag()
+  p7 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap", split.by = "orig.ident", raster = T) %>% AddTag()
   print(p7)
-  p8 <- plotCellRatio(input, sample = "orig.ident", celltype = "seurat_clusters")
+  p8 <- PlotCellRatio(input, sample = "orig.ident", celltype = "seurat_clusters")
   print(p8)
   # plot features
   for (feature in plot.features){
@@ -206,15 +206,15 @@ renameClusterPlotMarkers <- function (input, outdir, project,
   sample.cols <- scicolors(length(unique(input@meta.data$orig.ident)))
   cluster.cols <- scicolors(length(unique(groups.df$cellType)))
   p5 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap", group.by = key,
-                        label.size = 5, repel = T,label = T, raster = T) %>% addTag()
+                        label.size = 5, repel = T,label = T, raster = T) %>% AddTag()
   print(p5)
   p6 <- Seurat::DimPlot(input, cols = sample.cols, group.by = "orig.ident",
-                        shuffle = TRUE, reduction = "umap", raster = T) %>% addTag()
+                        shuffle = TRUE, reduction = "umap", raster = T) %>% AddTag()
   print(p6)
   p7 <- Seurat::DimPlot(input, cols = cluster.cols, group.by = key, split.by = "orig.ident",
-                        shuffle = TRUE, reduction = "umap", raster = T) %>% addTag()
+                        shuffle = TRUE, reduction = "umap", raster = T) %>% AddTag()
   print(p7)
-  p8 <- plotCellRatio(input, sample = "orig.ident", celltype = key)
+  p8 <- PlotCellRatio(input, sample = "orig.ident", celltype = key)
   print(p8)
   # read markers
   markers.df <- read.csv(markerfile)

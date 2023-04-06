@@ -293,7 +293,7 @@ AnnotateCellType.CellMarker <- function(input, outdir, project, used,
       }
     }
     if (length(markers) > 0){
-      p <- plotCellMarkerExpression(input, markers, "seurat_clusters") &
+      p <- PlotCellMarkerExpression(input, markers, "seurat_clusters") &
         ggplot2::labs(caption = paste0("Cell Type: ", cell))
       print(p)
       markers <- gsub('\\-|\\+', '.', markers)
@@ -345,10 +345,10 @@ AnnotateCellType.SelfMarker <- function(input, outdir, project, used,
   cluster.cols <- scicolors(length(unique(input@meta.data$seurat_clusters)))
   p1 <- Seurat::DimPlot(input, cols = cluster.cols,
                         shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
-                        label.size = 5, repel = T,label = T, raster = T) %>% addTag()
+                        label.size = 5, repel = T,label = T, raster = T) %>% AddTag()
   print(p1)
   p2 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, label = T,
-                        reduction = "umap", split.by = "orig.ident", raster = T) %>% addTag()
+                        reduction = "umap", split.by = "orig.ident", raster = T) %>% AddTag()
   print(p2)
   markers.all <- read.csv(marker.file) %>% distinct() %>%
     mutate(across('cellType', ~ gsub(' ', '_', .x))) %>%
@@ -392,7 +392,7 @@ AnnotateCellType.SelfMarker <- function(input, outdir, project, used,
       }
     }
     if (length(markers) > 0){
-      p <- plotCellMarkerExpression(input, markers, "seurat_clusters") &
+      p <- PlotCellMarkerExpression(input, markers, "seurat_clusters") &
         ggplot2::labs(caption = paste0("Cell Type: ", celltype))
       print(p)
       markers <- gsub('\\-|\\+', '.', markers)

@@ -60,14 +60,14 @@ Integration.SeuratCCA <- function(object, outdir, project, used, dims,
     ggplot2::labs(caption = "after integration")
   print(p2 + p3)
   mycolors <- scicolors(length(unique(combined.data@meta.data$orig.ident)))
-  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(caption = "after integration")
   print(p7)
   mycolors <- scicolors(length(unique(combined.data@meta.data$seurat_clusters)))
-  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(title = "after integration")
   print(p7_2)
-  p7_3 <- plotCellRatio(combined.data, "orig.ident", "seurat_clusters")
+  p7_3 <- PlotCellRatio(combined.data, "orig.ident", "seurat_clusters")
   print(p7_3)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"), raster = T)
   p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"), raster = T)
@@ -161,14 +161,14 @@ Integration.SeuratRPCA <- function(object, outdir, project, used, dims, ref.samp
     ggplot2::labs(caption = "after integration")
   print(p2 + p3)
   mycolors <- scicolors(length(unique(combined.data@meta.data$orig.ident)))
-  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(caption = "after integration")
   print(p7)
   mycolors <- scicolors(length(unique(combined.data@meta.data$seurat_clusters)))
-  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(title = "after integration")
   print(p7_2)
-  p7_3 <- plotCellRatio(combined.data, "orig.ident", "seurat_clusters")
+  p7_3 <- PlotCellRatio(combined.data, "orig.ident", "seurat_clusters")
   print(p7_3)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1",
                         group.by = c("orig.ident", "seurat_clusters"), raster = T)
@@ -251,14 +251,14 @@ Integration.SCTransform <- function(object, outdir, project, used, dims,
     ggplot2::labs(caption = "after integration")
   print(p2 + p3)
   mycolors <- scicolors(length(unique(combined.data@meta.data$orig.ident)))
-  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(caption = "after integration")
   print(p7)
   mycolors <- scicolors(length(unique(combined.data@meta.data$seurat_clusters)))
-  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(title = "after integration")
   print(p7_2)
-  p7_3 <- plotCellRatio(combined.data, "orig.ident", "seurat_clusters")
+  p7_3 <- PlotCellRatio(combined.data, "orig.ident", "seurat_clusters")
   print(p7_3)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1", group.by = c("orig.ident", "seurat_clusters"), raster = T)
   p9 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_2", group.by = c("orig.ident", "seurat_clusters"), raster = T)
@@ -328,7 +328,7 @@ Integration.Harmony <- function(object, outdir, project, used, dims,
   p1 <- (Seurat::DimPlot(object = combined.data, reduction = "pca",
                         group.by = c("orig.ident", "seurat_clusters"),
                         shuffle = TRUE, label = T, repel = T, raster = T) %>%
-        addTag()) &
+        AddTag()) &
     Seurat::NoLegend() &
     ggplot2::labs(title = "before integration")
   print(p1)
@@ -363,14 +363,14 @@ Integration.Harmony <- function(object, outdir, project, used, dims,
     ggplot2::labs(caption = "after integration")
   print(p5 + p6)
   mycolors <- scicolors(length(unique(combined.data@meta.data$orig.ident)))
-  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", group.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(caption = "after integration")
   print(p7)
   mycolors <- scicolors(length(unique(combined.data@meta.data$seurat_clusters)))
-  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% addTag()) +
+  p7_2 <- (Seurat::DimPlot(combined.data, cols = mycolors, shuffle = TRUE, reduction = "umap", split.by = c("orig.ident"), raster=T) %>% AddTag()) +
     ggplot2::labs(title = "after integration")
   print(p7_2)
-  p7_3 <- plotCellRatio(combined.data, "orig.ident", "seurat_clusters")
+  p7_3 <- PlotCellRatio(combined.data, "orig.ident", "seurat_clusters")
   print(p7_3)
   p8 <- Seurat::VlnPlot(object = combined.data, features = "UMAP_1",
                         group.by = c("orig.ident", "seurat_clusters"), raster = T)
@@ -388,7 +388,7 @@ Integration.Harmony <- function(object, outdir, project, used, dims,
     combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")
   }
   for (feature in plot.features){
-    p <- (Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap") %>% addTag()) &
+    p <- (Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap") %>% AddTag()) &
       ggplot2::theme(plot.title = ggplot2::element_text(size=10))
     print(p)
   }

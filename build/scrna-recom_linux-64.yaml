@@ -9,21 +9,23 @@ dependencies:
   - argon2-cffi=21.3.0
   - argon2-cffi-bindings=21.2.0
   - asttokens=2.0.8
+  - atk-1.0=2.36.0
   - attrs=22.1.0
   - backcall=0.2.0
   - backports=1.0
   - backports.functools_lru_cache=1.6.4
   - beautifulsoup4=4.11.1
   - binutils_impl_linux-64=2.36.1
+  - binutils_linux-64=2.36
   - bleach=5.0.1
   - blosc=1.21.1
   - boost-cpp=1.78.0
   - bwidget=1.9.14
   - bzip2=1.0.8
   - c-ares=1.18.1
-  - ca-certificates=2022.9.24
+  - ca-certificates=2022.12.7
   - cairo=1.16.0
-  - certifi=2022.9.24
+  - certifi=2022.12.7
   - cffi=1.15.1
   - cfitsio=4.1.0
   - curl=7.85.0
@@ -33,6 +35,7 @@ dependencies:
   - entrypoints=0.4
   - executing=1.1.0
   - expat=2.4.9
+  - fftw=3.3.10
   - flit-core=3.7.1
   - font-ttf-dejavu-sans-mono=2.37
   - font-ttf-inconsolata=3.000
@@ -44,25 +47,35 @@ dependencies:
   - freetype=2.12.1
   - freexl=1.0.6
   - fribidi=1.0.10
-  - gcc_impl_linux-64=12.1.0
+  - gcc_impl_linux-64=10.4.0
+  - gcc_linux-64=10.4.0
   - gdal=3.5.2
+  - gdk-pixbuf=2.42.8
   - geos=3.11.0
   - geotiff=1.7.1
   - gettext=0.19.8.1
-  - gfortran_impl_linux-64=12.1.0
+  - gfortran_impl_linux-64=10.4.0
+  - gfortran_linux-64=10.4.0
+  - ghostscript=9.54.0
   - giflib=5.2.1
   - graphite2=1.3.13
+  - graphviz=6.0.1
   - gsl=2.7
-  - gxx_impl_linux-64=12.1.0
+  - gtk2=2.24.33
+  - gts=0.7.6
+  - gxx_impl_linux-64=10.4.0
+  - gxx_linux-64=10.4.0
   - harfbuzz=5.3.0
   - hdf4=4.2.15
   - hdf5=1.12.2
   - icu=70.1
+  - imagemagick=7.1.0_50
   - importlib-metadata=4.11.4
   - importlib_resources=5.10.0
   - ipykernel=6.16.0
   - ipython=8.5.0
   - ipython_genutils=0.2.0
+  - jbig=2.1
   - jedi=0.18.1
   - jinja2=3.1.2
   - jpeg=9e
@@ -86,8 +99,9 @@ dependencies:
   - libedit=3.1.20191231
   - libev=4.33
   - libffi=3.4.2
-  - libgcc-devel_linux-64=12.1.0
+  - libgcc-devel_linux-64=10.4.0
   - libgcc-ng=12.1.0
+  - libgd=2.3.3
   - libgdal=3.5.2
   - libgfortran-ng=12.1.0
   - libgfortran5=12.1.0
@@ -103,16 +117,19 @@ dependencies:
   - libopenblas=0.3.21
   - libpng=1.6.38
   - libpq=14.5
+  - librsvg=2.54.4
   - librttopo=1.1.0
-  - libsanitizer=12.1.0
+  - libsanitizer=10.4.0
   - libsodium=1.0.18
   - libspatialite=5.0.1
   - libsqlite=3.39.4
   - libssh2=1.10.0
-  - libstdcxx-devel_linux-64=12.1.0
+  - libstdcxx-devel_linux-64=10.4.0
   - libstdcxx-ng=12.1.0
   - libtiff=4.4.0
+  - libtool=2.4.7
   - libuuid=2.32.1
+  - libwebp=1.2.4
   - libwebp-base=1.2.4
   - libxcb=1.13
   - libxml2=2.9.14
@@ -135,7 +152,7 @@ dependencies:
   - nss=3.78
   - numpy=1.23.3
   - openjpeg=2.5.0
-  - openssl=3.0.5
+  - openssl=3.1.0
   - packaging=21.3
   - pandoc=2.19.2
   - pandocfilters=1.5.0
@@ -143,6 +160,7 @@ dependencies:
   - parso=0.8.3
   - pcre=8.45
   - pcre2=10.37
+  - perl=5.32.1
   - pexpect=4.8.0
   - pickleshare=0.7.5
   - pip=22.2.2
@@ -171,129 +189,132 @@ dependencies:
   - r-askpass=1.1
   - r-assertthat=0.2.1
   - r-backports=1.4.1
-  - r-base=4.1.3
+  - r-base=4.2.0
   - r-base64enc=0.1_3
-  - r-bit=4.0.4
+  - r-bit=4.0.5
   - r-bit64=4.0.5
-  - r-blob=1.2.3
-  - r-boot=1.3_28
+  - r-blob=1.2.4
+  - r-boot=1.3_28.1
   - r-brio=1.1.3
-  - r-broom=1.0.1
-  - r-bslib=0.4.0
-  - r-cachem=1.0.6
-  - r-callr=3.7.2
-  - r-caret=6.0_93
+  - r-broom=1.0.4
+  - r-bslib=0.4.2
+  - r-cachem=1.0.7
+  - r-callr=3.7.3
+  - r-caret=6.0_94
   - r-cellranger=1.1.0
-  - r-class=7.3_20
-  - r-classint=0.4_7
-  - r-cli=3.4.1
+  - r-class=7.3_21
+  - r-classint=0.4_9
+  - r-cli=3.6.1
   - r-clipr=0.8.0
-  - r-cluster=2.1.3
-  - r-codetools=0.2_18
-  - r-colorspace=2.0_3
-  - r-commonmark=1.8.0
-  - r-cpp11=0.4.2
+  - r-clock=0.6.1
+  - r-cluster=2.1.4
+  - r-codetools=0.2_19
+  - r-colorspace=2.1_0
+  - r-commonmark=1.9.0
+  - r-cpp11=0.4.3
   - r-crayon=1.5.2
   - r-credentials=1.3.2
   - r-crul=1.3
   - r-curl=4.3.3
-  - r-data.table=1.14.2
+  - r-data.table=1.14.8
   - r-dbi=1.1.3
-  - r-dbplyr=2.2.1
+  - r-dbplyr=2.3.2
   - r-deldir=1.0_6
   - r-desc=1.4.2
   - r-diffobj=0.3.5
-  - r-digest=0.6.29
-  - r-dplyr=1.0.10
-  - r-dtplyr=1.2.2
-  - r-e1071=1.7_11
+  - r-digest=0.6.31
+  - r-dplyr=1.1.1
+  - r-dtplyr=1.3.1
+  - r-e1071=1.7_13
   - r-ellipsis=0.3.2
-  - r-essentials=4.1
-  - r-evaluate=0.17
-  - r-fansi=1.0.3
+  - r-essentials=4.2
+  - r-evaluate=0.20
+  - r-fansi=1.0.4
   - r-farver=2.1.1
-  - r-fastmap=1.1.0
-  - r-fontawesome=0.3.0
-  - r-forcats=0.5.2
+  - r-fastmap=1.1.1
+  - r-fontawesome=0.5.0
+  - r-forcats=1.0.0
   - r-foreach=1.5.2
-  - r-foreign=0.8_83
-  - r-formatr=1.12
-  - r-fs=1.5.2
-  - r-future=1.28.0
-  - r-future.apply=1.9.1
-  - r-gargle=1.2.1
+  - r-foreign=0.8_84
+  - r-formatr=1.14
+  - r-fs=1.6.1
+  - r-future=1.32.0
+  - r-future.apply=1.10.0
+  - r-gargle=1.3.0
   - r-generics=0.1.3
   - r-gert=1.5.0
-  - r-ggplot2=3.3.6
+  - r-ggplot2=3.4.1
   - r-gistr=0.9.0
   - r-glmnet=4.1_2
-  - r-globals=0.16.1
+  - r-globals=0.16.2
   - r-glue=1.6.2
-  - r-googledrive=2.0.0
-  - r-googlesheets4=1.0.1
-  - r-gower=1.0.0
-  - r-gtable=0.3.1
+  - r-googledrive=2.1.0
+  - r-googlesheets4=1.1.0
+  - r-gower=1.0.1
+  - r-gtable=0.3.3
   - r-hardhat=1.2.0
-  - r-haven=2.5.0
-  - r-hexbin=1.28.2
-  - r-highr=0.9
-  - r-hms=1.1.2
-  - r-htmltools=0.5.3
-  - r-htmlwidgets=1.5.4
+  - r-haven=2.5.2
+  - r-hdf5r=1.3.8
+  - r-hexbin=1.28.3
+  - r-highr=0.10
+  - r-hms=1.1.3
+  - r-htmltools=0.5.5
+  - r-htmlwidgets=1.6.2
   - r-httpcode=0.3.0
-  - r-httpuv=1.6.6
-  - r-httr=1.4.4
+  - r-httpuv=1.6.9
+  - r-httr=1.4.5
   - r-ids=1.0.1
-  - r-ipred=0.9_13
+  - r-ipred=0.9_14
   - r-irdisplay=1.1
-  - r-irkernel=1.3
-  - r-isoband=0.2.6
+  - r-irkernel=1.3.2
+  - r-isoband=0.2.7
   - r-iterators=1.0.14
   - r-jquerylib=0.1.4
-  - r-jsonlite=1.8.2
+  - r-jsonlite=1.8.4
   - r-kernsmooth=2.23_20
-  - r-knitr=1.40
+  - r-knitr=1.42
   - r-labeling=0.4.2
-  - r-later=1.2.0
+  - r-later=1.3.0
   - r-lattice=0.20_45
-  - r-lava=1.6.10
+  - r-lava=1.7.2.1
   - r-lazyeval=0.2.2
   - r-lifecycle=1.0.3
-  - r-listenv=0.8.0
+  - r-listenv=0.9.0
   - r-lobstr=1.1.2
-  - r-lubridate=1.8.0
+  - r-lubridate=1.9.2
+  - r-magick=2.7.3
   - r-magrittr=2.0.3
-  - r-maps=3.4.0
-  - r-mass=7.3_58.1
-  - r-matrix=1.4_1
+  - r-maps=3.4.1
+  - r-mass=7.3_58.3
+  - r-matrix=1.5_3
   - r-memoise=2.0.1
-  - r-mgcv=1.8_40
+  - r-mgcv=1.8_42
   - r-mime=0.12
   - r-modelmetrics=1.2.2.2
-  - r-modelr=0.1.9
+  - r-modelr=0.1.11
   - r-munsell=0.5.0
-  - r-nlme=3.1_159
+  - r-nlme=3.1_162
   - r-nnet=7.3_18
   - r-numderiv=2016.8_1.1
-  - r-openssl=2.0.3
-  - r-parallelly=1.32.1
-  - r-pbdzmq=0.3_7
-  - r-pillar=1.8.1
+  - r-openssl=2.0.6
+  - r-parallelly=1.35.0
+  - r-pbdzmq=0.3_9
+  - r-pillar=1.9.0
   - r-pkgconfig=2.0.3
-  - r-pkgload=1.3.0
-  - r-plyr=1.8.7
+  - r-pkgload=1.3.2
+  - r-plyr=1.8.8
   - r-praise=1.0.0
   - r-prettyunits=1.1.1
   - r-proc=1.18.0
-  - r-processx=3.7.0
+  - r-processx=3.8.0
   - r-prodlim=2019.11.13
   - r-progress=1.2.2
-  - r-progressr=0.11.0
+  - r-progressr=0.13.0
   - r-promises=1.2.0.1
   - r-proxy=0.4_27
-  - r-pryr=0.1.5
-  - r-ps=1.7.1
-  - r-purrr=0.3.5
+  - r-pryr=0.1.6
+  - r-ps=1.7.3
+  - r-purrr=1.0.1
   - r-quantmod=0.4.20
   - r-r6=2.5.1
   - r-randomforest=4.7_1.1
@@ -301,68 +322,69 @@ dependencies:
   - r-raster=3.5_21
   - r-rbokeh=0.5.2
   - r-rcolorbrewer=1.1_3
-  - r-rcpp=1.0.9
-  - r-rcppeigen=0.3.3.9.2
-  - r-readr=2.1.3
-  - r-readxl=1.4.1
-  - r-recipes=1.0.1
-  - r-recommended=4.1
+  - r-rcpp=1.0.10
+  - r-rcppeigen=0.3.3.9.3
+  - r-readr=2.1.4
+  - r-readxl=1.4.2
+  - r-recipes=1.0.5
+  - r-recommended=4.2
   - r-rematch=1.0.1
   - r-rematch2=2.1.2
-  - r-repr=1.1.4
+  - r-repr=1.1.6
   - r-reprex=2.0.2
   - r-reshape2=1.4.4
-  - r-rlang=1.0.6
-  - r-rmarkdown=2.17
-  - r-rpart=4.1.16
+  - r-rlang=1.1.0
+  - r-rmarkdown=2.20
+  - r-rpart=4.1.19
   - r-rprojroot=2.0.3
   - r-rstudioapi=0.14
   - r-rvest=1.0.3
-  - r-s2=1.1.0
-  - r-sass=0.4.2
+  - r-s2=1.1.1
+  - r-sass=0.4.5
   - r-scales=1.2.1
   - r-selectr=0.4_2
   - r-sf=1.0_7
   - r-shape=1.4.6
-  - r-shiny=1.7.2
-  - r-sourcetools=0.1.7
-  - r-sp=1.5_0
-  - r-spatial=7.3_15
-  - r-spdata=2.2.0
-  - r-spdep=1.2_7
+  - r-shiny=1.7.4
+  - r-sourcetools=0.1.7_1
+  - r-sp=1.6_0
+  - r-spatial=7.3_16
+  - r-spdata=2.2.2
+  - r-spdep=1.2_8
   - r-squarem=2021.1
-  - r-stringi=1.7.8
-  - r-stringr=1.4.1
-  - r-survival=3.4_0
-  - r-sys=3.4
+  - r-stringi=1.7.12
+  - r-stringr=1.5.0
+  - r-survival=3.5_5
+  - r-sys=3.4.1
   - r-terra=1.5_21
-  - r-testthat=3.1.5
-  - r-tibble=3.1.8
-  - r-tidyr=1.2.1
-  - r-tidyselect=1.1.2
+  - r-testthat=3.1.7
+  - r-tibble=3.2.1
+  - r-tidyr=1.3.0
+  - r-tidyselect=1.2.0
   - r-tidyverse=1.3.2
-  - r-timedate=4021.106
-  - r-tinytex=0.42
-  - r-triebeard=0.3.0
+  - r-timechange=0.2.0
+  - r-timedate=4022.108
+  - r-tinytex=0.44
+  - r-triebeard=0.4.1
   - r-ttr=0.24.3
   - r-tzdb=0.3.0
-  - r-units=0.8_0
+  - r-units=0.8_1
   - r-urltools=1.7.3
-  - r-utf8=1.2.2
+  - r-utf8=1.2.3
   - r-uuid=1.1_0
-  - r-vctrs=0.4.2
+  - r-vctrs=0.6.1
   - r-viridislite=0.4.1
-  - r-vroom=1.6.0
+  - r-vroom=1.6.1
   - r-waldo=0.4.0
   - r-withr=2.5.0
-  - r-wk=0.6.0
-  - r-xfun=0.33
-  - r-xml=3.99_0.9
+  - r-wk=0.7.2
+  - r-xfun=0.38
+  - r-xml=3.99_0.11
   - r-xml2=1.3.3
   - r-xtable=1.8_4
-  - r-xts=0.12.1
-  - r-yaml=2.3.5
-  - r-zip=2.2.1
+  - r-xts=0.13.0
+  - r-yaml=2.3.7
+  - r-zip=2.2.2
   - r-zoo=1.8_11
   - readline=8.1.2
   - sed=4.8
@@ -405,90 +427,93 @@ dependencies:
   - zlib=1.2.12
   - zstd=1.5.2
   - pip:
-    - aiohttp==3.8.3
-    - aiosignal==1.2.0
-    - alabaster==0.7.12
-    - anndata==0.8.0
-    - arboreto==0.1.6
-    - async-timeout==4.0.2
-    - babel==2.10.3
-    - bokeh==2.4.3
-    - boltons==21.0.0
-    - charset-normalizer==2.1.1
-    - click==8.1.3
-    - cloudpickle==2.2.0
-    - contourpy==1.0.5
-    - ctxcore==0.2.0
-    - cycler==0.11.0
-    - cython==0.29.32
-    - cytoolz==0.12.0
-    - dask==2022.9.2
-    - dill==0.3.5.1
-    - distributed==2022.9.2
-    - docutils==0.17.1
-    - fonttools==4.38.0
-    - frozendict==2.3.4
-    - frozenlist==1.3.1
-    - fsspec==2022.8.2
-    - h5py==3.7.0
-    - heapdict==1.0.1
-    - idna==3.4
-    - imagesize==1.4.1
-    - interlap==0.2.7
-    - joblib==1.2.0
-    - kiwisolver==1.4.4
-    - llvmlite==0.39.1
-    - locket==1.0.0
-    - loompy==3.0.7
-    - matplotlib==3.6.0
-    - msgpack==1.0.4
-    - multicoretsne==0.1
-    - multidict==6.0.2
-    - multiprocessing-on-dill==3.5.0a4
-    - natsort==8.2.0
-    - networkx==2.8.7
-    - numba==0.56.2
-    - numexpr==2.8.3
-    - numpy-groupies==0.9.19
-    - pandas==1.5.0
-    - partd==1.3.0
-    - patsy==0.5.3
-    - pillow==9.2.0
-    - pyarrow==9.0.0
-    - pydata-sphinx-theme==0.8.1
-    - pynndescent==0.5.7
-    - pysam==0.19.1
-    - pyscenic==0.12.0
-    - pytz==2022.4
-    - pyyaml==6.0
-    - requests==2.28.1
-    - scanpy==1.9.1
-    - scikit-learn==1.1.2
-    - scipy==1.9.2
-    - scvelo==0.2.4
-    - seaborn==0.12.1
-    - session-info==1.0.0
-    - setuptools==59.8.0
-    - snowballstemmer==2.2.0
-    - sortedcontainers==2.4.0
-    - sphinx==4.5.0
-    - sphinx-book-theme==0.3.3
-    - sphinxcontrib-applehelp==1.0.2
-    - sphinxcontrib-devhelp==1.0.2
-    - sphinxcontrib-htmlhelp==2.0.0
-    - sphinxcontrib-jsmath==1.0.1
-    - sphinxcontrib-qthelp==1.0.3
-    - sphinxcontrib-serializinghtml==1.1.5
-    - statsmodels==0.13.2
-    - stdlib-list==0.8.0
-    - tblib==1.7.0
-    - threadpoolctl==3.1.0
-    - toolz==0.12.0
-    - torch==1.12.1
-    - tornado==6.1
-    - tqdm==4.64.1
-    - umap-learn==0.5.3
-    - urllib3==1.26.12
-    - velocyto==0.17.17
-    - yarl==1.8.1
-    - zict==2.2.0
+      - aiohttp==3.8.3
+      - aiosignal==1.2.0
+      - alabaster==0.7.12
+      - anndata==0.8.0
+      - arboreto==0.1.6
+      - async-timeout==4.0.2
+      - babel==2.10.3
+      - bokeh==2.4.3
+      - boltons==21.0.0
+      - charset-normalizer==2.1.1
+      - click==8.1.3
+      - cloudpickle==2.2.0
+      - contourpy==1.0.5
+      - ctxcore==0.2.0
+      - cycler==0.11.0
+      - cython==0.29.32
+      - cytoolz==0.12.0
+      - dask==2022.9.2
+      - dill==0.3.5.1
+      - distributed==2022.9.2
+      - docutils==0.17.1
+      - fonttools==4.38.0
+      - frozendict==2.3.4
+      - frozenlist==1.3.1
+      - fsspec==2022.8.2
+      - h5py==3.7.0
+      - heapdict==1.0.1
+      - idna==3.4
+      - igraph==0.10.4
+      - imagesize==1.4.1
+      - interlap==0.2.7
+      - joblib==1.2.0
+      - kiwisolver==1.4.4
+      - leidenalg==0.9.1
+      - llvmlite==0.39.1
+      - locket==1.0.0
+      - loompy==3.0.7
+      - matplotlib==3.6.0
+      - msgpack==1.0.4
+      - multicoretsne==0.1
+      - multidict==6.0.2
+      - multiprocessing-on-dill==3.5.0a4
+      - natsort==8.2.0
+      - networkx==2.8.7
+      - numba==0.56.2
+      - numexpr==2.8.3
+      - numpy-groupies==0.9.19
+      - pandas==1.5.0
+      - partd==1.3.0
+      - patsy==0.5.3
+      - pillow==9.2.0
+      - pyarrow==9.0.0
+      - pydata-sphinx-theme==0.8.1
+      - pynndescent==0.5.7
+      - pysam==0.19.1
+      - pyscenic==0.12.0
+      - pytz==2022.4
+      - pyyaml==6.0
+      - requests==2.28.1
+      - scanpy==1.9.1
+      - scikit-learn==1.1.2
+      - scipy==1.9.2
+      - scvelo==0.2.4
+      - seaborn==0.12.1
+      - session-info==1.0.0
+      - setuptools==59.8.0
+      - snowballstemmer==2.2.0
+      - sortedcontainers==2.4.0
+      - sphinx==4.5.0
+      - sphinx-book-theme==0.3.3
+      - sphinxcontrib-applehelp==1.0.2
+      - sphinxcontrib-devhelp==1.0.2
+      - sphinxcontrib-htmlhelp==2.0.0
+      - sphinxcontrib-jsmath==1.0.1
+      - sphinxcontrib-qthelp==1.0.3
+      - sphinxcontrib-serializinghtml==1.1.5
+      - statsmodels==0.13.2
+      - stdlib-list==0.8.0
+      - tblib==1.7.0
+      - texttable==1.6.7
+      - threadpoolctl==3.1.0
+      - toolz==0.12.0
+      - torch==1.12.1
+      - tornado==6.1
+      - tqdm==4.64.1
+      - umap-learn==0.5.3
+      - urllib3==1.26.12
+      - velocyto==0.17.17
+      - yarl==1.8.1
+      - zict==2.2.0
