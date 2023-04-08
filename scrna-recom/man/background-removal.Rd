@@ -4,7 +4,7 @@
 \alias{background.removal}
 \title{Remove background RNA using SoupX}
 \usage{
-background.removal(raw, filtered, outdir, project)
+background.removal(raw, filtered, outdir, project, genecol = 2)
 }
 \arguments{
 \item{raw}{cellranger output raw_feature_bc_matrix folder}

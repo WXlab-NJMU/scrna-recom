@@ -30,13 +30,13 @@ clustering <- function (input, outdir, project, dims,
   pdf(paste0(prefix, ".pdf"), 16,9)
   # prepare
   if (! .hasSlot(input@meta.data, "percent.mt")) {
-    input[["percent.mt"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "^MT-")
+    input[["percent.mt"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^MT|:MT)-")
   }
   if (! .hasSlot(input@meta.data, "percent.hb")) {
-    input[["percent.hb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "^HB[AB]")
+    input[["percent.hb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^HB|:HB)[AB]")
   }
   if (! .hasSlot(input@meta.data, "percent.rb")){
-    input[["percent.rb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "^RP[SL]")
+    input[["percent.rb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
   ## norm
   assay <- input@active.assay
@@ -103,6 +103,7 @@ clustering <- function (input, outdir, project, dims,
                 slope= - diff(p$data$stdev)/diff(p$data$dims))
   write.csv(data, paste0(prefix, ".elbow.csv"), quote = F)
   opt_dim <- determineOptimalDims(p$data)
+  DeterminePCS(input)
   if (dims == "auto"){
     print(paste0("Optimal dimensional: ", opt_dim))
   } else {
@@ -140,11 +141,10 @@ clustering <- function (input, outdir, project, dims,
   markers <- Seurat::FindAllMarkers(input, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
   markers %>% group_by(cluster) %>% slice_max(n = 20, order_by = avg_log2FC) -> top50
   write.csv(top50, paste0(prefix, ".top50_genes.csv"))
-  markers %>% group_by(cluster) %>% slice_max(n = 3, order_by = avg_log2FC) -> top3
+  markers %>% group_by(cluster) %>% slice_max(n = 5, order_by = avg_log2FC) -> top3
   #Seurat::DotPlot(input, cols = ggsci::pal_npg("nrc")(1),
   Seurat::DotPlot(input,
                   features = unique(top3$gene[1:20])) &
-    Seurat::NoLegend() &
     ggplot2::labs(title = "Top3 markers") &
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust=1)) -> p
   print(p)
@@ -227,13 +227,13 @@ renameClusterPlotMarkers <- function (input, outdir, project,
   # plot features
   plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
   if (! .hasSlot(input@meta.data, "percent.mt")) {
-    input[["percent.mt"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "^MT-")
+    input[["percent.mt"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^MT|:MT)-")
   }
   if (! .hasSlot(input@meta.data, "percent.hb")) {
-    input[["percent.hb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "^HB[AB]")
+    input[["percent.hb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^HB|:HB)[AB]")
   }
   if (! .hasSlot(input@meta.data, "percent.rb")){
-    input[["percent.rb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "^RP[SL]")
+    input[["percent.rb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
   p <- Seurat::FeaturePlot(input, reduction = "umap", features = plot.features, raster = T) &
        Seurat::NoAxes() &

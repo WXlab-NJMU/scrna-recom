@@ -53,6 +53,7 @@ remove_doublet <- function (input, outdir, project, dims,
   write.csv(data, paste0(prefix, ".elbow.csv"), quote = F)
   if (dims == "auto"){
     opt_dim <- determineOptimalDims(p$data)
+    DeterminePCS(input)
     print(paste0("Optimal dimensional: ", opt_dim))
   } else {
     opt_dim <- as.integer(dims)

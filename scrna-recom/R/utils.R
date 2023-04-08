@@ -26,12 +26,15 @@ TryCatchWithCallingHandlers <- function(expression){
 #' @importFrom Seurat Read10X CreateSeuratObject
 #' @export
 #'
-MergeFileData <- function(csv, outdir, mincell, minrna, maxrna, maxmt) {
+MergeFileData <- function(csv, outdir,
+                          mincell, minrna, maxrna, maxmt,
+                          genecol = 2) {
   inputs <- read.csv(csv)
   data.list <- apply(inputs, 1, FUN = function(item) {
     indir  <- item[["path"]]
     sample  <- item[["sample"]]
-    data <- Seurat::Read10X(data.dir = indir) %>% Seurat::CreateSeuratObject(project = sample)
+    data <- Seurat::Read10X(data.dir = indir, gene.column = genecol, strip.suffix = TRUE) %>%
+      Seurat::CreateSeuratObject(project = sample)
     data[["dataset"]] <- sample
   })
   return(data.list)
@@ -51,7 +54,7 @@ MergeFileData <- function(csv, outdir, mincell, minrna, maxrna, maxmt) {
 #' @importFrom tools file_ext
 #' @export
 #'
-ReadtoSeuratObject <- function(infile) {
+ReadtoSeuratObject <- function(infile, genecol = 2) {
   message("Reading: ", infile)
   if (file_test('-f', infile)) {
     extension <- tools::file_ext(infile)
@@ -70,7 +73,7 @@ ReadtoSeuratObject <- function(infile) {
       warning("Input is not supported !!!")
     }
   } else if (file_test('-d', infile)) {
-    input <- Seurat::Read10X(infile, strip.suffix=TRUE)
+    input <- Seurat::Read10X(infile, gene.column = genecol, strip.suffix=TRUE)
     final <- Seurat::CreateSeuratObject(input)
   }
   final
@@ -271,10 +274,8 @@ AddTag <- function(p, aspect.ratio = 1, strip.font.size = 8,
 PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clusters"){
   ratio.info <- input@meta.data %>% group_by(.data[[sample]],.data[[celltype]]) %>%
     summarise(num = n()) %>% mutate(rel_num = num/sum(num))
-  p <- ggplot2::ggplot(ratio.info,ggplot2::aes_string(x = sample,y = "rel_num")) +
-    ggplot2::geom_col(ggplot2::aes_string(fill = celltype), width =  0.5) +
-    ggalluvial::geom_flow(ggplot2::aes_string(stratum = celltype, alluvium = celltype, fill = celltype),
-                          width = .5, curve_type = "quintic", alpha = 0.4) +
+  p <- ggplot2::ggplot(ratio.info,ggplot2::aes_string(x = sample,y = "rel_num", alluvium = celltype, stratum =celltype, fill = celltype)) +
+    ggalluvial::geom_flow(width = .5, curve_type = "quintic", alpha = 0.4) + geom_stratum(width = .5) +
     ggplot2::theme_bw() +
     ggplot2::coord_cartesian(expand = 0) +
     ggplot2::scale_y_continuous(labels = scales::label_percent()) +
@@ -284,7 +285,7 @@ PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clust
                    axis.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black'),
                    legend.text = ggplot2::element_text(size = ggplot2::rel(1.2),color = 'black'),
                    legend.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black')) +
-    ggplot2::xlab('') + ggplot2::ylab('Cell percent ratio')
+    ggplot2::xlab('') + ggplot2::ylab('Cell Ratio')
 
   print(p)
 }
@@ -335,11 +336,39 @@ determineOptimalDims <- function(data){
   data2 <- tibble(dims=head(data$dims,-1),
                 stdev=head(data$stdev,-1),
                 slope= - diff(data$stdev)/diff(data$dims))
-  optimal_dim <- data2 %>% filter(slope < 0.02) %>% head(3) %>% tail(1) %>% .$dims
-  if (length(optimal_dim) == 0){
-    optimal_dim <- 20
-  } else{
-    optimal_dim <- optimal_dim + 1
-  }
-  return(optimal_dim)
+  dims <- data2 %>% filter(slope > 0.05) %>%
+    arrange(desc(dims)) %>% .$dims
+  optimal_dim <- dims[1] + 1
+}
+
+
+#' Determine PCS by stdev
+#'
+#' @description
+#' determine optimal pcs
+#'
+#' @param obj.seu seurat object
+#' @return Returns optimal dims
+#'
+#' @import tidyr
+#' @import dplyr
+#' @export
+DeterminePCS <- function(obj.seu){
+  pct <- obj.seu[["pca"]]@stdev / sum( obj.seu[["pca"]]@stdev) * 100
+  cumu <- cumsum(pct)
+
+  co1 <- which(cumu > 90 & pct < 5)[1] # first pc with cumu > 90
+  co2 <- sort(which((pct[1:length(pct) - 1] - pct[2:length(pct)]) > 0.1),
+              decreasing = T)[1] + 1 # last diff < 0.01
+  pcs <- min(co1, co2)
+  pcs
+
+  plot_df <- data.frame(pct = pct,   cumu = cumu,   rank = 1:length(pct))
+  p <- ggplot2::ggplot(plot_df, aes(cumu, pct, label = rank, color = rank > pcs)) +
+         geom_text() +
+         geom_vline(xintercept = 90, color = "red") +
+         geom_hline(yintercept = min(pct[pct > 5]), color = "grey") +
+         theme_bw()
+  print(p)
+  return(pcs)
 }

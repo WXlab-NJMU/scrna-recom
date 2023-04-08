@@ -4,7 +4,7 @@
 \alias{ReadtoSeuratObject}
 \title{Read files to Seurat Object}
 \usage{
-ReadtoSeuratObject(infile)
+ReadtoSeuratObject(infile, genecol = 2)
 }
 \arguments{
 \item{csv}{The header must be "project,path"}

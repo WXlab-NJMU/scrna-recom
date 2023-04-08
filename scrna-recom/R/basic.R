@@ -4,13 +4,16 @@
 NULL
 
 library(Seurat)
-QualityControl <- function (indir, outdir, project, mincell, minrna, maxrna, maxmt) {
-  pbmc.data <- Seurat::Read10X(data.dir = indir)
+QualityControl <- function (indir, outdir, project,
+                            mincell, minrna, maxrna, maxmt,
+                            genecol = 2) {
+  pbmc.data <- Seurat::Read10X(data.dir = indir,
+                               gene.column = genecol, strip.suffix = TRUE)
   pbmc <- Seurat::CreateSeuratObject(counts = pbmc.data,
                              project = project,
                              min.cells = mincell,
                              min.features = minrna)
-  pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^MT-")
+  pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "(^MT|:MT)-")
   #plot
   pdf(file.path(outdir,"01_qc_before.pdf"))
   plot1 <- Seurat::VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
@@ -146,8 +149,11 @@ setMethod("basic_analysis",
             dir.create(object@outdir, showWarnings = FALSE)
             cat("Steps: ", object@steps)
             # qc
-            rds <- QualityControl(object@indir, object@outdir, 
-                                  object@project, object@mincell, object@minrna, object@maxrna, object@maxmt)
+            rds <- QualityControl(object@indir, object@outdir,
+                                  object@project, object@mincell,
+                                  object@minrna, object@maxrna, object@maxmt,
+                                  object@genecol
+            )
             # norm
             rds <- dplyr::if_else(2 %in% object@steps, Normalization(rds, object@outdir), rds)
             # feature select

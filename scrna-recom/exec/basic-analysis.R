@@ -4,6 +4,7 @@ p <- arg_parser("scRNA Basic Data Analysis Using Seurat")
 p <- add_argument(p, "indir", help="input matrix folder", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")
+p <- add_argument(p, "--genecol", help="gene.column for Read10X", type="numeric", default = 2)
 p <- add_argument(p, "--maxrna", help="nFeature_RNA maximum", type="numeric", default = 2500)
 p <- add_argument(p, "--minrna", help="nFeature_RNA minimum", type="numeric", default = 200)
 p <- add_argument(p, "--mincell", help="cell minimum", type="numeric", default = 3)
@@ -17,8 +18,9 @@ argv <- parse_args(p)
 
 library(scrnaRecom)
 pc <- ifelse(is.na(argv$pc), NA_integer_, argv$pc)
-input <- new("Input", indir = argv$indir,  outdir = argv$outdir, project = argv$project, 
-             maxrna = argv$maxrna, minrna = argv$minrna, mincell = argv$mincell, maxmt = argv$maxmt, 
+input <- new("Input", indir = argv$indir,  outdir = argv$outdir,
+             project = argv$project, genecol = argv$genecol,
+             maxrna = argv$maxrna, minrna = argv$minrna, mincell = argv$mincell, maxmt = argv$maxmt,
              steps = argv$steps, sctransform = argv$sctransform, pc = pc)
 basic_analysis(input)
 print(input)

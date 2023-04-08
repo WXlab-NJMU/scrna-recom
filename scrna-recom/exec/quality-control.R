@@ -4,6 +4,7 @@ p <- arg_parser("scRNA-seq quality control using Seurat")
 p <- add_argument(p, "csv", help="csv file including sample, path, qc(specific to sample)", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
 p <- add_argument(p, "project", help="project name", type="character")
+p <- add_argument(p, "--genecol", help="gene.column for Read10X", type="numeric", default = 2)
 p <- add_argument(p, "--max.genes", help="nFeature_RNA maximum", type="numeric", default = 5000)
 p <- add_argument(p, "--min.genes", help="nFeature_RNA minimum", type="numeric", default = 200)
 p <- add_argument(p, "--max.counts", help="nCount_RNA maximum", type="numeric", default = 40000)
@@ -16,6 +17,8 @@ argv <- parse_args(p)
 
 library(scrnaRecom)
 scrnaRecom::group_qc(
-  argv$csv, argv$outdir, argv$project, 
+  argv$csv, argv$outdir, argv$project,
   argv$max.counts, argv$min.counts, argv$max.genes, argv$min.genes,
-  argv$min.cells, argv$max.mt, argv$max.hb)
+  argv$min.cells, argv$max.mt, argv$max.hb,
+  argv$genecol
+)

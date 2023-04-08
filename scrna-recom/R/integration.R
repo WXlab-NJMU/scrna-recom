@@ -39,6 +39,7 @@ Integration.SeuratCCA <- function(object, outdir, project, used, dims,
   write.csv(data, paste0(prefix, ".elbow.csv"), quote = F)
   if (dims == "auto"){
     opt_dim <- determineOptimalDims(p$data)
+    DeterminePCS(combined.data)
     print(paste0("Optimal dimensional: ", opt_dim))
   } else {
     opt_dim <- as.integer(dims)
@@ -74,13 +75,13 @@ Integration.SeuratCCA <- function(object, outdir, project, used, dims,
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
-    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^MT-")
+    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^MT|:MT)-")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.hb")) {
-    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^HB[AB]")
+    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^HB|:HB)[AB]")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.rb")){
-    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")
+    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
   for (feature in plot.features){
     p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap", raster = T) &
@@ -136,6 +137,7 @@ Integration.SeuratRPCA <- function(object, outdir, project, used, dims, ref.samp
   write.csv(data, paste0(prefix, ".elbow.csv"), quote = F)
   if (dims == "auto"){
     opt_dim <- determineOptimalDims(p$data)
+    DeterminePCS(combined.data)
     print(paste0("Optimal dimensional: ", opt_dim))
   } else {
     opt_dim <- as.integer(dims)
@@ -177,13 +179,13 @@ Integration.SeuratRPCA <- function(object, outdir, project, used, dims, ref.samp
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
-    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^MT-")
+    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^MT|:MT)-")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.hb")) {
-    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^HB[AB]")
+    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^HB|:HB)[AB]")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.rb")){
-    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")
+    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
   for (feature in plot.features){
     p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap", raster = T) &
@@ -227,6 +229,7 @@ Integration.SCTransform <- function(object, outdir, project, used, dims,
   write.csv(data, paste0(prefix, ".elbow.csv"), quote = F)
   if (dims == "auto"){
     opt_dim <- determineOptimalDims(p$data)
+    DeterminePCS(combined.data)
     print(paste0("Optimal dimensional: ", opt_dim))
   } else {
     opt_dim <- as.integer(dims)
@@ -265,13 +268,13 @@ Integration.SCTransform <- function(object, outdir, project, used, dims,
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
-    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^MT-")
+    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^MT|:MT)-")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.hb")) {
-    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^HB[AB]")
+    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^HB|:HB)[AB]")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.rb")){
-    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")
+    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
   for (feature in plot.features){
     p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))
@@ -314,6 +317,7 @@ Integration.Harmony <- function(object, outdir, project, used, dims,
   write.csv(data, paste0(prefix, ".elbow.csv"), quote = F)
   if (dims == "auto"){
     opt_dim <- determineOptimalDims(p$data)
+    DeterminePCS(combined.data)
     print(paste0("Optimal dimensional: ", opt_dim))
   } else {
     opt_dim <- as.integer(dims)
@@ -379,13 +383,13 @@ Integration.Harmony <- function(object, outdir, project, used, dims,
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
-    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^MT-")
+    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^MT|:MT)-")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.hb")) {
-    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^HB[AB]")
+    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^HB|:HB)[AB]")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.rb")){
-    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")
+    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
   for (feature in plot.features){
     p <- (Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap") %>% AddTag()) &
@@ -428,6 +432,7 @@ Integration.Liger <- function(object, outdir, project, used, dims,
   write.csv(data, paste0(prefix, ".elbow.csv"), quote = F)
   if (dims == "auto"){
     opt_dim <- determineOptimalDims(p$data)
+    DeterminePCS(combined.data)
     print(paste0("Optimal dimensional: ", opt_dim))
   } else {
     opt_dim <- as.integer(dims)
@@ -497,13 +502,13 @@ Integration.Liger <- function(object, outdir, project, used, dims,
   print(p8 + p9)
   # plot features
   if (! .hasSlot(combined.data@meta.data, "percent.mt")) {
-    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^MT-")
+    combined.data[["percent.mt"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^MT|:MT)-")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.hb")) {
-    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^HB[AB]")
+    combined.data[["percent.hb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^HB|:HB)[AB]")
   }
   if (! .hasSlot(combined.data@meta.data, "percent.rb")){
-    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "^RP[SL]")
+    combined.data[["percent.rb"]] <- Seurat::PercentageFeatureSet(combined.data, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
   for (feature in plot.features){
     p <- Seurat::FeaturePlot(combined.data, features = feature, reduction = "umap") & ggplot2::theme(plot.title = ggplot2::element_text(size=10))

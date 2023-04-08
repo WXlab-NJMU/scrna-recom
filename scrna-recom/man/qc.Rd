@@ -15,7 +15,8 @@ qc(
   min.genes,
   min.cells,
   max.mt,
-  max.hb
+  max.hb,
+  genecol = 2
 )
 
 group_qc(
@@ -28,7 +29,8 @@ group_qc(
   min.genes,
   min.cells,
   max.mt,
-  max.hb
+  max.hb,
+  genecol = 2
 )
 }
 \description{

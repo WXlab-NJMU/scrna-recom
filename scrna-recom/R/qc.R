@@ -19,8 +19,10 @@ library(ggpubr)
 #'
 qc <- function (indir, outdir, project,
                 max.counts, min.counts, max.genes, min.genes,
-                min.cells, max.mt, max.hb) {
-  pbmc.data <- Seurat::Read10X(data.dir = indir)
+                min.cells, max.mt, max.hb, genecol = 2) {
+  pbmc.data <- Seurat::Read10X(data.dir = indir,
+                               gene.column = genecol, strip.suffix = TRUE
+  )
   pbmc <- Seurat::CreateSeuratObject(counts = pbmc.data,
                                      project = project,
                                      min.cells = min.cells)
@@ -29,9 +31,9 @@ qc <- function (indir, outdir, project,
   print(project)
   cat("total cell counts: ", total.cells, "\n")
   cat("total gene counts: ", total.genes, "\n")
-  pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^MT-?(ND|CO|ATP|CYB)")
-  pbmc[["percent.hb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^HB[ABDEGMQZ]")
-  pbmc[["percent.rb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "^M?RP[SL]")
+  pbmc[["percent.mt"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "(^MT|:MT)-")
+  pbmc[["percent.hb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "(^HB|:HB)[ABDEGMQZ]")
+  pbmc[["percent.rb"]] <- Seurat::PercentageFeatureSet(pbmc, pattern = "(^RP|:RP)[SL]")
   # filt counts
   pbmc <- subset(pbmc, subset = nCount_RNA > min.counts & nCount_RNA < max.counts)
   count.filt = total.cells - ncol(x = pbmc)
@@ -87,7 +89,8 @@ qc <- function (indir, outdir, project,
 #'
 group_qc <- function (csv, outdir, project,
                       max.counts, min.counts, max.genes, min.genes,
-                      min.cells, max.mt, max.hb) {
+                      min.cells, max.mt, max.hb,
+                      genecol = 2) {
   # create outdir
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
@@ -96,11 +99,13 @@ group_qc <- function (csv, outdir, project,
   inputs <- read.csv(csv)
   samples <- inputs[["sample"]]
   sample.data <- apply(inputs, 1, function(item) {
-    data <- Seurat::Read10X(data.dir = item[["path"]])
+    data <- Seurat::Read10X(data.dir = item[["path"]],
+                            gene.column = genecol, strip.suffix = TRUE
+    )
     object <- Seurat::CreateSeuratObject(counts = data, project = item[["sample"]])
-    object[["percent.mt"]] <- Seurat::PercentageFeatureSet(object, pattern = "^MT-")
-    object[["percent.hb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^HB[ABDEGMQZ]")
-    object[["percent.rb"]] <- Seurat::PercentageFeatureSet(object, pattern = "^M?RP[LS]")
+    object[["percent.mt"]] <- Seurat::PercentageFeatureSet(object, pattern = "(^MT|:MT)-")
+    object[["percent.hb"]] <- Seurat::PercentageFeatureSet(object, pattern = "(^HB|:HB)[ABDEGMQZ]")
+    object[["percent.rb"]] <- Seurat::PercentageFeatureSet(object, pattern = "(^M|:M)?RP[LS]")
     object
   })
   raw.data <- merge(sample.data[[1]], tail(sample.data, length(sample.data)-1),
@@ -165,7 +170,8 @@ group_qc <- function (csv, outdir, project,
     qc(indir, outdir, sample,
        as.numeric(max.counts), as.numeric(min.counts),
        as.numeric(max.genes), as.numeric(min.genes),
-       as.numeric(min.cells), as.numeric(max.mt), as.numeric(max.hb))
+       as.numeric(min.cells), as.numeric(max.mt), as.numeric(max.hb),
+       genecol)
   })
   qc.data <- merge(sample.qcdata[[1]], tail(sample.qcdata, length(sample.qcdata)-1),
                     add.cell.ids = samples, project = project)

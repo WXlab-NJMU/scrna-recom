@@ -4,7 +4,7 @@
 \alias{MergeFileData}
 \title{Merge Data to List of Seurat Object}
 \usage{
-MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt)
+MergeFileData(csv, outdir, mincell, minrna, maxrna, maxmt, genecol = 2)
 }
 \arguments{
 \item{csv}{The header must be "project,path"}

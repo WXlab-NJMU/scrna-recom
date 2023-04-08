@@ -22,18 +22,19 @@ NULL
 #' @rdname background-removal
 #' @export
 #'
-background.removal <- function(raw, filtered, outdir, project) {
+background.removal <- function(raw, filtered, outdir, project, genecol = 2) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.bkremoval.SoupX", project))
   pdf(paste0(prefix, ".pdf"))
-  tod <- Seurat::Read10X(raw)
-  toc <- Seurat::Read10X(filtered)
+  tod <- Seurat::Read10X(raw, gene.column = 2, strip.suffix = TRUE)
+  toc <- Seurat::Read10X(filtered, gene.column = 2, strip.suffix = TRUE)
   sc = SoupX::SoupChannel(tod, toc)
 
   # add cluster and reduction
   folder.clustering <- file.path(outdir, "clustering")
   project.before <- paste0(project, ".before")
-  Seurat::Read10X(filtered) %>% Seurat::CreateSeuratObject(project = project.before) %>%
+  Seurat::Read10X(filtered, gene.column = 2, strip.suffix = TRUE) %>%
+    Seurat::CreateSeuratObject(project = project.before) %>%
     clustering(folder.clustering, project.before) -> obj.before
   Seurat::FindAllMarkers(obj.before, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25) %>%
     group_by(cluster) %>% slice_max(n = 3, order_by = avg_log2FC) -> top3.before
