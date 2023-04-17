@@ -116,9 +116,15 @@ clustering <- function (input, outdir, project, dims,
       Seurat::FindNeighbors(reduction = "pca", dims = 1:opt_dim) %>%
       Seurat::FindClusters(resolution = resolution)
   input <- Seurat::RunUMAP(input, reduction = "pca", dims = 1:opt_dim, min_dist = 0.1)
-  write.table(table(input@meta.data$seurat_clusters, input@meta.data$orig.ident),
+  cluster_counts <- table(input@meta.data$seurat_clusters)
+  cluster_props <- prop.table(cluster_counts)
+  cluster_stats <- t(bind_rows(cluster_counts, cluster_props))
+  colnames(cluster_stats) <- c("count", "percentage")
+  cluster_stats[,"percentage"] <- round(cluster_stats[,"percentage"]*100, digits = 2)
+
+  write.table(cluster_stats,
               paste0(prefix, ".clusters.tsv"),
-              quote = FALSE, row.names = FALSE)
+              quote = FALSE, row.names = TRUE)
   cluster.cols <- scicolors(length(unique(input@meta.data$seurat_clusters)))
   p5 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
                         label.size = 5, repel = T,label = T, raster = T) %>% AddTag()
@@ -197,6 +203,7 @@ renameClusterPlotMarkers <- function (input, outdir, project,
                        metadata = sapply(input@meta.data$seurat_clusters, function(x) groups[[x]]))
   write.table(input@meta.data, paste0(prefix, ".clusters.tsv"),
               quote = FALSE, row.names = FALSE)
+  saveRDS(input, paste0(prefix, ".rds"))
   seu.ls <- Seurat::SplitObject(input, split.by = key)
   for (celltype in names(seu.ls)){
     seu <- seu.ls[[celltype]]
@@ -240,7 +247,6 @@ renameClusterPlotMarkers <- function (input, outdir, project,
        ggplot2::theme(plot.title = ggplot2::element_text(size=10))
   print(p)
   dev.off()
-  saveRDS(input, paste0(prefix, ".rds"))
 
   # other figures using scanpy
   input.h5seurat = paste0(prefix, ".h5Seurat")

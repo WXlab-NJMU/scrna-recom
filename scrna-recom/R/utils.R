@@ -273,18 +273,23 @@ AddTag <- function(p, aspect.ratio = 1, strip.font.size = 8,
 #' @export
 PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clusters"){
   ratio.info <- input@meta.data %>% group_by(.data[[sample]],.data[[celltype]]) %>%
-    summarise(num = n()) %>% mutate(rel_num = num/sum(num))
-  p <- ggplot2::ggplot(ratio.info,ggplot2::aes_string(x = sample,y = "rel_num", alluvium = celltype, stratum =celltype, fill = celltype)) +
+    summarise(num = n()) %>% mutate(prop = round(num/sum(num), digits = 4)) %>%
+    mutate(id = paste0(.data[[celltype]],": ", prop*100))
+  p <- ggplot2::ggplot(ratio.info,
+                       ggplot2::aes_string(x = sample,y = "prop",fill = celltype,
+                                           alluvium = celltype, stratum = celltype,
+                                           label = "id")) +
     ggalluvial::geom_flow(width = .5, curve_type = "quintic", alpha = 0.4) + geom_stratum(width = .5) +
+    ggplot2::geom_text(stat = ggalluvial::StatStratum, size = 4, min.y = 0.02) +
     ggplot2::theme_bw() +
     ggplot2::coord_cartesian(expand = 0) +
     ggplot2::scale_y_continuous(labels = scales::label_percent()) +
-    ggsci::scale_fill_npg(alpha = 0.7) +
+    ggsci::scale_color_npg(alpha = 1) +
     ggplot2::theme(panel.grid = ggplot2::element_blank(),
                    axis.text = ggplot2::element_text(size = ggplot2::rel(1.2),color = 'black'),
-                   axis.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black'),
-                   legend.text = ggplot2::element_text(size = ggplot2::rel(1.2),color = 'black'),
-                   legend.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black')) +
+                 axis.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black'),
+                 legend.text = ggplot2::element_text(size = ggplot2::rel(1.2),color = 'black'),
+                 legend.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black')) +
     ggplot2::xlab('') + ggplot2::ylab('Cell Ratio')
 
   print(p)
