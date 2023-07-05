@@ -61,11 +61,12 @@ remove_doublet <- function (input, outdir, project, dims,
   p <- p + ggplot2::geom_vline(xintercept = opt_dim, color = "red") +
     ggplot2::geom_text(x=c(opt_dim + 2), y=c(2), label=paste0("dim=",opt_dim))
   print(p)
+  saveRDS(input, paste0(prefix, ".before.rds"))
   input <- input %>%
       Seurat::FindNeighbors(reduction = "pca", dims = 1:opt_dim) %>%
       Seurat::FindClusters(resolution = resolution)
   input <- Seurat::RunUMAP(input, reduction = "pca", dims = 1:opt_dim, min_dist = 0.1)
-  input <- Seurat::RunTSNE(input, reduction="pca", dims=1:opt_dim)
+  input <- Seurat::RunTSNE(input, reduction="pca", dims=1:opt_dim, check_duplicates = FALSE)
   #if (! "umap" %in% names(input@reductions))  input <- Seurat::RunUMAP(input, reduction = "pca", dims = 1:dims)
   #if (! "tsne" %in% names(input@reductions)) input <- Seurat::RunTSNE(input, reduction="pca", dims=1:dims)
 
@@ -164,7 +165,7 @@ remove_doublet <- function (input, outdir, project, dims,
 #' @param dims Dimensions to use for clustering
 #'
 group_remove_doublet <- function(input, outdir, project, dims,
-                                 nfeatures = 2000, resolution = 2,
+                                 nfeatures = 2000, resolution = 1,
                                  cores = 10) {
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.dedoublet", project))

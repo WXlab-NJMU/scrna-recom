@@ -279,8 +279,8 @@ PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clust
                        ggplot2::aes_string(x = sample,y = "prop",fill = celltype,
                                            alluvium = celltype, stratum = celltype,
                                            label = "id")) +
-    ggalluvial::geom_flow(width = .5, curve_type = "quintic", alpha = 0.4) + geom_stratum(width = .5) +
-    ggplot2::geom_text(stat = ggalluvial::StatStratum, size = 4, min.y = 0.02) +
+    ggalluvial::geom_flow(width = .5, curve_type = "quintic", alpha = 0.6) + geom_stratum(width = .5) +
+    ggplot2::geom_text(stat = ggalluvial::StatStratum, size = 4, min.y = 0.01) +
     ggplot2::theme_bw() +
     ggplot2::coord_cartesian(expand = 0) +
     ggplot2::scale_y_continuous(labels = scales::label_percent()) +
@@ -307,11 +307,12 @@ PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clust
 #' @import Seurat
 #' @import ggplot2
 #' @import dplyr
-#' @importFrom ggsci pal_npg
 #' @export
 PlotCellMarkerExpression <- function(input, genes, kw = "celltype"){
+  blues <- c("#BDCEEE","#1552BE")
+  reds <- c("#FCC1C9","#F80B39")
   p <- DotPlot(input,group.by = 'seurat_clusters',features = genes, assay = "RNA",
-               cols = ggsci::pal_npg("nrc", alpha = 0.7)(3))
+               cols = blues)
   ann <- input@meta.data[,c('seurat_clusters',kw)] %>% distinct()
   colnames(ann) <- c("id","celltype")
   p$data <- left_join(p$data,ann)

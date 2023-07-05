@@ -18,11 +18,12 @@ NULL
 #' @param reduction Reduction method, current support is pca, harmony, iNMF (liger)
 #' @param dim Dimensions to use for clustering
 #' @param resolution Resolution to use for clustering
+#' @param do.sct whether to use sctransform instead of normdata and scale data
 #' @rdname clustering
 #'
 clustering <- function (input, outdir, project, dims,
                         nfeatures = 2000, plot.features = c("nFeature_RNA", "percent.mt", "percent.rb"),
-                        reduction = "pca", k =20, resolution = 2){
+                        reduction = "pca", k =20, resolution = 2, do.sct = FALSE){
   # create outdir
   if (!dir.exists(outdir)) dir.create(outdir, recursive = TRUE)
   prefix <- file.path(outdir, sprintf("%s.cluster.ds=%s.reso=%.2f",
@@ -38,64 +39,81 @@ clustering <- function (input, outdir, project, dims,
   if (! .hasSlot(input@meta.data, "percent.rb")){
     input[["percent.rb"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^RP|:RP)[SL]")
   }
-  ## norm
-  assay <- input@active.assay
-  if (assay == "RNA") {
-    input <- Seurat::NormalizeData(input)
-  }
-  ## features
-  input <- Seurat::FindVariableFeatures(input, selection.method = "vst", nfeatures = as.numeric(nfeatures))
-  top10 <- head(Seurat::VariableFeatures(input), 10)
-  p <- Seurat::VariableFeaturePlot(input)
-  p <- Seurat::LabelPoints(plot = p, points = top10,
-                           repel = TRUE, xnudge = 0, ynudge = 0) +
-       ggplot2::theme(legend.position="bottom")
-  print(p)
   sample.cols <- scicolors(length(unique(input@meta.data$orig.ident)))
-  if (reduction == "pca") {
-    # pca
-    input <- Seurat::ScaleData(input, features= rownames(input))
-    input <- Seurat::RunPCA(input, npcs = 50,
-                            features = Seurat::VariableFeatures(object = input))
-    p1 <- Seurat::DimPlot(input, cols = sample.cols, reduction = reduction, group.by = c("orig.ident"),
-                          shuffle = TRUE, raster = T)
-    print(p1)
-    p2 <- Seurat::VizDimLoadings(input, dims = 1:9, reduction = reduction) &
-      ggplot2::theme(axis.text=ggplot2::element_text(size=5),
-                     axis.title=ggplot2::element_text(size=8,face="bold"))
-    print(p2)
-    p3 <- Seurat::DimHeatmap(input, reduction = reduction,
-                             dims = 1:6, nfeatures = 20, cells = 500, balanced = T)
-    print(p3)
-  } else if (reduction == "harmony"){
-    input <- Seurat::ScaleData(input)
-    if (!("harmony" %in% names(input@reductions))){
-      input <- Seurat::RunPCA(input, npcs = 50)
-      input <- harmony::RunHarmony(input, group.by.vars = c("orig.ident"))
+  assay <- input@active.assay
+  # norm, scale, find variables
+  if (do.sct) {
+    if (assay == "integrated"){
+        sample.ls <- lapply(X = SplitObject(input, split.by = "orig.ident"), FUN = SCTransform)
+        features <- SelectIntegrationFeatures(object.list = sample.ls, nfeatures = 3000)
+        sample.ls <- PrepSCTIntegration(object.list = sample.ls, anchor.features = features)
+        anchors <- FindIntegrationAnchors(object.list = sample.ls,
+                                          normalization.method = "SCT",
+                                          anchor.features = features)
+        input <- IntegrateData(anchorset = anchors, normalization.method = "SCT") %>%
+            Seurat::RunPCA(npcs = 50)
+
+    } else {
+        input <- SCTransform(input, assay = assay, vst.flavor = "v2", verbose = FALSE, method = "glmGamPoi")  %>%
+            Seurat::RunPCA(npcs = 50)
     }
-    p1 <- Seurat::DimPlot(input, cols = sample.cols, reduction = reduction, group.by = c("orig.ident"),
-                          shuffle = TRUE, raster = T)
-    print(p1)
-    p2 <- Seurat::VizDimLoadings(input, dims = 1:9, reduction = reduction) &
-      ggplot2::theme(axis.text=ggplot2::element_text(size=5),
-                     axis.title=ggplot2::element_text(size=8,face="bold"))
-    print(p2)
-    p3 <- Seurat::DimHeatmap(input, reduction = reduction, dims = 1:6, nfeatures = 20, cells = 500, balanced = T)
-    print(p3)
-    p4 <- Seurat::ElbowPlot(input, ndims = dims, reduction = reduction)
-    print(p4)
-  } else if (reduction == "iNMF") {
-    ## scale
-    input <- Seurat::ScaleData(input, split.by = "orig.ident", do.center = FALSE)
-    ## reduct
-    if (!("iNMF" %in% names(input@reductions))){
-      input <- SeuratWrappers::RunOptimizeALS(input, k = 20, split.by = "orig.ident") %>%
-        SeuratWrappers::RunQuantileNorm(split.by = "orig.ident")
+  } else {
+    ## norm
+    if (assay == "RNA") input <- Seurat::NormalizeData(input)
+    ## features
+    input <- Seurat::FindVariableFeatures(input, selection.method = "vst", nfeatures = as.numeric(nfeatures))
+    top10 <- head(Seurat::VariableFeatures(input), 10)
+    p <- Seurat::VariableFeaturePlot(input)
+    p <- Seurat::LabelPoints(plot = p, points = top10,
+                             repel = TRUE, xnudge = 0, ynudge = 0) +
+      ggplot2::theme(legend.position="bottom")
+    print(p)
+    if (reduction == "pca") {
+      # pca
+      input <- Seurat::ScaleData(input, features= rownames(input))
+      input <- Seurat::RunPCA(input, npcs = 50,
+                              features = Seurat::VariableFeatures(object = input))
+      p1 <- Seurat::DimPlot(input, cols = sample.cols, reduction = reduction, group.by = c("orig.ident"),
+                            shuffle = TRUE, raster = T)
+      print(p1)
+      p2 <- Seurat::VizDimLoadings(input, dims = 1:9, reduction = reduction) &
+        ggplot2::theme(axis.text=ggplot2::element_text(size=5),
+                       axis.title=ggplot2::element_text(size=8,face="bold"))
+      print(p2)
+      p3 <- Seurat::DimHeatmap(input, reduction = reduction,
+                               dims = 1:6, nfeatures = 20, cells = 500, balanced = T)
+      print(p3)
+    } else if (reduction == "harmony"){
+      input <- Seurat::ScaleData(input)
+      if (!("harmony" %in% names(input@reductions))){
+        input <- Seurat::RunPCA(input, npcs = 50)
+        input <- harmony::RunHarmony(input, group.by.vars = c("orig.ident"))
+      }
+      p1 <- Seurat::DimPlot(input, cols = sample.cols, reduction = reduction, group.by = c("orig.ident"),
+                            shuffle = TRUE, raster = T)
+      print(p1)
+      p2 <- Seurat::VizDimLoadings(input, dims = 1:9, reduction = reduction) &
+        ggplot2::theme(axis.text=ggplot2::element_text(size=5),
+                       axis.title=ggplot2::element_text(size=8,face="bold"))
+      print(p2)
+      p3 <- Seurat::DimHeatmap(input, reduction = reduction, dims = 1:6, nfeatures = 20, cells = 500, balanced = T)
+      print(p3)
+      p4 <- Seurat::ElbowPlot(input, ndims = dims, reduction = reduction)
+      print(p4)
+    } else if (reduction == "iNMF") {
+      ## scale
+      input <- Seurat::ScaleData(input, split.by = "orig.ident", do.center = FALSE)
+      ## reduct
+      if (!("iNMF" %in% names(input@reductions))){
+        input <- SeuratWrappers::RunOptimizeALS(input, k = 20, split.by = "orig.ident") %>%
+          SeuratWrappers::RunQuantileNorm(split.by = "orig.ident")
+      }
+      p1 <- Seurat::DimPlot(input, cols = sample.cols, reduction = reduction, group.by = c("orig.ident"),
+                            shuffle = TRUE, raster = T)
+      print(p1)
     }
-    p1 <- Seurat::DimPlot(input, cols = sample.cols, reduction = reduction, group.by = c("orig.ident"),
-                          shuffle = TRUE, raster = T)
-    print(p1)
   }
+
   # determine the optimal dims
   p <- Seurat::ElbowPlot(input, ndims = 50, reduction = "pca")
   data <- tibble(dims=head(p$data$dims,-1),
@@ -144,7 +162,12 @@ clustering <- function (input, outdir, project, dims,
     print(p)
   }
   # markers
-  markers <- Seurat::FindAllMarkers(input, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  if (do.sct) {
+    input <- Seurat::PrepSCTFindMarkers(input)
+    markers <- Seurat::FindAllMarkers(input, assay = "SCT", only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  } else {
+    markers <- Seurat::FindAllMarkers(input, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+  }
   markers %>% group_by(cluster) %>% slice_max(n = 20, order_by = avg_log2FC) -> top50
   write.csv(top50, paste0(prefix, ".top50_genes.csv"))
   markers %>% group_by(cluster) %>% slice_max(n = 5, order_by = avg_log2FC) -> top3
