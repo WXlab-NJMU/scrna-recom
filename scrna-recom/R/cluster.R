@@ -139,10 +139,20 @@ clustering <- function (input, outdir, project, dims,
   cluster_stats <- t(bind_rows(cluster_counts, cluster_props))
   colnames(cluster_stats) <- c("count", "percentage")
   cluster_stats[,"percentage"] <- round(cluster_stats[,"percentage"]*100, digits = 2)
-
   write.table(cluster_stats,
               paste0(prefix, ".clusters.tsv"),
               quote = FALSE, row.names = TRUE)
+# cluster region
+  Idents(input) <- 'seurat_clusters'
+  chunks <- length(levels(Seurat::Idents(input)))
+  if (chunks > 15) { chunks <- 15 }
+  p <- map(split(levels(Seurat::Idents(input)), 1:chunks),
+           function(x) {Seurat::DimPlot(input, label = T, label.size = 2,
+                                        cells.highlight = Seurat::CellsByIdentities(input, idents = x)) +
+                        Seurat::NoAxes(legend.position='top', legend.text = element_text(size = 8)) })
+  p2 <- patchwork::wrap_plots(plots = p, ncol=5)
+  print(p2)
+
   cluster.cols <- scicolors(length(unique(input@meta.data$seurat_clusters)))
   p5 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap", group.by = c("seurat_clusters"),
                         label.size = 5, repel = T,label = T, raster = T) %>% AddTag()
@@ -153,6 +163,25 @@ clustering <- function (input, outdir, project, dims,
   print(p7)
   p8 <- PlotCellRatio(input, sample = "orig.ident", celltype = "seurat_clusters")
   print(p8)
+  # cell cycle
+  if (length(intersect(rownames(input), Seurat::cc.genes$s.genes)) > 0) {
+      input <- Seurat::CellCycleScoring(input, assay = "RNA", s.features = Seurat::cc.genes$s.genes, g2m.features = Seurat::cc.genes$g2m.genes, set.ident = FALSE)
+      p9 <- Seurat::VlnPlot(input, assay = "RNA",features = c("S.Score", "G2M.Score"), group.by = "seurat_clusters", ncol = 1) &
+        ggplot2::theme(axis.title.x=element_blank())
+      print(p9)
+      p10 <- Seurat::VlnPlot(input, assay = "RNA",features = c("PCNA", "TOP2A",  "MKI67"), group.by = "seurat_clusters", ncol = 1 ) +
+        ggplot2::labs(caption="Cell Cycle Markers") & ggplot2::theme(axis.title.x=element_blank())
+      print(p10)
+      p11 <- Seurat::DotPlot(input, assay = "RNA", features = intersect(rownames(input), Seurat::cc.genes$s.genes), group.by = "seurat_clusters") +
+        Seurat::RotatedAxis() + Seurat::NoLegend() +
+        ggplot2::ggtitle("Phase S")  + ggplot2::xlab("Genes") + ggplot2::ylab("Clusters")
+      print(p11)
+      p12 <- Seurat::DotPlot(input, assay = "RNA", features = intersect(rownames(input), Seurat::cc.genes$g2m.genes), group.by = "seurat_clusters") +
+        Seurat::RotatedAxis() + Seurat::NoLegend() +
+        ggplot2::ggtitle("Phase G2M") + ggplot2::xlab("Genes") + ggplot2::ylab("Clusters")
+      print(p12)
+  }
+
   # plot features
   for (feature in plot.features){
     p <- Seurat::FeaturePlot(input, reduction = "umap",
@@ -172,10 +201,14 @@ clustering <- function (input, outdir, project, dims,
   write.csv(top50, paste0(prefix, ".top50_genes.csv"))
   markers %>% group_by(cluster) %>% slice_max(n = 5, order_by = avg_log2FC) -> top3
   #Seurat::DotPlot(input, cols = ggsci::pal_npg("nrc")(1),
-  Seurat::DotPlot(input,
-                  features = unique(top3$gene[1:20])) &
+  Seurat::DotPlot(input, assay = "RNA",
+                  features = unique(top3$gene[1:30])) &
     ggplot2::labs(title = "Top3 markers") &
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust=1)) -> p
+  print(p)
+  p <- Seurat::DoHeatmap(input,  assay = "RNA", slot = "data", group.by = "seurat_clusters",
+                         features = unique(top3$gene[1:50])) + Seurat::NoLegend() +
+       ggplot2::scale_fill_gradientn(colors = c("blue", "white", "red"))
   print(p)
 
   dev.off()
@@ -220,6 +253,8 @@ renameClusterPlotMarkers <- function (input, outdir, project,
   groups.df <- read.csv(groupfile)
   groups <- groups.df$cellType
   names(groups) <-  groups.df$cluster
+  # read marker
+  markers.df <- read.csv(markerfile)
   #input <- Seurat::RenameIdents(input, groups)
   #input[[key]] = Idents(input)
   input <- AddMetaData(input, col.name = key,
@@ -232,30 +267,60 @@ renameClusterPlotMarkers <- function (input, outdir, project,
     seu <- seu.ls[[celltype]]
     saveRDS(seu, file.path(outdir, paste0(celltype, ".rds")))
   }
+  # change cluster order
+  Idents(input) <- key
+  order <-  markers.df %>% dplyr::distinct(cellType) %>% .$cellType
+  message("cluster order: ", paste(order,  delimiter =""))
+  Idents(input) <- factor(Idents(input), levels = order)
+  message("seurat ident levels: ", paste(levels(Idents(input)),  delimiter =""))
 
   sample.cols <- scicolors(length(unique(input@meta.data$orig.ident)))
   cluster.cols <- scicolors(length(unique(groups.df$cellType)))
-  p5 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap", group.by = key,
+  p5 <- Seurat::DimPlot(input, cols = cluster.cols, shuffle = TRUE, reduction = "umap",
                         label.size = 5, repel = T,label = T, raster = T) %>% AddTag()
   print(p5)
   p6 <- Seurat::DimPlot(input, cols = sample.cols, group.by = "orig.ident",
                         shuffle = TRUE, reduction = "umap", raster = T) %>% AddTag()
   print(p6)
-  p7 <- Seurat::DimPlot(input, cols = cluster.cols, group.by = key, split.by = "orig.ident",
+  p7 <- Seurat::DimPlot(input, cols = cluster.cols, split.by = "orig.ident",
                         shuffle = TRUE, reduction = "umap", raster = T) %>% AddTag()
   print(p7)
   p8 <- PlotCellRatio(input, sample = "orig.ident", celltype = key)
   print(p8)
-  # read markers
-  markers.df <- read.csv(markerfile)
-  markers <- markers.df$gene
-  Seurat::DotPlot(input, features = unique(markers)) &
+  p <- map(levels(Seurat::Idents(input)),
+           function(x) {Seurat::DimPlot(input, label = T, label.size = 2,
+                                        cells.highlight = Seurat::CellsByIdentities(input, idents = x)) +
+                        Seurat::NoAxes(legend.position='top', legend.text = element_text(size = 8)) })
+  p2 <- patchwork::wrap_plots(plots = p, ncol=4)
+  print(p2)
+
+  # marker expression
+  markers <- markers.df %>% dplyr::distinct(gene) %>% .$gene
+  Seurat::DotPlot(input, assay = "RNA", features = markers) &
     Seurat::NoLegend() &
     ggplot2::labs(title = "Cell Markers") &
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust=1)) -> p
   print(p)
+  p <- Seurat::DoHeatmap(input,  assay = "RNA", slot = "data",
+                         features = markers) + Seurat::NoLegend() +
+       ggplot2::scale_fill_gradientn(colors = c("blue", "white", "red"))
+  print(p)
+  # cell cycle
+  if (length(intersect(rownames(input), Seurat::cc.genes$s.genes)) > 0) {
+      p10 <- Seurat::VlnPlot(input, assay = "RNA",features = c("PCNA", "TOP2A",  "MKI67"), ncol = 1 ) +
+        ggplot2::labs(caption="Cell Cycle Markers") & ggplot2::theme(axis.title.x=element_blank())
+      print(p10)
+      p11 <- Seurat::DotPlot(input, assay = "RNA", features = intersect(rownames(input), cc.genes$s.genes)) +
+        Seurat::RotatedAxis() + Seurat::NoLegend() +
+        ggplot2::ggtitle("Phase S")  + ggplot2::xlab("Genes") + ggplot2::ylab("Clusters")
+      print(p11)
+      p12 <- Seurat::DotPlot(input, assay = "RNA", features = intersect(rownames(input), cc.genes$g2m.genes)) +
+        Seurat::RotatedAxis() + Seurat::NoLegend() +
+        ggplot2::ggtitle("Phase G2M") + ggplot2::xlab("Genes") + ggplot2::ylab("Cell Type")
+    print(p12)
+  }
   # plot features
-  plot.features = c("nFeature_RNA", "percent.mt", "percent.rb")
+  plot.features = c("nFeature_RNA", "percent.rb")
   if (! .hasSlot(input@meta.data, "percent.mt")) {
     input[["percent.mt"]] <- Seurat::PercentageFeatureSet(input, assay = "RNA", pattern = "(^MT|:MT)-")
   }

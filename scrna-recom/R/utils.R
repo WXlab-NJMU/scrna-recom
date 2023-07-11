@@ -187,12 +187,12 @@ OutFromSeuratToOthers <- function(obj, format, outfile = NULL) {
 #'
 #' @concept utility
 scicolors <- function(x, journal="nature") {
-  alphas  <- ifelse(x %% 8 == 0, x %/% 8, (x %/% 8) + 1)
-  rounds <- rev(seq(0.3, 0.3*alphas, 0.2))
+  nround  <- ifelse(x %% 8 == 0, x %/% 8, (x %/% 8) + 1)
   if (journal=="science"){
-    mycolors  <- map(rounds, ~ggsci::pal_aaas("default", alpha = .)(8)) %>% flatten()
+    #mycolors  <- map(rounds, ~ggsci::pal_aaas("default", alpha = .)(8)) %>% flatten()
+    mycolors  <- rep(ggsci::pal_aaas("default", alpha = 0.8)(10)[seq(8)], nround)
   } else if  (journal=="nature"){
-    mycolors  <- map(rounds, ~ggsci::pal_npg("nrc", alpha = .)(8))  %>% flatten()
+    mycolors  <- rep(ggsci::pal_npg("nrc", alpha = 0.8)(10)[seq(8)], nround)
   }
   mycolors  <- unlist(mycolors)[1:x]
   return(mycolors)
@@ -275,6 +275,7 @@ PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clust
   ratio.info <- input@meta.data %>% group_by(.data[[sample]],.data[[celltype]]) %>%
     summarise(num = n()) %>% mutate(prop = round(num/sum(num), digits = 4)) %>%
     mutate(id = paste0(.data[[celltype]],": ", prop*100))
+  ratio.info[[celltype]] <- factor(ratio.info[[celltype]], levels = levels(input))
   p <- ggplot2::ggplot(ratio.info,
                        ggplot2::aes_string(x = sample,y = "prop",fill = celltype,
                                            alluvium = celltype, stratum = celltype,
@@ -284,15 +285,14 @@ PlotCellRatio <- function(input, sample = "orig.ident", celltype = "seurat_clust
     ggplot2::theme_bw() +
     ggplot2::coord_cartesian(expand = 0) +
     ggplot2::scale_y_continuous(labels = scales::label_percent()) +
-    ggsci::scale_color_npg(alpha = 1) +
+    ggplot2::scale_fill_manual(values=scicolors(length(unique(ratio.info[[celltype]])))) +
     ggplot2::theme(panel.grid = ggplot2::element_blank(),
                    axis.text = ggplot2::element_text(size = ggplot2::rel(1.2),color = 'black'),
                  axis.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black'),
                  legend.text = ggplot2::element_text(size = ggplot2::rel(1.2),color = 'black'),
                  legend.title = ggplot2::element_text(size = ggplot2::rel(1.5),color = 'black')) +
     ggplot2::xlab('') + ggplot2::ylab('Cell Ratio')
-
-  print(p)
+    p
 }
 
 #' Plot Cell Marker Expression

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 library(argparser)
-#library(Seurat)
+library(tictoc)
 p <- arg_parser("scRNA-seq Dimension Reduction and Clustering using Seurat")
 p <- add_argument(p, "infile", help="input SeuratObject rds", type="character")
 p <- add_argument(p, "outdir", help="output result folder", type="character")
@@ -16,10 +16,9 @@ p <- add_argument(p, "--kparam", help="k of knn in FindNeighbor", type="numeric"
 #                  default = c("nFeature_RNA", "percent.mt", "percent.rb"),
 #                  help="features to plot on umap")
 argv <- parse_args(p)
-print(argv)
-print(argv$plot)
+#print(argv)
+tic("Runing clustering")
 input <- readRDS(argv$infile)
-
 library(scrnaRecom)
 features <- c("nFeature_RNA", "percent.rb")
 scrnaRecom::clustering(input, argv$outdir, argv$project, argv$dims,
@@ -27,3 +26,4 @@ scrnaRecom::clustering(input, argv$outdir, argv$project, argv$dims,
                        reduction = argv$method, resolution = argv$resolution,
                        do.sct = argv$sct
 )
+toc()

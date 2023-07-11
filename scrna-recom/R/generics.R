@@ -93,7 +93,7 @@ MetabolicAnalysis <- function(csv, outdir, used = "scMetabolism") {
 #' @concept Cell Communication
 #' @export CellCommunication
 #'
-CellCommunication <- function(infile, outdir, used = "CellChat") {
+CellCommunication <- function(input, outdir, project, used = "CellChat", ...) {
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
   }
