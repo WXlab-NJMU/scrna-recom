@@ -11,7 +11,7 @@ if (any(installed_packages == FALSE)) {
 
 # install packages from Bioconductor
 pkgs.bioc <- c("ComplexHeatmap","SingleR","clusterProfiler","GSVA",
-               "AUCell","DropletUtils", "bambu")
+               "AUCell","DropletUtils")
 installed_packages <- pkgs.bioc %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {
   BiocManager::install(pkgs.bioc[!installed_packages])

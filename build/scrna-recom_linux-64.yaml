@@ -134,7 +134,7 @@ dependencies:
   - libxcb=1.13
   - libxml2=2.9.14
   - libzip=1.9.2
-  - libzlib=1.2.12
+  - libzlib
   - lz4-c=1.9.3
   - make=4.3
   - markupsafe=2.1.1
@@ -396,7 +396,7 @@ dependencies:
   - stack_data=0.5.1
   - sysroot_linux-64=2.12
   - terminado=0.16.0
-  - tiledb=2.11.3
+  - tiledb
   - tinycss2=1.1.1
   - tk=8.6.12
   - tktable=2.10
@@ -479,7 +479,7 @@ dependencies:
       - patsy==0.5.3
       - pillow==9.2.0
       - pyarrow==9.0.0
-      - pydata-sphinx-theme==0.8.1
+      - pydata-sphinx-theme
       - pynndescent==0.5.7
       - pysam==0.19.1
       - pyscenic==0.12.0
@@ -517,3 +517,4 @@ dependencies:
       - velocyto==0.17.17
       - yarl==1.8.1
       - zict==2.2.0
+      - cython

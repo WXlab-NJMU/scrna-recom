@@ -125,7 +125,7 @@ dependencies:
   - libxcb=1.13
   - libxml2=2.9.14
   - libzip=1.9.2
-  - libzlib=1.2.12
+  - libzlib
   - llvm-openmp=14.0.4
   - llvm-tools=14.0.4
   - lz4-c=1.9.3
@@ -415,7 +415,7 @@ dependencies:
   - stack_data=0.5.1
   - tapi=1100.0.11
   - terminado=0.16.0
-  - tiledb=2.11.2
+  - tiledb
   - tinycss2=1.1.1
   - tk=8.6.12
   - tktable=2.10
@@ -495,7 +495,7 @@ dependencies:
     - patsy==0.5.3
     - pillow==9.3.0
     - pyarrow==10.0.0
-    - pydata-sphinx-theme==0.7.2
+    - pydata-sphinx-theme
     - pynndescent==0.5.8
     - pysam==0.20.0
     - pyscenic==0.12.0
@@ -530,3 +530,4 @@ dependencies:
     - velocyto==0.17.17
     - yarl==1.8.1
     - zict==2.2.0
+    - cython
